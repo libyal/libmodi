@@ -44,7 +44,7 @@ in the section entitled "GNU Free Documentation License".
 | Version | Author | Date | Comments
 | 0.0.1 | J.B. Metz | July 2012 | Initial version.
 | 0.0.2 | J.B. Metz | January 2016 | Switched to asccidoc format.
-| 0.0.3 | J.B. Metz | October 2016 | Textual changes.
+| 0.0.3 | J.B. Metz | October 2016 | Textual changes. Worked on format.
 |===
 
 :numbered:
@@ -93,12 +93,15 @@ The file header is 4096 bytes of size and consist of:
 [yellow-background]*Seen: 3*
 | 8 | 4 | | Number of sectors in band +
 The bytes per sector is 512 bytes
-| 12 | 4 | 1 | [yellow-background]*Unknown* +
+| 12 | 4 | | [yellow-background]*Unknown* +
 [yellow-background]*Seen: 1*
 | 16 | 4 | | The non-sparse image size in sectors +
 The bytes per sector is 512 bytes
-| 20 | 44 | | [yellow-background]*Unknown (empty values)*
+| 20 | 12 | | [yellow-background]*Unknown (empty values)*
+| 32 | 4 | | [yellow-background]*Unknown*
+| 36 | 28 | | [yellow-background]*Unknown (empty values)*
 | 64 | ... | | Array of band indexes
+| ... | ... | | [yellow-background]*Unknown (empty values)*
 |===
 
 The array of band indexes contains 32-bit values that contain the band index 
@@ -114,6 +117,11 @@ and 0 indicates an unset value in the array.
 E.g. if the first band index is 1, then the sparse image data at offset 
 0x00001000 maps to offset 0 in the non-sparse image. A band non defined in the 
 sparse image contains 0-bytes in the non-sparse image.
+
+....
+data offset = 4096 + ( array index x sectors per band x 512 )
+original offset = 4096 + ( ( band index - 1 ) x sectors per band x 512 )
+....
 
 == Sparse bundle disk image (.sparsebundle)
 The sparse bundle disk image was introduced in Mac OS X v10.5. It consists of a 

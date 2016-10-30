@@ -1,0 +1,12 @@
+TODO:
+* use range list to map the bands
+* test multi band sparseimage
+* add sparsebundle support
+
+20161030
+* applied updates
+* worked on format support
+
+20120723
+* initial version
+
