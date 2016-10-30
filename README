@@ -1,0 +1,16 @@
+libmodi is a library to access the Mac OS disk image format.
+
+Project information:
+
+* Status: experimental
+* Licence: LGPLv3+
+
+Work in progress:
+
+* Finish library
+
+For more information see:
+
+* Project documentation: https://github.com/libyal/libmodi/wiki/Home
+* How to build from source: https://github.com/libyal/libmodi/wiki/Building
+
