@@ -9,8 +9,8 @@ Analysis of Mac OS disk image type formats
 == Summary
 Apple Mac OS supports disk image types used for various purposes by the 
 operating system, e.g. software distribution in the form of .dmg files. This 
-specification is based on available documentation and was enhanced by reverse 
-engineering of the file format. 
+specification is based on available documentation and was enhanced by analyzing
+test images. 
 
 This document is intended as a working document for the Mac OS disk image
 formats specification. Which should allow existing Open Source forensic tooling
@@ -67,6 +67,8 @@ document:
 
 == Read-write disk image (.dmg)
 RAW image (CRawDiskImage).
+
+[yellow-background]*TODO what about compressed dmg files*
 
 == Sparse disk image (.sparseimage)
 The sparse disk image consists of:
