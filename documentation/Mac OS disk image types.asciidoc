@@ -119,8 +119,8 @@ E.g. if the first band index is 1, then the sparse image data at offset
 sparse image contains 0-bytes in the non-sparse image.
 
 ....
-data offset = 4096 + ( array index x sectors per band x 512 )
-original offset = 4096 + ( ( band index - 1 ) x sectors per band x 512 )
+band data offset = 4096 + ( array index x sectors per band x 512 )
+original data offset = 4096 + ( ( band index - 1 ) x sectors per band x 512 )
 ....
 
 == Sparse bundle disk image (.sparsebundle)

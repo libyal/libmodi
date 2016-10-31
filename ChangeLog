@@ -2,6 +2,12 @@ TODO:
 * use range list to map the bands
 * test multi band sparseimage
 * add sparsebundle support
+* add dmg support
+* add compressed dmg support
+* add encryption support
+
+20161031
+* worked on format support
 
 20161030
 * applied updates
