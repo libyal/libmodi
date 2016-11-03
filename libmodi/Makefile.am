@@ -10,6 +10,7 @@ AM_CPPFLAGS = \
 	@LIBCNOTIFY_CPPFLAGS@ \
 	@LIBCSPLIT_CPPFLAGS@ \
 	@LIBUNA_CPPFLAGS@ \
+	@LIBCDIRECTORY_CPPFLAGS@ \
 	@LIBCFILE_CPPFLAGS@ \
 	@LIBCPATH_CPPFLAGS@ \
 	@LIBBFIO_CPPFLAGS@ \
@@ -32,6 +33,7 @@ libmodi_la_SOURCES = \
 	libmodi_i18n.c libmodi_i18n.h \
 	libmodi_io_handle.c libmodi_io_handle.h \
 	libmodi_libbfio.h \
+	libmodi_libcdirectory.h \
 	libmodi_libcerror.h \
 	libmodi_libclocale.h \
 	libmodi_libcnotify.h \
@@ -56,6 +58,7 @@ libmodi_la_LIBADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCDIRECTORY_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBBFIO_LIBADD@ \

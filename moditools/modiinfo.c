@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Mac OS disk image file
+ * Shows information obtained from a Mac OS disk image
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -54,11 +54,11 @@ void usage_fprint(
 		return;
 	}
 	fprintf( stream, "Use modiinfo to determine information about a Mac OS disk\n"
-	                 "image file.\n\n" );
+	                 "image.\n\n" );
 
 	fprintf( stream, "Usage: modiinfo [ -hvV ] source\n\n" );
 
-	fprintf( stream, "\tsource: the source file\n\n" );
+	fprintf( stream, "\tsource: the source file or directory\n\n" );
 
 	fprintf( stream, "\t-h:     shows this help\n" );
 	fprintf( stream, "\t-v:     verbose output to stderr\n" );
@@ -189,7 +189,7 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Missing source file.\n" );
+		 "Missing source file or directory.\n" );
 
 		usage_fprint(
 		 stdout );
@@ -223,17 +223,17 @@ int main( int argc, char * const argv[] )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to open source file.\n" );
+		 "Unable to open source file or directory.\n" );
 
 		goto on_error;
 	}
-	if( info_handle_file_fprint(
+	if( info_handle_input_fprint(
 	     modiinfo_info_handle,
 	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to print file information.\n" );
+		 "Unable to print input information.\n" );
 
 		goto on_error;
 	}

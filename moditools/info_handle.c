@@ -85,14 +85,14 @@ int info_handle_initialize(
 			goto on_error;
 		}
 		if( libmodi_handle_initialize(
-		     &( ( *info_handle )->input_handle ),
+		     &( ( *info_handle )->input ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize input handle.",
+			 "%s: unable to initialize input.",
 			 function );
 
 			goto on_error;
@@ -135,17 +135,17 @@ int info_handle_free(
 	}
 	if( *info_handle != NULL )
 	{
-		if( ( *info_handle )->input_handle != NULL )
+		if( ( *info_handle )->input != NULL )
 		{
 			if( libmodi_handle_free(
-			     &( ( *info_handle )->input_handle ),
+			     &( ( *info_handle )->input ),
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-				 "%s: unable to free input handle.",
+				 "%s: unable to free input.",
 				 function );
 
 				result = -1;
@@ -179,17 +179,17 @@ int info_handle_signal_abort(
 
 		return( -1 );
 	}
-	if( info_handle->input_handle != NULL )
+	if( info_handle->input != NULL )
 	{
 		if( libmodi_handle_signal_abort(
-		     info_handle->input_handle,
+		     info_handle->input,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to signal input handle to abort.",
+			 "%s: unable to signal input to abort.",
 			 function );
 
 			return( -1 );
@@ -221,13 +221,13 @@ int info_handle_open_input(
 	}
 #if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libmodi_handle_open_wide(
-	     info_handle->input_handle,
+	     info_handle->input,
 	     filename,
 	     LIBMODI_OPEN_READ,
 	     error ) != 1 )
 #else
 	if( libmodi_handle_open(
-	     info_handle->input_handle,
+	     info_handle->input,
 	     filename,
 	     LIBMODI_OPEN_READ,
 	     error ) != 1 )
@@ -237,7 +237,7 @@ int info_handle_open_input(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open input handle.",
+		 "%s: unable to open input.",
 		 function );
 
 		return( -1 );
@@ -265,26 +265,26 @@ int info_handle_close(
 
 		return( -1 );
 	}
-	if( info_handle->input_handle == NULL )
+	if( info_handle->input == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid info handle - missing input handle.",
+		 "%s: invalid info handle - missing input.",
 		 function );
 
 		return( -1 );
 	}
 	if( libmodi_handle_close(
-	     info_handle->input_handle,
+	     info_handle->input,
 	     error ) != 0 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
-		 "%s: unable to close input handle.",
+		 "%s: unable to close input.",
 		 function );
 
 		return( -1 );
@@ -295,13 +295,13 @@ int info_handle_close(
 /* Prints the handle information to a stream
  * Returns 1 if successful or -1 on error
  */
-int info_handle_file_fprint(
+int info_handle_input_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
 	libcstring_system_character_t byte_size_string[ 16 ];
 
-	static char *function = "info_handle_file_fprint";
+	static char *function = "info_handle_input_fprint";
 	size64_t media_size   = 0;
 	int result            = 0;
 
@@ -325,7 +325,7 @@ int info_handle_file_fprint(
 	 "\n" );
 
 	if( libmodi_handle_get_media_size(
-	     info_handle->input_handle,
+	     info_handle->input,
 	     &media_size,
 	     error ) != 1 )
 	{

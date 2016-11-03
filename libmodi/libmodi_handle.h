@@ -29,6 +29,7 @@
 #include "libmodi_extern.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
+#include "libmodi_libcdirectory.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcthreads.h"
 #include "libmodi_libfcache.h"
@@ -122,6 +123,12 @@ int libmodi_handle_open_wide(
      libcerror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+int libmodi_handle_open_directory(
+     libmodi_handle_t *handle,
+     libcdirectory_directory_t *directory,
+     int access_flags,
+     libcerror_error_t **error );
 
 LIBMODI_EXTERN \
 int libmodi_handle_open_file_io_handle(

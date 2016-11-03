@@ -31,6 +31,7 @@
 #include "libmodi_io_handle.h"
 #include "libmodi_handle.h"
 #include "libmodi_libbfio.h"
+#include "libmodi_libcdirectory.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_libcstring.h"
@@ -288,9 +289,11 @@ int libmodi_handle_open(
      libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle           = NULL;
+	libcdirectory_directory_t *directory       = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libmodi_handle_open";
 	size_t filename_length                     = 0;
+	int is_directory                           = 0;
 
 	if( handle == NULL )
 	{
@@ -339,66 +342,119 @@ int libmodi_handle_open(
 
 		return( -1 );
 	}
-	if( libbfio_file_initialize(
-	     &file_io_handle,
+	if( libcdirectory_directory_initialize(
+	     &directory,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file IO handle.",
+		 "%s: unable to create directory.",
 		 function );
 
 		goto on_error;
 	}
+	is_directory = libcdirectory_directory_open(
+	                directory,
+	                filename,
+	                NULL );
+
+	if( is_directory == 1 )
+	{
+		if( libmodi_handle_open_directory(
+		     handle,
+		     directory,
+		     access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open handle from directory: %s.",
+			 function,
+			 filename );
+
+			goto on_error;
+		}
+	}
+	else
+	{
+		if( libbfio_file_initialize(
+		     &file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create file IO handle.",
+			 function );
+
+			goto on_error;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libbfio_handle_set_track_offsets_read(
-	     file_io_handle,
-	     1,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set track offsets read in file IO handle.",
-                 function );
+		if( libbfio_handle_set_track_offsets_read(
+		     file_io_handle,
+		     1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set track offsets read in file IO handle.",
+			 function );
 
-		goto on_error;
-	}
+			goto on_error;
+		}
 #endif
-	filename_length = libcstring_narrow_string_length(
-	                   filename );
+		filename_length = libcstring_narrow_string_length(
+		                   filename );
 
-	if( libbfio_file_set_name(
-	     file_io_handle,
-	     filename,
-	     filename_length + 1,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file IO handle.",
-                 function );
+		if( libbfio_file_set_name(
+		     file_io_handle,
+		     filename,
+		     filename_length + 1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set filename in file IO handle.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		if( libmodi_handle_open_file_io_handle(
+		     handle,
+		     file_io_handle,
+		     access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open handle from file: %s.",
+			 function,
+			 filename );
+
+			goto on_error;
+		}
 	}
-	if( libmodi_handle_open_file_io_handle(
-	     handle,
-	     file_io_handle,
-	     access_flags,
+	if( libcdirectory_directory_free(
+	     &directory,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open handle: %s.",
-		 function,
-		 filename );
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free directory.",
+		 function );
 
 		goto on_error;
 	}
@@ -441,6 +497,12 @@ on_error:
 	{
 		libbfio_handle_free(
 		 &file_io_handle,
+		 NULL );
+	}
+	if( directory != NULL )
+	{
+		libcdirectory_directory_free(
+		 &directory,
 		 NULL );
 	}
 	return( -1 );
@@ -458,9 +520,11 @@ int libmodi_handle_open_wide(
      libcerror_error_t **error )
 {
 	libbfio_handle_t *file_io_handle           = NULL;
+	libcdirectory_directory_t *directory       = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libmodi_handle_open_wide";
 	size_t filename_length                     = 0;
+	int is_directory                           = 0;
 
 	if( handle == NULL )
 	{
@@ -509,66 +573,119 @@ int libmodi_handle_open_wide(
 
 		return( -1 );
 	}
-	if( libbfio_file_initialize(
-	     &file_io_handle,
+	if( libcdirectory_directory_initialize(
+	     &directory,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file IO handle.",
+		 "%s: unable to create directory.",
 		 function );
 
 		goto on_error;
 	}
+	is_directory = libcdirectory_directory_open_wide(
+	                directory,
+	                filename,
+	                NULL );
+
+	if( is_directory == 1 )
+	{
+		if( libmodi_handle_open_directory(
+		     handle,
+		     directory,
+		     access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open handle from directory: %s.",
+			 function,
+			 filename );
+
+			goto on_error;
+		}
+	}
+	else
+	{
+		if( libbfio_file_initialize(
+		     &file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create file IO handle.",
+			 function );
+
+			goto on_error;
+		}
 #if defined( HAVE_DEBUG_OUTPUT )
-	if( libbfio_handle_set_track_offsets_read(
-	     file_io_handle,
-	     1,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set track offsets read in file IO handle.",
-                 function );
+		if( libbfio_handle_set_track_offsets_read(
+		     file_io_handle,
+		     1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set track offsets read in file IO handle.",
+			 function );
 
-		goto on_error;
-	}
+			goto on_error;
+		}
 #endif
-	filename_length = libcstring_wide_string_length(
-	                   filename );
+		filename_length = libcstring_wide_string_length(
+		                   filename );
 
-	if( libbfio_file_set_name_wide(
-	     file_io_handle,
-	     filename,
-	     filename_length + 1,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file IO handle.",
-                 function );
+		if( libbfio_file_set_name_wide(
+		     file_io_handle,
+		     filename,
+		     filename_length + 1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set filename in file IO handle.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		if( libmodi_handle_open_file_io_handle(
+		     handle,
+		     file_io_handle,
+		     access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open handle: %ls.",
+			 function,
+			 filename );
+
+			goto on_error;
+		}
 	}
-	if( libmodi_handle_open_file_io_handle(
-	     handle,
-	     file_io_handle,
-	     access_flags,
+	if( libcdirectory_directory_free(
+	     &directory,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open handle: %ls.",
-		 function,
-		 filename );
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free directory.",
+		 function );
 
 		goto on_error;
 	}
@@ -613,10 +730,79 @@ on_error:
 		 &file_io_handle,
 		 NULL );
 	}
+	if( directory != NULL )
+	{
+		libcdirectory_directory_free(
+		 &directory,
+		 NULL );
+	}
 	return( -1 );
 }
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
+/* Opens a handle using a Basic File IO (bfio) handle
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_handle_open_directory(
+     libmodi_handle_t *handle,
+     libcdirectory_directory_t *directory,
+     int access_flags,
+     libcerror_error_t **error )
+{
+	libmodi_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libmodi_handle_open_directory";
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libmodi_internal_handle_t *) handle;
+
+	if( directory == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid directory.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( ( access_flags & LIBMODI_ACCESS_FLAG_READ ) == 0 )
+	 && ( ( access_flags & LIBMODI_ACCESS_FLAG_WRITE ) == 0 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported access flags.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( access_flags & LIBMODI_ACCESS_FLAG_WRITE ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_UNSUPPORTED_VALUE,
+		 "%s: write access currently not supported.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO */
+	return( -1 );
+}
 
 /* Opens a handle using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
