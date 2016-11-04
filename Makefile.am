@@ -17,6 +17,9 @@ SUBDIRS = \
 	libbfio \
 	libfcache \
 	libfdata \
+	libfguid \
+	libfvalue \
+	libfplist \
 	libmodi \
 	libcsystem \
 	moditools \
@@ -94,6 +97,9 @@ library:
 	(cd $(srcdir)/libbfio && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfcache && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdata && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfguid && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfvalue && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfplist && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libmodi && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
@@ -124,6 +130,9 @@ splint:
 	(cd $(srcdir)/libbfio && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfcache && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfdata && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfguid && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libfplist && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libmodi && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/moditools && $(MAKE) splint $(AM_MAKEFLAGS))

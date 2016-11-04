@@ -1,5 +1,5 @@
 /*
- * The internal type definitions
+ * The libfplist header wrapper
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,29 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_INTERNAL_TYPES_H )
-#define _LIBMODI_INTERNAL_TYPES_H
+#if !defined( _LIBMODI_LIBFPLIST_H )
+#define _LIBMODI_LIBFPLIST_H
 
 #include <common.h>
-#include <types.h>
 
-/* Define HAVE_LOCAL_LIBMODI for local use of libmodi
- * The definitions in <libmodi/types.h> are copied here
- * for local use of libmodi
+/* Define HAVE_LOCAL_LIBFPLIST for local use of libfplist
  */
-#if defined( HAVE_LOCAL_LIBMODI )
+#if defined( HAVE_LOCAL_LIBFPLIST )
 
-/* The following type definitions hide internal data structures
- */
-#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
-typedef struct libmodi_handle {}	libmodi_handle_t;
+#include <libfplist_definitions.h>
+#include <libfplist_key.h>
+#include <libfplist_plist.h>
+#include <libfplist_types.h>
 
 #else
-typedef intptr_t libmodi_handle_t;
 
-#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
+/* If libtool DLL support is enabled set LIBFPLIST_DLL_IMPORT
+ * before including libfplist.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBFPLIST_DLL_IMPORT
+#endif
 
-#endif /* defined( HAVE_LOCAL_LIBMODI ) */
+#include <libfplist.h>
 
-#endif /* !defined( _LIBMODI_INTERNAL_TYPES_H ) */
+#endif /* defined( HAVE_LOCAL_LIBFPLIST ) */
+
+#endif /* !defined( _LIBMODI_LIBFPLIST_H ) */
 

@@ -124,9 +124,10 @@ int libmodi_handle_open_wide(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-int libmodi_handle_open_directory(
+LIBMODI_EXTERN \
+int libmodi_handle_open_info_plist(
      libmodi_handle_t *handle,
-     libcdirectory_directory_t *directory,
+     libbfio_handle_t *file_io_handle,
      int access_flags,
      libcerror_error_t **error );
 

@@ -1,7 +1,7 @@
 /*
- * The internal type definitions
+ * The internal libcpath header
  *
- * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2009-2016, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -19,29 +19,30 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_INTERNAL_TYPES_H )
-#define _LIBMODI_INTERNAL_TYPES_H
+#if !defined( _LIBMODI_LIBCPATH_H )
+#define _LIBMODI_LIBCPATH_H
 
 #include <common.h>
-#include <types.h>
 
-/* Define HAVE_LOCAL_LIBMODI for local use of libmodi
- * The definitions in <libmodi/types.h> are copied here
- * for local use of libmodi
+/* Define HAVE_LOCAL_LIBCPATH for local use of libcpath
  */
-#if defined( HAVE_LOCAL_LIBMODI )
+#if defined( HAVE_LOCAL_LIBCPATH )
 
-/* The following type definitions hide internal data structures
- */
-#if defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI )
-typedef struct libmodi_handle {}	libmodi_handle_t;
+#include <libcpath_definitions.h>
+#include <libcpath_path.h>
 
 #else
-typedef intptr_t libmodi_handle_t;
 
-#endif /* defined( HAVE_DEBUG_OUTPUT ) && !defined( WINAPI ) */
+/* If libtool DLL support is enabled set LIBCPATH_DLL_IMPORT
+ * before including libcpath.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCPATH_DLL_IMPORT
+#endif
 
-#endif /* defined( HAVE_LOCAL_LIBMODI ) */
+#include <libcpath.h>
 
-#endif /* !defined( _LIBMODI_INTERNAL_TYPES_H ) */
+#endif /* defined( HAVE_LOCAL_LIBCPATH ) */
+
+#endif /* !defined( _LIBMODI_LIBCPATH_H ) */
 

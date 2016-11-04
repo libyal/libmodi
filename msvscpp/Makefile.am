@@ -14,6 +14,9 @@ MSVSCPP_FILES = \
 	libcthreads/libcthreads.vcproj \
 	libfcache/libfcache.vcproj \
 	libfdata/libfdata.vcproj \
+	libfguid/libfguid.vcproj \
+	libfplist/libfplist.vcproj \
+	libfvalue/libfvalue.vcproj \
 	libmodi/libmodi.vcproj \
 	libuna/libuna.vcproj \
 	modi_test_error/modi_test_error.vcproj \

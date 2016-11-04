@@ -1,20 +1,23 @@
 TODO:
-* use range list to map the bands
-* test multi band sparseimage
-* add sparsebundle support
 * add dmg support
 * add compressed dmg support
-* add encryption support
+* add encrypted image support
+* sparse bundle
+  - add open band files function, NULL is non-existing band file?
+  - use libvmdk like approach
+
+20161104
+* worked on sparse bundle format support
 
 20161103
-* worked on format support
+* worked on sparse image format support
 
 20161031
-* worked on format support
+* worked on sparse image format support
 
 20161030
 * applied updates
-* worked on format support
+* worked on sparse image format support
 
 20120723
 * initial version

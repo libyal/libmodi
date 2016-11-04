@@ -81,6 +81,11 @@ int libmodi_io_handle_read_sparse_image_header(
      libmodi_bands_table_t *data_bands_table,
      libcerror_error_t **error );
 
+int libmodi_io_handle_read_info_plist(
+     libmodi_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
 int libmodi_io_handle_read_data_band(
      libmodi_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,

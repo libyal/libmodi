@@ -16,6 +16,9 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
 	@LIBFDATA_CPPFLAGS@ \
+	@LIBFGUID_CPPFLAGS@ \
+	@LIBFVALUE_CPPFLAGS@ \
+	@LIBFPLIST_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@
 
 lib_LTLIBRARIES = libmodi.la
@@ -37,10 +40,12 @@ libmodi_la_SOURCES = \
 	libmodi_libcerror.h \
 	libmodi_libclocale.h \
 	libmodi_libcnotify.h \
+	libmodi_libcpath.h \
 	libmodi_libcstring.h \
 	libmodi_libcthreads.h \
 	libmodi_libfcache.h \
 	libmodi_libfdata.h \
+	libmodi_libfplist.h \
 	libmodi_libuna.h \
 	libmodi_metadata.c libmodi_metadata.h \
 	libmodi_notify.c libmodi_notify.h \
@@ -64,6 +69,9 @@ libmodi_la_LIBADD = \
 	@LIBBFIO_LIBADD@ \
 	@LIBFCACHE_LIBADD@ \
 	@LIBFDATA_LIBADD@ \
+	@LIBFGUID_LIBADD@ \
+	@LIBFVALUE_LIBADD@ \
+	@LIBFPLIST_LIBADD@ \
 	@PTHREAD_LIBADD@
 
 libmodi_la_LDFLAGS = -no-undefined -version-info 1:0:0

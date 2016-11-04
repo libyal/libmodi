@@ -10,7 +10,7 @@ Analysis of Mac OS disk image type formats
 Apple Mac OS supports disk image types used for various purposes by the
 operating system, e.g. software distribution in the form of .dmg files. This
 specification is based on available documentation and was enhanced by analyzing
-test images.
+test data.
 
 This document is intended as a working document for the Mac OS disk image
 formats specification. Which should allow existing Open Source forensic tooling
@@ -147,7 +147,7 @@ contains the following key/value pairs.
 Consists of a string containing a floating point +
 As of Mac OS X v10.0 +
 The value should be 6.0
-| band-size | The (maximum) size of a band (file) +
+| band-size | The (maximum) size of a band (file) in bytes +
 Consists of a string containing an unsigned integer
 | bundle-backingstore-version | [yellow-background]*Unknown* +
 Consists of a string containing an unsigned integer +
