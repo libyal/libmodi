@@ -1,5 +1,5 @@
 /*
- * Data band functions
+ * Data block functions
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -24,40 +24,40 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libmodi_data_band.h"
+#include "libmodi_data_block.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 
-/* Creates a data band
- * Make sure the value data_band is referencing, is set to NULL
+/* Creates a data block
+ * Make sure the value data_block is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
-int libmodi_data_band_initialize(
-     libmodi_data_band_t **data_band,
+int libmodi_data_block_initialize(
+     libmodi_data_block_t **data_block,
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_data_band_initialize";
+	static char *function = "libmodi_data_block_initialize";
 
-	if( data_band == NULL )
+	if( data_block == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid data band.",
+		 "%s: invalid data block.",
 		 function );
 
 		return( -1 );
 	}
-	if( *data_band != NULL )
+	if( *data_block != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid data band value already set.",
+		 "%s: invalid data block value already set.",
 		 function );
 
 		return( -1 );
@@ -73,45 +73,45 @@ int libmodi_data_band_initialize(
 
 		return( -1 );
 	}
-	*data_band = memory_allocate_structure(
-	              libmodi_data_band_t );
+	*data_block = memory_allocate_structure(
+	               libmodi_data_block_t );
 
-	if( *data_band == NULL )
+	if( *data_block == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create data band.",
+		 "%s: unable to create data block.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     *data_band,
+	     *data_block,
 	     0,
-	     sizeof( libmodi_data_band_t ) ) == NULL )
+	     sizeof( libmodi_data_block_t ) ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear data band.",
+		 "%s: unable to clear data block.",
 		 function );
 
 		memory_free(
-		 *data_band );
+		 *data_block );
 
-		*data_band = NULL;
+		*data_block = NULL;
 
 		return( -1 );
 	}
 	if( data_size > 0 )
 	{
-		( *data_band )->data = (uint8_t *) memory_allocate(
-		                                    sizeof( uint8_t ) * data_size );
+		( *data_block )->data = (uint8_t *) memory_allocate(
+		                                     sizeof( uint8_t ) * data_size );
 
-		if( ( *data_band )->data == NULL )
+		if( ( *data_block )->data == NULL )
 		{
 			libcerror_error_set(
 			 error,
@@ -122,50 +122,50 @@ int libmodi_data_band_initialize(
 
 			goto on_error;
 		}
-		( *data_band )->data_size = data_size;
+		( *data_block )->data_size = data_size;
 	}
 	return( 1 );
 
 on_error:
-	if( *data_band != NULL )
+	if( *data_block != NULL )
 	{
 		memory_free(
-		 *data_band );
+		 *data_block );
 
-		*data_band = NULL;
+		*data_block = NULL;
 	}
 	return( -1 );
 }
 
-/* Frees a data band
+/* Frees a data block
  * Returns 1 if successful or -1 on error
  */
-int libmodi_data_band_free(
-     libmodi_data_band_t **data_band,
+int libmodi_data_block_free(
+     libmodi_data_block_t **data_block,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_data_band_free";
+	static char *function = "libmodi_data_block_free";
 	int result            = 1;
 
-	if( data_band == NULL )
+	if( data_block == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid data band.",
+		 "%s: invalid data block.",
 		 function );
 
 		return( -1 );
 	}
-	if( *data_band != NULL )
+	if( *data_block != NULL )
 	{
-		if( ( *data_band )->data != NULL )
+		if( ( *data_block )->data != NULL )
 		{
 			if( memory_set(
-			     ( *data_band )->data,
+			     ( *data_block )->data,
 			     0,
-			     ( *data_band )->data_size ) == NULL )
+			     ( *data_block )->data_size ) == NULL )
 			{
 				libcerror_error_set(
 				 error,
@@ -177,46 +177,46 @@ int libmodi_data_band_free(
 				result = -1;
 			}
 			memory_free(
-			 ( *data_band )->data );
+			 ( *data_block )->data );
 		}
 		memory_free(
-		 *data_band );
+		 *data_block );
 
-		*data_band = NULL;
+		*data_block = NULL;
 	}
 	return( result );
 }
 
-/* Reads data band
+/* Reads data block
  * Returns 1 if successful or -1 on error
  */
-int libmodi_data_band_read(
-     libmodi_data_band_t *data_band,
+int libmodi_data_block_read(
+     libmodi_data_block_t *data_block,
      libbfio_handle_t *file_io_handle,
-     off64_t data_band_offset,
+     off64_t data_block_offset,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_data_band_read";
+	static char *function = "libmodi_data_block_read";
 	ssize_t read_count    = 0;
 
-	if( data_band == NULL )
+	if( data_block == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid data band.",
+		 "%s: invalid data block.",
 		 function );
 
 		return( -1 );
 	}
-	if( data_band->data == NULL )
+	if( data_block->data == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid data band - missing data.",
+		 "%s: invalid data block - missing data.",
 		 function );
 
 		return( -1 );
@@ -225,15 +225,15 @@ int libmodi_data_band_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: reading data band at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+		 "%s: reading data block at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
 		 function,
-		 data_band_offset,
-		 data_band_offset );
+		 data_block_offset,
+		 data_block_offset );
 	}
 #endif
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
-	     data_band_offset,
+	     data_block_offset,
 	     SEEK_SET,
 	     error ) == -1 )
 	{
@@ -241,25 +241,25 @@ int libmodi_data_band_read(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek data band offset: %" PRIi64 ".",
+		 "%s: unable to seek data block offset: %" PRIi64 ".",
 		 function,
-		 data_band_offset );
+		 data_block_offset );
 
 		return( -1 );
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
-	              data_band->data,
-	              data_band->data_size,
+	              data_block->data,
+	              data_block->data_size,
 	              error );
 
-	if( read_count != (ssize_t) data_band->data_size )
+	if( read_count != (ssize_t) data_block->data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read data band.",
+		 "%s: unable to read data block.",
 		 function );
 
 		return( -1 );
@@ -268,11 +268,11 @@ int libmodi_data_band_read(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: data band:\n",
+		 "%s: data block:\n",
 		 function );
 		libcnotify_print_data(
-		 data_band->data,
-		 data_band->data_size,
+		 data_block->data,
+		 data_block->data_size,
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 	}
 #endif

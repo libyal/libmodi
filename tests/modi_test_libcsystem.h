@@ -1,5 +1,6 @@
 /*
- * The libfplist header wrapper
+ * Library for system independent implementation of functionality
+ * for programs
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,32 +20,35 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_LIBFPLIST_H )
-#define _LIBMODI_LIBFPLIST_H
+#if !defined( _MODI_TEST_LIBCSYSTEM_H )
+#define _MODI_TEST_LIBCSYSTEM_H
 
-#include <common.h>
-
-/* Define HAVE_LOCAL_LIBFPLIST for local use of libfplist
+/* Define HAVE_LOCAL_LIBCSYSTEM for local use of libcsystem
  */
-#if defined( HAVE_LOCAL_LIBFPLIST )
+#if defined( HAVE_LOCAL_LIBCSYSTEM )
 
-#include <libfplist_definitions.h>
-#include <libfplist_property.h>
-#include <libfplist_property_list.h>
-#include <libfplist_types.h>
+#include <libcsystem_definitions.h>
+#include <libcsystem_file_io.h>
+#include <libcsystem_getopt.h>
+#include <libcsystem_glob.h>
+#include <libcsystem_i18n.h>
+#include <libcsystem_signal.h>
+#include <libcsystem_string.h>
+#include <libcsystem_support.h>
+#include <libcsystem_unused.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBFPLIST_DLL_IMPORT
- * before including libfplist.h
+/* If libtool DLL support is enabled set LIBCSYSTEM_DLL_IMPORT
+ * before including libcsystem.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBFPLIST_DLL_IMPORT
+#define LIBCSYSTEM_DLL_IMPORT
 #endif
 
-#include <libfplist.h>
+#include <libcsystem.h>
 
-#endif /* defined( HAVE_LOCAL_LIBFPLIST ) */
+#endif /* defined( HAVE_LOCAL_LIBCSYSTEM ) */
 
-#endif /* !defined( _LIBMODI_LIBFPLIST_H ) */
+#endif /* !defined( _MODI_TEST_LIBCSYSTEM_H ) */
 

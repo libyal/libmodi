@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_support"
-	ProjectGUID="{63E124BD-5CED-45F0-9671-12323DAF23FF}"
-	RootNamespace="modi_test_support"
+	Name="modi_test_handle"
+	ProjectGUID="{9628FA1F-AA2E-4BC7-AA0B-B2A91710364A}"
+	RootNamespace="modi_test_handle"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_support.c"
+				RelativePath="..\..\tests\modi_test_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -211,6 +215,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_memory.h"
 				>
 			</File>
 			<File

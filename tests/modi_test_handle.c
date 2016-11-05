@@ -1,5 +1,5 @@
 /*
- * Library support functions test program
+ * Library handle type testing program
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,6 +20,8 @@
  */
 
 #include <common.h>
+#include <file_stream.h>
+#include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( WINAPI )
 #include <stdlib.h>
@@ -32,18 +34,26 @@
 #include "modi_test_libmodi.h"
 #include "modi_test_libuna.h"
 #include "modi_test_macros.h"
-#include "modi_test_unused.h"
+#include "modi_test_memory.h"
+
+#if SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#error Unsupported size of wchar_t
+#endif
+
+/* Define to make modi_test_handle generate verbose output
+#define MODI_TEST_FILE_VERBOSE
+ */
 
 /* Retrieves source as a narrow string
  * Returns 1 if successful or -1 on error
  */
-int modi_test_support_get_narrow_source(
+int modi_test_handle_get_narrow_source(
      const libcstring_system_character_t *source,
      char *narrow_string,
      size_t narrow_string_size,
      libcerror_error_t **error )
 {
-	static char *function     = "modi_test_support_get_narrow_source";
+	static char *function     = "modi_test_handle_get_narrow_source";
 	size_t narrow_source_size = 0;
 	size_t source_length      = 0;
 
@@ -237,13 +247,13 @@ int modi_test_support_get_narrow_source(
 /* Retrieves source as a wide string
  * Returns 1 if successful or -1 on error
  */
-int modi_test_support_get_wide_source(
+int modi_test_handle_get_wide_source(
      const libcstring_system_character_t *source,
      wchar_t *wide_string,
      size_t wide_string_size,
      libcerror_error_t **error )
 {
-	static char *function   = "modi_test_support_get_wide_source";
+	static char *function   = "modi_test_handle_get_wide_source";
 	size_t wide_source_size = 0;
 	size_t source_length    = 0;
 
@@ -383,14 +393,14 @@ int modi_test_support_get_wide_source(
 		result = libuna_utf32_string_copy_from_utf8(
 		          (libuna_utf32_character_t *) wide_string,
 		          wide_string_size,
-		          (uint8_t *) source,
+		          (libuna_utf8_character_t *) source,
 		          source_length + 1,
 		          error );
 #elif SIZEOF_WCHAR_T == 2
 		result = libuna_utf16_string_copy_from_utf8(
 		          (libuna_utf16_character_t *) wide_string,
 		          wide_string_size,
-		          (uint8_t *) source,
+		          (libuna_utf8_character_t *) source,
 		          source_length + 1,
 		          error );
 #endif
@@ -434,66 +444,435 @@ int modi_test_support_get_wide_source(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* Tests the libmodi_get_version function
+/* Creates and opens a source handle
+ * Returns 1 if successful or -1 on error
+ */
+int modi_test_handle_open_source(
+     libmodi_handle_t **handle,
+     const libcstring_system_character_t *source,
+     libcerror_error_t **error )
+{
+	static char *function = "modi_test_handle_open_source";
+	int result            = 0;
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( source == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid source.",
+		 function );
+
+		return( -1 );
+	}
+	if( libmodi_handle_initialize(
+	     handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to initialize handle.",
+		 function );
+
+		goto on_error;
+	}
+#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libmodi_handle_open_wide(
+	          *handle,
+	          source,
+	          LIBMODI_OPEN_READ,
+	          error );
+#else
+	result = libmodi_handle_open(
+	          *handle,
+	          source,
+	          LIBMODI_OPEN_READ,
+	          error );
+#endif
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open handle.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( *handle != NULL )
+	{
+		libmodi_handle_free(
+		 handle,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Closes and frees a source handle
+ * Returns 1 if successful or -1 on error
+ */
+int modi_test_handle_close_source(
+     libmodi_handle_t **handle,
+     libcerror_error_t **error )
+{
+	static char *function = "modi_test_handle_close_source";
+	int result            = 0;
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( libmodi_handle_close(
+	     *handle,
+	     error ) != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+		 "%s: unable to close handle.",
+		 function );
+
+		result = -1;
+	}
+	if( libmodi_handle_free(
+	     handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free handle.",
+		 function );
+
+		result = -1;
+	}
+	return( result );
+}
+
+/* Tests the libmodi_handle_initialize function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_get_version(
+int modi_test_handle_initialize(
      void )
 {
-	const char *version_string = NULL;
-	int result                 = 0;
+	libcerror_error_t *error = NULL;
+	libmodi_handle_t *handle      = NULL;
+	int result               = 0;
 
-	version_string = libmodi_get_version();
+	/* Test libmodi_handle_initialize
+	 */
+	result = libmodi_handle_initialize(
+	          &handle,
+	          &error );
 
-	result = libcstring_narrow_string_compare(
-	          version_string,
-	          LIBMODI_VERSION_STRING,
-	          9 );
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "handle",
+         handle );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libmodi_handle_free(
+	          &handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "handle",
+         handle );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test error cases
+	 */
+	result = libmodi_handle_initialize(
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	handle = (libmodi_handle_t *) 0x12345678UL;
+
+	result = libmodi_handle_initialize(
+	          &handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	handle = NULL;
+
+#if defined( HAVE_MODI_TEST_MEMORY )
+
+	/* Test libmodi_handle_initialize with malloc failing
+	 */
+	modi_test_malloc_attempts_before_fail = 0;
+
+	result = libmodi_handle_initialize(
+	          &handle,
+	          &error );
+
+	if( modi_test_malloc_attempts_before_fail != -1 )
+	{
+		modi_test_malloc_attempts_before_fail = -1;
+
+		if( handle != NULL )
+		{
+			libmodi_handle_free(
+			 &handle,
+			 NULL );
+		}
+	}
+	else
+	{
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		MODI_TEST_ASSERT_IS_NULL(
+		 "handle",
+		 handle );
+
+		MODI_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libmodi_handle_initialize with memset failing
+	 */
+	modi_test_memset_attempts_before_fail = 0;
+
+	result = libmodi_handle_initialize(
+	          &handle,
+	          &error );
+
+	if( modi_test_memset_attempts_before_fail != -1 )
+	{
+		modi_test_memset_attempts_before_fail = -1;
+
+		if( handle != NULL )
+		{
+			libmodi_handle_free(
+			 &handle,
+			 NULL );
+		}
+	}
+	else
+	{
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		MODI_TEST_ASSERT_IS_NULL(
+		 "handle",
+		 handle );
+
+		MODI_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_MODI_TEST_MEMORY ) */
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		libmodi_handle_free(
+		 &handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
+/* Tests the libmodi_handle_free function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_handle_free(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libmodi_handle_free(
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "error",
+         error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libmodi_handle_open functions
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_handle_open(
+     const libcstring_system_character_t *source )
+{
+	char narrow_source[ 256 ];
+
+	libcerror_error_t *error = NULL;
+	libmodi_handle_t *handle      = NULL;
+	int result               = 0;
+
+	/* Initialize test
+	 */
+	result = modi_test_handle_get_narrow_source(
+	          source,
+	          narrow_source,
+	          256,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	result = libmodi_handle_initialize(
+	          &handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "handle",
+         handle );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open
+	 */
+	result = libmodi_handle_open(
+	          handle,
+	          narrow_source,
+	          LIBMODI_OPEN_READ,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Clean up
+	 */
+	result = libmodi_handle_close(
+	          handle,
+	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
 	 0 );
 
-	return( 1 );
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
 
-on_error:
-	return( 0 );
-}
-
-/* Tests the libmodi_get_access_flags_read function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_get_access_flags_read(
-     void )
-{
-	int access_flags = 0;
-
-	access_flags = libmodi_get_access_flags_read();
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "access_flags",
-	 access_flags,
-	 LIBMODI_ACCESS_FLAG_READ );
-
-	return( 1 );
-
-on_error:
-	return( 0 );
-}
-
-/* Tests the libmodi_get_codepage function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_get_codepage(
-     void )
-{
-	libcerror_error_t *error = NULL;
-	int codepage             = 0;
-	int result               = 0;
-
-	result = libmodi_get_codepage(
-	          &codepage,
+	result = libmodi_handle_free(
+	          &handle,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -502,26 +881,12 @@ int modi_test_get_codepage(
 	 1 );
 
         MODI_TEST_ASSERT_IS_NULL(
+         "handle",
+         handle );
+
+        MODI_TEST_ASSERT_IS_NULL(
          "error",
          error );
-
-	/* Test error cases
-	 */
-	result = libmodi_get_codepage(
-	          NULL,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
 
 	return( 1 );
 
@@ -531,148 +896,32 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	return( 0 );
-}
-
-/* Tests the libmodi_set_codepage function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_set_codepage(
-     void )
-{
-	libcerror_error_t *error = NULL;
-	int result               = 0;
-
-	result = libmodi_set_codepage(
-	          0,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        MODI_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test error cases
-	 */
-	result = libmodi_set_codepage(
-	          -1,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
+	if( handle != NULL )
 	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libmodi_check_file_signature function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_check_file_signature(
-     const libcstring_system_character_t *source )
-{
-	char narrow_source[ 256 ];
-
-	libcerror_error_t *error = NULL;
-	int result               = 0;
-
-	/* Initialize test
-	 */
-	result = modi_test_support_get_narrow_source(
-	          source,
-	          narrow_source,
-	          256,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        MODI_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test check file signature
-	 */
-	result = libmodi_check_file_signature(
-	          narrow_source,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-        MODI_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
-
-	/* Test error cases
-	 */
-	result = libmodi_check_file_signature(
-	          NULL,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
+		libmodi_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-/* Tests the libmodi_check_file_signature_wide function
+/* Tests the libmodi_handle_open_wide functions
  * Returns 1 if successful or 0 if not
  */
-int modi_test_check_file_signature_wide(
+int modi_test_handle_open_wide(
      const libcstring_system_character_t *source )
 {
 	wchar_t wide_source[ 256 ];
 
 	libcerror_error_t *error = NULL;
+	libmodi_handle_t *handle      = NULL;
 	int result               = 0;
 
 	/* Initialize test
 	 */
-	result = modi_test_support_get_wide_source(
+	result = modi_test_handle_get_wide_source(
 	          source,
 	          wide_source,
 	          256,
@@ -687,10 +936,29 @@ int modi_test_check_file_signature_wide(
          "error",
          error );
 
-	/* Test check file signature
+	result = libmodi_handle_initialize(
+	          &handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "handle",
+         handle );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+	/* Test open
 	 */
-	result = libmodi_check_file_signature_wide(
+	result = libmodi_handle_open_wide(
+	          handle,
 	          wide_source,
+	          LIBMODI_OPEN_READ,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -702,23 +970,37 @@ int modi_test_check_file_signature_wide(
          "error",
          error );
 
-	/* Test error cases
+	/* Clean up
 	 */
-	result = libmodi_check_file_signature_wide(
-	          NULL,
+	result = libmodi_handle_close(
+	          handle,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
-	 -1 );
+	 0 );
 
-        MODI_TEST_ASSERT_IS_NOT_NULL(
+        MODI_TEST_ASSERT_IS_NULL(
          "error",
          error );
 
-	libcerror_error_free(
-	 &error );
+	result = libmodi_handle_free(
+	          &handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "handle",
+         handle );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
 
 	return( 1 );
 
@@ -727,6 +1009,12 @@ on_error:
 	{
 		libcerror_error_free(
 		 &error );
+	}
+	if( handle != NULL )
+	{
+		libmodi_handle_free(
+		 &handle,
+		 NULL );
 	}
 	return( 0 );
 }
@@ -745,8 +1033,11 @@ int main(
      char * const argv[] )
 #endif
 {
+	libcerror_error_t *error              = NULL;
 	libcstring_system_character_t *source = NULL;
+	libmodi_handle_t *handle                   = NULL;
 	libcstring_system_integer_t option    = 0;
+	int result                            = 0;
 
 	while( ( option = libcsystem_getopt(
 	                   argc,
@@ -769,51 +1060,107 @@ int main(
 	{
 		source = argv[ optind ];
 	}
+#if defined( HAVE_DEBUG_OUTPUT ) && defined( MODI_TEST_FILE_VERBOSE )
+	libmodi_notify_set_verbose(
+	 1 );
+	libmodi_notify_set_stream(
+	 stderr,
+	 NULL );
+#endif
 
 	MODI_TEST_RUN(
-	 "libmodi_get_version",
-	 modi_test_get_version );
+	 "libmodi_handle_initialize",
+	 modi_test_handle_initialize );
 
 	MODI_TEST_RUN(
-	 "libmodi_get_access_flags_read",
-	 modi_test_get_access_flags_read );
-
-	MODI_TEST_RUN(
-	 "libmodi_get_codepage",
-	 modi_test_get_codepage );
-
-	MODI_TEST_RUN(
-	 "libmodi_set_codepage",
-	 modi_test_set_codepage );
+	 "libmodi_handle_free",
+	 modi_test_handle_free );
 
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
 		MODI_TEST_RUN_WITH_ARGS(
-		 "libmodi_check_file_signature",
-		 modi_test_check_file_signature,
+		 "libmodi_handle_open",
+		 modi_test_handle_open,
 		 source );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
 		MODI_TEST_RUN_WITH_ARGS(
-		 "libmodi_check_file_signature_wide",
-		 modi_test_check_file_signature_wide,
+		 "libmodi_handle_open_wide",
+		 modi_test_handle_open_wide,
 		 source );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( LIBMODI_HAVE_BFIO )
 
-		/* TODO add test for libmodi_file_open_file_io_handle */
+		/* TODO add test for libmodi_handle_open_file_io_handle */
 
 #endif /* defined( LIBMODI_HAVE_BFIO ) */
+
+		/* TODO add test for libmodi_handle_close */
+
+		/* Initialize test
+		 */
+		result = modi_test_handle_open_source(
+		          &handle,
+		          source,
+		          &error );
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        MODI_TEST_ASSERT_IS_NOT_NULL(
+	         "handle",
+	         handle );
+
+	        MODI_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
+
+		MODI_TEST_RUN_WITH_ARGS(
+		 "libmodi_handle_open",
+		 modi_test_handle_open,
+		 handle );
+
+		/* Clean up
+		 */
+		result = modi_test_handle_close_source(
+		          &handle,
+		          &error );
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 0 );
+
+		MODI_TEST_ASSERT_IS_NULL(
+	         "handle",
+	         handle );
+
+	        MODI_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
 	}
 #endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
 
 	return( EXIT_SUCCESS );
 
 on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( handle != NULL )
+	{
+		modi_test_handle_close_source(
+		 &handle,
+		 NULL );
+	}
 	return( EXIT_FAILURE );
 }
 

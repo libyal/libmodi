@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_INTERNAL_HANDLE_H )
-#define _LIBMODI_INTERNAL_HANDLE_H
+#if !defined( _LIBMODI_HANDLE_H )
+#define _LIBMODI_HANDLE_H
 
 #include <common.h>
 #include <types.h>
@@ -60,6 +60,14 @@ struct libmodi_internal_handle
 	 */
 	libmodi_io_handle_t *io_handle;
 
+	/* The bands directory path
+	 */
+	libcstring_system_character_t *bands_directory_path;
+
+	/* The bands directory path size
+	 */
+	size_t bands_directory_path_size;
+
 	/* The file IO handle
 	 */
 	libbfio_handle_t *file_io_handle;
@@ -72,17 +80,33 @@ struct libmodi_internal_handle
 	 */
 	uint8_t file_io_handle_opened_in_library;
 
-	/* The data bands table
+	/* The band data file IO pool
 	 */
-	libmodi_bands_table_t *data_bands_table;
+	libbfio_pool_t *band_data_file_io_pool;
 
-	/* The data bands vector
+	/* Value to indicate if the file IO pool was created inside the library
 	 */
-	libfdata_vector_t *data_bands_vector;
+	uint8_t band_data_file_io_pool_created_in_library;
 
-	/* The data bands cache
+	/* The access flags
 	 */
-	libfcache_cache_t *data_bands_cache;
+	int access_flags;
+
+	/* The bands table
+	 */
+	libmodi_bands_table_t *bands_table;
+
+	/* The bands vector
+	 */
+	libfdata_vector_t *bands_vector;
+
+	/* The bands cache
+	 */
+	libfcache_cache_t *bands_cache;
+
+	/* The maximum number of open handles in the pool
+	 */
+	int maximum_number_of_open_handles;
 
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	/* The read/write lock
@@ -106,6 +130,22 @@ int libmodi_handle_signal_abort(
      libmodi_handle_t *handle,
      libcerror_error_t **error );
 
+int libmodi_handle_set_bands_directory_path(
+     libmodi_internal_handle_t *internal_handle,
+     const char *filename,
+     size_t filename_length,
+     libcerror_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+int libmodi_handle_set_bands_directory_path_wide(
+     libmodi_internal_handle_t *internal_handle,
+     const wchar_t *filename,
+     size_t filename_length,
+     libcerror_error_t **error );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
 LIBMODI_EXTERN \
 int libmodi_handle_open(
      libmodi_handle_t *handle,
@@ -125,18 +165,38 @@ int libmodi_handle_open_wide(
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBMODI_EXTERN \
-int libmodi_handle_open_info_plist(
+int libmodi_handle_open_file_io_handle(
      libmodi_handle_t *handle,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libcerror_error_t **error );
 
 LIBMODI_EXTERN \
-int libmodi_handle_open_file_io_handle(
+int libmodi_handle_open_band_data_files(
      libmodi_handle_t *handle,
-     libbfio_handle_t *file_io_handle,
-     int access_flags,
      libcerror_error_t **error );
+
+LIBMODI_EXTERN \
+int libmodi_handle_open_band_data_files_file_io_pool(
+     libmodi_handle_t *handle,
+     libbfio_pool_t *file_io_pool,
+     libcerror_error_t **error );
+
+int libmodi_handle_open_band_data_file(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_pool_t *file_io_pool,
+     int band_index,
+     libcerror_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+int libmodi_handle_open_band_data_file_wide(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_pool_t *file_io_pool,
+     int band_index,
+     libcerror_error_t **error );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBMODI_EXTERN \
 int libmodi_handle_close(
@@ -215,9 +275,15 @@ int libmodi_handle_get_offset(
      off64_t *offset,
      libcerror_error_t **error );
 
+LIBMODI_EXTERN \
+int libmodi_handle_set_maximum_number_of_open_handles(
+     libmodi_handle_t *handle,
+     int maximum_number_of_open_handles,
+     libcerror_error_t **error );
+
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_INTERNAL_HANDLE_H ) */
+#endif /* !defined( _LIBMODI_HANDLE_H ) */
 

@@ -1,5 +1,5 @@
 /*
- * Features of libmodi
+ * The internal libclocale header
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,32 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_FEATURES_H )
-#define _LIBMODI_FEATURES_H
+#if !defined( _MODI_TEST_LIBCLOCALE_H )
+#define _MODI_TEST_LIBCLOCALE_H
 
-/* The libmodi type support features
+#include <common.h>
+
+/* Define HAVE_LOCAL_LIBCLOCALE for local use of libclocale
  */
-#if defined( WINAPI ) || @HAVE_WIDE_CHARACTER_TYPE@
-#define LIBMODI_HAVE_WIDE_CHARACTER_TYPE	1
-#endif
+#if defined( HAVE_LOCAL_LIBCLOCALE )
 
-#if defined( WINAPI ) || @HAVE_MULTI_THREAD_SUPPORT@
-#define LIBMODI_HAVE_MULTI_THREAD_SUPPORT	1
-#endif
+#include <libclocale_codepage.h>
+#include <libclocale_definitions.h>
+#include <libclocale_locale.h>
+#include <libclocale_support.h>
 
-#if defined( HAVE_LIBBFIO ) || ( !defined( WINAPI ) && @HAVE_LIBBFIO@ )
-#define LIBMODI_HAVE_BFIO			1
-#endif
-
-#if !defined( LIBMODI_DEPRECATED )
-#if defined( __GNUC__ ) && __GNUC__ >= 3
-#define LIBMODI_DEPRECATED	__attribute__ ((__deprecated__))
-#elif defined( _MSC_VER )
-#define LIBMODI_DEPRECATED	__declspec(deprecated)
 #else
-#define LIBMODI_DEPRECATED
-#endif
+
+/* If libtool DLL support is enabled set LIBCLOCALE_DLL_IMPORT
+ * before including libclocale.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCLOCALE_DLL_IMPORT
 #endif
 
-#endif /* !defined( _LIBMODI_FEATURES_H ) */
+#include <libclocale.h>
+
+#endif /* defined( HAVE_LOCAL_LIBCLOCALE ) */
+
+#endif /* !defined( _MODI_TEST_LIBCLOCALE_H ) */
 

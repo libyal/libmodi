@@ -27,7 +27,7 @@ libmodi_la_SOURCES = \
 	libmodi.c \
 	libmodi_bands_table.c libmodi_bands_table.h \
 	libmodi_codepage.h \
-	libmodi_data_band.c libmodi_data_band.h \
+	libmodi_data_block.c libmodi_data_block.h \
 	libmodi_debug.c libmodi_debug.h \
 	libmodi_definitions.h \
 	libmodi_error.c libmodi_error.h \
@@ -50,6 +50,7 @@ libmodi_la_SOURCES = \
 	libmodi_metadata.c libmodi_metadata.h \
 	libmodi_notify.c libmodi_notify.h \
 	libmodi_support.c libmodi_support.h \
+	libmodi_system_string.c libmodi_system_string.h \
 	libmodi_types.h \
 	libmodi_unused.h \
 	modi_sparse_image_header.h

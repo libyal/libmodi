@@ -25,7 +25,7 @@
 #include <types.h>
 
 #include "libmodi_bands_table.h"
-#include "libmodi_data_band.h"
+#include "libmodi_data_block.h"
 #include "libmodi_definitions.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
@@ -194,7 +194,7 @@ int libmodi_io_handle_clear(
 int libmodi_io_handle_read_sparse_image_header(
      libmodi_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     libmodi_bands_table_t *data_bands_table,
+     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error )
 {
 	uint8_t *sparse_image_header_data = NULL;
@@ -390,7 +390,7 @@ int libmodi_io_handle_read_sparse_image_header(
 	}
 	io_handle->media_size        = (size64_t) number_of_sectors * 512;
 	io_handle->bands_data_offset = (off64_t) sparse_image_header_size;
-	io_handle->bands_data_size   = (size64_t) sectors_per_band * 512;
+	io_handle->band_data_size    = (size64_t) sectors_per_band * 512;
 
 	number_of_bands = number_of_sectors / sectors_per_band;
 
@@ -404,7 +404,7 @@ int libmodi_io_handle_read_sparse_image_header(
 	if( number_of_bands > 0 )
 	{
 		if( libmodi_bands_table_read(
-		     data_bands_table,
+		     bands_table,
 		     &( sparse_image_header_data[ sparse_image_header_offset ] ),
 		     band_array_data_size,
 		     number_of_bands,
@@ -414,7 +414,7 @@ int libmodi_io_handle_read_sparse_image_header(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read data bands table.",
+			 "%s: unable to read bands table.",
 			 function );
 
 			goto on_error;
@@ -461,14 +461,14 @@ int libmodi_io_handle_read_info_plist(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	libfplist_key_t *root_key    = NULL;
-	libfplist_key_t *sub_key     = NULL;
-	libfplist_plist_t *xml_plist = NULL;
-	uint8_t *xml_plist_data      = NULL;
-	static char *function        = "libmodi_io_handle_read_info_plist";
-	size64_t file_size           = 0;
-	ssize_t read_count           = 0;
-	int result                   = 0;
+	libfplist_property_t *root_property  = NULL;
+	libfplist_property_t *sub_property   = NULL;
+	libfplist_property_list_t *xml_plist = NULL;
+	uint8_t *xml_plist_data              = NULL;
+	static char *function                = "libmodi_io_handle_read_info_plist";
+	size64_t file_size                   = 0;
+	ssize_t read_count                   = 0;
+	int result                           = 0;
 
 	if( io_handle == NULL )
 	{
@@ -521,7 +521,7 @@ int libmodi_io_handle_read_info_plist(
 
 		goto on_error;
 	}
-	if( libfplist_plist_initialize(
+	if( libfplist_property_list_initialize(
 	     &xml_plist,
 	     error ) != 1 )
 	{
@@ -529,7 +529,7 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create plist.",
+		 "%s: unable to create property list.",
 		 function );
 
 		goto on_error;
@@ -543,7 +543,7 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create plist data.",
+		 "%s: unable to create XML plist data.",
 		 function );
 
 		goto on_error;
@@ -560,12 +560,12 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read plist data.",
+		 "%s: unable to read XML plist data.",
 		 function );
 
 		goto on_error;
 	}
-	if( libfplist_plist_copy_from_byte_stream(
+	if( libfplist_property_list_copy_from_byte_stream(
 	     xml_plist,
 	     xml_plist_data,
 	     (size_t) file_size,
@@ -575,7 +575,7 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to copy plist from byte stream.",
+		 "%s: unable to copy property list from byte stream.",
 		 function );
 
 		goto on_error;
@@ -585,25 +585,25 @@ int libmodi_io_handle_read_info_plist(
 
 	xml_plist_data = NULL;
 
-	if( libfplist_plist_get_root_key(
+	if( libfplist_property_list_get_root_property(
 	     xml_plist,
-	     &root_key,
+	     &root_property,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve root key.",
+		 "%s: unable to retrieve root property.",
 		 function );
 
 		goto on_error;
 	}
-	result = libfplist_key_get_sub_key_by_utf8_name(
-	          root_key,
+	result = libfplist_property_get_sub_property_by_utf8_name(
+	          root_property,
 	          (uint8_t *) "CFBundleInfoDictionaryVersion",
 	          29,
-	          &sub_key,
+	          &sub_property,
 	          error );
 
 	if( result == -1 )
@@ -612,7 +612,7 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve CFBundleInfoDictionaryVersion sub key.",
+		 "%s: unable to retrieve CFBundleInfoDictionaryVersion sub property.",
 		 function );
 
 		goto on_error;
@@ -620,25 +620,25 @@ int libmodi_io_handle_read_info_plist(
 	else if( result == 1 )
 	{
 /* TODO store version */
-		if( libfplist_key_free(
-		     &sub_key,
+		if( libfplist_property_free(
+		     &sub_property,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free CFBundleInfoDictionaryVersion sub key.",
+			 "%s: unable to free CFBundleInfoDictionaryVersion sub property.",
 			 function );
 
 			goto on_error;
 		}
 	}
-	result = libfplist_key_get_sub_key_by_utf8_name(
-	          root_key,
+	result = libfplist_property_get_sub_property_by_utf8_name(
+	          root_property,
 	          (uint8_t *) "band-size",
 	          9,
-	          &sub_key,
+	          &sub_property,
 	          error );
 
 	if( result == -1 )
@@ -647,16 +647,16 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve band-size sub key.",
+		 "%s: unable to retrieve band-size sub property.",
 		 function );
 
 		goto on_error;
 	}
 	else if( result == 1 )
 	{
-		if( libfplist_key_get_value_integer(
-		     sub_key,
-		     (uint64_t *) &( io_handle->bands_data_size ),
+		if( libfplist_property_get_value_integer(
+		     sub_property,
+		     (uint64_t *) &( io_handle->band_data_size ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -668,25 +668,25 @@ int libmodi_io_handle_read_info_plist(
 
 			goto on_error;
 		}
-		if( libfplist_key_free(
-		     &sub_key,
+		if( libfplist_property_free(
+		     &sub_property,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free band-size sub key.",
+			 "%s: unable to free band-size sub property.",
 			 function );
 
 			goto on_error;
 		}
 	}
-	result = libfplist_key_get_sub_key_by_utf8_name(
-	          root_key,
+	result = libfplist_property_get_sub_property_by_utf8_name(
+	          root_property,
 	          (uint8_t *) "diskimage-bundle-type",
 	          21,
-	          &sub_key,
+	          &sub_property,
 	          error );
 
 	if( result == -1 )
@@ -695,7 +695,7 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve diskimage-bundle-type sub key.",
+		 "%s: unable to retrieve diskimage-bundle-type sub property.",
 		 function );
 
 		goto on_error;
@@ -703,25 +703,25 @@ int libmodi_io_handle_read_info_plist(
 	else if( result == 1 )
 	{
 /* TODO compare value against com.apple.diskimage.sparsebundle */
-		if( libfplist_key_free(
-		     &sub_key,
+		if( libfplist_property_free(
+		     &sub_property,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free diskimage-bundle-type sub key.",
+			 "%s: unable to free diskimage-bundle-type sub property.",
 			 function );
 
 			goto on_error;
 		}
 	}
-	result = libfplist_key_get_sub_key_by_utf8_name(
-	          root_key,
+	result = libfplist_property_get_sub_property_by_utf8_name(
+	          root_property,
 	          (uint8_t *) "size",
 	          4,
-	          &sub_key,
+	          &sub_property,
 	          error );
 
 	if( result == -1 )
@@ -730,15 +730,15 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-		 "%s: unable to retrieve size sub key.",
+		 "%s: unable to retrieve size sub property.",
 		 function );
 
 		goto on_error;
 	}
 	else if( result == 1 )
 	{
-		if( libfplist_key_get_value_integer(
-		     sub_key,
+		if( libfplist_property_get_value_integer(
+		     sub_property,
 		     (uint64_t *) &( io_handle->media_size ),
 		     error ) != 1 )
 		{
@@ -751,15 +751,15 @@ int libmodi_io_handle_read_info_plist(
 
 			goto on_error;
 		}
-		if( libfplist_key_free(
-		     &sub_key,
+		if( libfplist_property_free(
+		     &sub_property,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free size sub key.",
+			 "%s: unable to free size sub property.",
 			 function );
 
 			goto on_error;
@@ -772,7 +772,7 @@ int libmodi_io_handle_read_info_plist(
 		libcnotify_printf(
 		 "%s: band size\t\t\t: %" PRIu32 "\n",
 		 function,
-		 io_handle->bands_data_size );
+		 io_handle->band_data_size );
 
 		libcnotify_printf(
 		 "%s: image size\t\t\t: %" PRIu32 "\n",
@@ -785,20 +785,20 @@ int libmodi_io_handle_read_info_plist(
 #endif
 	io_handle->image_type = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
 
-	if( libfplist_key_free(
-	     &root_key,
+	if( libfplist_property_free(
+	     &root_property,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free root key.",
+		 "%s: unable to free root property.",
 		 function );
 
 		goto on_error;
 	}
-	if( libfplist_plist_free(
+	if( libfplist_property_list_free(
 	     &xml_plist,
 	     error ) != 1 )
 	{
@@ -806,7 +806,7 @@ int libmodi_io_handle_read_info_plist(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free plist.",
+		 "%s: unable to free property list.",
 		 function );
 
 		goto on_error;
@@ -814,16 +814,16 @@ int libmodi_io_handle_read_info_plist(
 	return( 1 );
 
 on_error:
-	if( sub_key != NULL )
+	if( sub_property != NULL )
 	{
-		libfplist_key_free(
-		 &sub_key,
+		libfplist_property_free(
+		 &sub_property,
 		 NULL );
 	}
-	if( root_key != NULL )
+	if( root_property != NULL )
 	{
-		libfplist_key_free(
-		 &root_key,
+		libfplist_property_free(
+		 &root_property,
 		 NULL );
 	}
 	if( xml_plist_data != NULL )
@@ -833,18 +833,18 @@ on_error:
 	}
 	if( xml_plist != NULL )
 	{
-		libfplist_plist_free(
+		libfplist_property_list_free(
 		 &xml_plist,
 		 NULL );
 	}
 	return( -1 );
 }
 
-/* Reads a data band
- * Callback function for the data band vector
+/* Reads a data block
+ * Callback function for the data block vector
  * Returns 1 if successful or -1 on error
  */
-int libmodi_io_handle_read_data_band(
+int libmodi_io_handle_read_data_block(
      libmodi_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_vector_t *vector,
@@ -857,8 +857,8 @@ int libmodi_io_handle_read_data_band(
      uint8_t read_flags LIBMODI_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
-	libmodi_data_band_t *data_band = NULL;
-	static char *function          = "libmodi_io_handle_read_data_band";
+	libmodi_data_block_t *data_block = NULL;
+	static char *function            = "libmodi_io_handle_read_data_block";
 
 	LIBMODI_UNREFERENCED_PARAMETER( element_data_flags );
 	LIBMODI_UNREFERENCED_PARAMETER( read_flags );
@@ -896,8 +896,8 @@ int libmodi_io_handle_read_data_band(
 
 		return( -1 );
 	}
-	if( libmodi_data_band_initialize(
-	     &data_band,
+	if( libmodi_data_block_initialize(
+	     &data_block,
 	     (size_t) element_data_size,
 	     error ) != 1 )
 	{
@@ -905,13 +905,13 @@ int libmodi_io_handle_read_data_band(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create data band.",
+		 "%s: unable to create data block.",
 		 function );
 
 		goto on_error;
 	}
-	if( libmodi_data_band_read(
-	     data_band,
+	if( libmodi_data_block_read(
+	     data_block,
 	     file_io_handle,
              element_data_offset,
 	     error ) != 1 )
@@ -920,7 +920,7 @@ int libmodi_io_handle_read_data_band(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read data band.",
+		 "%s: unable to read data block.",
 		 function );
 
 		goto on_error;
@@ -930,8 +930,8 @@ int libmodi_io_handle_read_data_band(
 	     (intptr_t *) file_io_handle,
 	     cache,
 	     element_index,
-	     (intptr_t *) data_band,
-	     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_data_band_free,
+	     (intptr_t *) data_block,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_data_block_free,
 	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
 	     error ) != 1 )
 	{
@@ -939,7 +939,7 @@ int libmodi_io_handle_read_data_band(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set data band as element value.",
+		 "%s: unable to set data block as element value.",
 		 function );
 
 		goto on_error;
@@ -947,10 +947,10 @@ int libmodi_io_handle_read_data_band(
 	return( 1 );
 
 on_error:
-	if( data_band != NULL )
+	if( data_block != NULL )
 	{
-		libmodi_data_band_free(
-		 &data_band,
+		libmodi_data_block_free(
+		 &data_block,
 		 NULL );
 	}
 	return( -1 );

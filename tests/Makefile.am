@@ -22,10 +22,12 @@ endif
 
 TESTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	$(TESTS_PYMODI)
 
 check_SCRIPTS = \
 	test_api_functions.sh \
+	test_api_types.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
@@ -33,6 +35,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	modi_test_error \
+	modi_test_handle \
 	modi_test_notify \
 	modi_test_support
 
@@ -47,6 +50,28 @@ modi_test_error_LDADD = \
 	../libmodi/libmodi.la \
 	@LIBCSTRING_LIBADD@
 
+modi_test_handle_SOURCES = \
+	modi_test_handle.c \
+	modi_test_libcerror.h \
+	modi_test_libclocale.h \
+	modi_test_libcstring.h \
+	modi_test_libcsystem.h \
+	modi_test_libmodi.h \
+	modi_test_libuna.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h
+
+modi_test_handle_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@ \
+	@LIBCSTRING_LIBADD@
+
 modi_test_notify_SOURCES = \
 	modi_test_libcstring.h \
 	modi_test_libmodi.h \
@@ -59,14 +84,24 @@ modi_test_notify_LDADD = \
 	@LIBCSTRING_LIBADD@
 
 modi_test_support_SOURCES = \
+	modi_test_libcerror.h \
+	modi_test_libclocale.h \
 	modi_test_libcstring.h \
+	modi_test_libcsystem.h \
 	modi_test_libmodi.h \
+	modi_test_libuna.h \
 	modi_test_macros.h \
 	modi_test_support.c \
 	modi_test_unused.h
 
 modi_test_support_LDADD = \
+	@LIBCSYSTEM_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@ \
 	@LIBCSTRING_LIBADD@
 
 MAINTAINERCLEANFILES = \

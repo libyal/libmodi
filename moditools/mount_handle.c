@@ -311,6 +311,19 @@ int mount_handle_open_input(
 
 		goto on_error;
 	}
+	if( libmodi_handle_open_band_data_files(
+	     input_handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open band data files.",
+		 function );
+
+		goto on_error;
+	}
 	if( libcdata_array_append_entry(
 	     mount_handle->inputs_array,
 	     &entry_index,

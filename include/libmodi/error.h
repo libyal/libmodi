@@ -39,7 +39,7 @@ enum LIBMODI_ERROR_DOMAINS
 	LIBMODI_ERROR_DOMAIN_INPUT			= (int) 'i',
 	LIBMODI_ERROR_DOMAIN_MEMORY			= (int) 'm',
 	LIBMODI_ERROR_DOMAIN_OUTPUT			= (int) 'o',
-	LIBMODI_ERROR_DOMAIN_RUNTIME			= (int) 'r',
+	LIBMODI_ERROR_DOMAIN_RUNTIME			= (int) 'r'
 };
 
 /* The argument error codes
@@ -208,6 +208,17 @@ enum LIBMODI_MEMORY_ERROR
 	LIBMODI_MEMORY_ERROR_SET_FAILED			= 3
 };
 
+/* The output error codes
+ */
+enum LIBMODI_OUTPUT_ERROR
+{
+	LIBMODI_OUTPUT_ERROR_GENERIC			= 0,
+
+	/* There is insuficient space to write the output
+	 */
+	LIBMODI_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
+};
+
 /* The runtime error codes
  * to signify errors regarding runtime processing
  */
@@ -274,17 +285,6 @@ enum LIBMODI_RUNTIME_ERROR
 	/* An abort was requested
 	 */
 	LIBMODI_RUNTIME_ERROR_ABORT_REQUESTED		= 15
-};
-
-/* The output error codes
- */
-enum LIBMODI_OUTPUT_ERROR
-{
-	LIBMODI_OUTPUT_ERROR_GENERIC			= 0,
-
-	/* There is insuficient space to write the output
-	 */
-	LIBMODI_OUTPUT_ERROR_INSUFFICIENT_SPACE		= 1
 };
 
 #endif /* !defined( _LIBMODI_ERROR_H ) */

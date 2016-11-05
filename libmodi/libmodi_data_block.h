@@ -1,5 +1,5 @@
 /*
- * Data band functions
+ * Data block functions
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -32,9 +32,9 @@
 extern "C" {
 #endif
 
-typedef struct libmodi_data_band libmodi_data_band_t;
+typedef struct libmodi_data_block libmodi_data_block_t;
 
-struct libmodi_data_band
+struct libmodi_data_block
 {
 	/* The data
 	 */
@@ -45,17 +45,17 @@ struct libmodi_data_band
 	size_t data_size;
 };
 
-int libmodi_data_band_initialize(
-     libmodi_data_band_t **data_band,
+int libmodi_data_block_initialize(
+     libmodi_data_block_t **data_block,
      size_t data_size,
      libcerror_error_t **error );
 
-int libmodi_data_band_free(
-     libmodi_data_band_t **data_band,
+int libmodi_data_block_free(
+     libmodi_data_block_t **data_block,
      libcerror_error_t **error );
 
-int libmodi_data_band_read(
-     libmodi_data_band_t *data_band,
+int libmodi_data_block_read(
+     libmodi_data_block_t *data_block,
      libbfio_handle_t *file_io_handle,
      off64_t data_offset,
      libcerror_error_t **error );

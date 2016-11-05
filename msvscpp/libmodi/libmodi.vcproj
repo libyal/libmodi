@@ -178,7 +178,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libmodi\libmodi_data_band.c"
+				RelativePath="..\..\libmodi\libmodi_data_block.c"
 				>
 			</File>
 			<File
@@ -213,6 +213,10 @@
 				RelativePath="..\..\libmodi\libmodi_support.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_system_string.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -228,7 +232,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libmodi\libmodi_data_band.h"
+				RelativePath="..\..\libmodi\libmodi_data_block.h"
 				>
 			</File>
 			<File
@@ -317,6 +321,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_support.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_system_string.h"
 				>
 			</File>
 			<File

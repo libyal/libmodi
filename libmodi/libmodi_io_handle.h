@@ -54,9 +54,9 @@ struct libmodi_io_handle
 	 */
 	off64_t bands_data_offset;
 
-	/* The bands data size
+	/* The band data size
 	 */
-	size64_t bands_data_size;
+	size64_t band_data_size;
 
 	/* Value to indicate if abort was signalled
 	 */
@@ -78,7 +78,7 @@ int libmodi_io_handle_clear(
 int libmodi_io_handle_read_sparse_image_header(
      libmodi_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
-     libmodi_bands_table_t *data_bands_table,
+     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error );
 
 int libmodi_io_handle_read_info_plist(
@@ -86,7 +86,7 @@ int libmodi_io_handle_read_info_plist(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
-int libmodi_io_handle_read_data_band(
+int libmodi_io_handle_read_data_block(
      libmodi_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_vector_t *vector,

@@ -264,6 +264,31 @@ int libmodi_handle_open_file_io_handle(
 
 #endif /* defined( LIBMODI_HAVE_BFIO ) */
 
+/* Opens the band data files
+ * If the band data filenames were not set explicitly this function assumes the band data files
+ * are in the sub directory band in the same location as the Info.plist file
+ * Returns 1 if successful or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_handle_open_band_data_files(
+     libmodi_handle_t *handle,
+     libmodi_error_t **error );
+
+#if defined( LIBMODI_HAVE_BFIO )
+
+/* Opens the band data files using a Basic File IO (bfio) pool
+ * This function assumes the band data files are in order and
+ * non-existing band data files are set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_handle_open_band_data_files_file_io_pool(
+     libmodi_handle_t *handle,
+     libbfio_pool_t *file_io_pool,
+     libmodi_error_t **error );
+
+#endif /* defined( LIBMODI_HAVE_BFIO ) */
+
 /* Closes a handle
  * Returns 0 if successful or -1 on error
  */
@@ -339,6 +364,15 @@ LIBMODI_EXTERN \
 int libmodi_handle_get_offset(
      libmodi_handle_t *handle,
      off64_t *offset,
+     libmodi_error_t **error );
+
+/* Sets the maximum number of (concurrent) open file handles
+ * Returns 1 if successful or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_handle_set_maximum_number_of_open_handles(
+     libmodi_handle_t *handle,
+     int maximum_number_of_open_handles,
      libmodi_error_t **error );
 
 /* -------------------------------------------------------------------------
