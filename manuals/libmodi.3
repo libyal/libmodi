@@ -1,4 +1,4 @@
-.Dd October 30, 2016
+.Dd November  5, 2016
 .Dt libmodi 3
 .Os libmodi
 .Sh NAME
@@ -65,6 +65,8 @@ Handle functions
 .Ft int
 .Fn libmodi_handle_open "libmodi_handle_t *handle, const char *filename, int access_flags, libmodi_error_t **error"
 .Ft int
+.Fn libmodi_handle_open_band_data_files "libmodi_handle_t *handle, libmodi_error_t **error"
+.Ft int
 .Fn libmodi_handle_close "libmodi_handle_t *handle, libmodi_error_t **error"
 .Ft ssize_t
 .Fn libmodi_handle_read_buffer "libmodi_handle_t *handle, void *buffer, size_t buffer_size, libmodi_error_t **error"
@@ -78,6 +80,8 @@ Handle functions
 .Fn libmodi_handle_seek_offset "libmodi_handle_t *handle, off64_t offset, int whence, libmodi_error_t **error"
 .Ft int
 .Fn libmodi_handle_get_offset "libmodi_handle_t *handle, off64_t *offset, libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_set_maximum_number_of_open_handles "libmodi_handle_t *handle, int maximum_number_of_open_handles, libmodi_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
@@ -86,6 +90,8 @@ Available when compiled with wide character string support:
 Available when compiled with libbfio support:
 .Ft int
 .Fn libmodi_handle_open_file_io_handle "libmodi_handle_t *handle, libbfio_handle_t *file_io_handle, int access_flags, libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_open_band_data_files_file_io_pool "libmodi_handle_t *handle, libbfio_pool_t *file_io_pool, libmodi_error_t **error"
 .Pp
 Meta data functions
 .Ft int

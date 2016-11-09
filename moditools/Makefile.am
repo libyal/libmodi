@@ -1,7 +1,6 @@
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -33,7 +32,6 @@ modiinfo_SOURCES = \
 	moditools_libcerror.h \
 	moditools_libclocale.h \
 	moditools_libcnotify.h \
-	moditools_libcstring.h \
 	moditools_libcsystem.h \
 	moditools_libmodi.h \
 	moditools_libuna.h
@@ -44,7 +42,6 @@ modiinfo_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 modimount_SOURCES = \
@@ -57,7 +54,6 @@ modimount_SOURCES = \
 	moditools_libclocale.h \
 	moditools_libcnotify.h \
 	moditools_libcpath.h \
-	moditools_libcstring.h \
 	moditools_libcsystem.h \
 	moditools_libmodi.h \
 	moditools_libuna.h
@@ -72,7 +68,6 @@ modimount_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
-	@LIBCSTRING_LIBADD@ \
 	@LIBINTL@
 
 MAINTAINERCLEANFILES = \

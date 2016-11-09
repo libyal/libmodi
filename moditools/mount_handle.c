@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "moditools_libcdata.h"
 #include "moditools_libcerror.h"
@@ -242,7 +245,7 @@ int mount_handle_signal_abort(
  */
 int mount_handle_open_input(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	libmodi_handle_t *input_handle = NULL;
@@ -272,7 +275,7 @@ int mount_handle_open_input(
 
 		return( -1 );
 	}
-	filename_length = libcstring_system_string_length(
+	filename_length = system_string_length(
 	                   filename );
 
 	if( libmodi_handle_initialize(
@@ -288,7 +291,7 @@ int mount_handle_open_input(
 
 		goto on_error;
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libmodi_handle_open_wide(
 	     input_handle,
 	     filename,

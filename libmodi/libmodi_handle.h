@@ -62,7 +62,7 @@ struct libmodi_internal_handle
 
 	/* The bands directory path
 	 */
-	libcstring_system_character_t *bands_directory_path;
+	system_character_t *bands_directory_path;
 
 	/* The bands directory path size
 	 */

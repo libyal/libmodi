@@ -8,7 +8,6 @@ if HAVE_PYTHON2
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -29,7 +28,6 @@ BUILT_SOURCES = \
 	pymodi_libbfio.h \
 	pymodi_libcerror.h \
 	pymodi_libclocale.h \
-	pymodi_libcstring.h \
 	pymodi_libmodi.h \
 	pymodi_python.h \
 	pymodi_unused.h
@@ -39,7 +37,6 @@ pyexec_LTLIBRARIES = pymodi.la
 nodist_pymodi_la_SOURCES = $(BUILT_SOURCES)
 
 pymodi_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCDATA_LIBADD@ \

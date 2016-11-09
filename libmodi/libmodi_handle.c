@@ -21,7 +21,10 @@
 
 #include <common.h>
 #include <memory.h>
+#include <narrow_string.h>
+#include <system_string.h>
 #include <types.h>
+#include <wide_string.h>
 
 #include "libmodi_bands_table.h"
 #include "libmodi_data_block.h"
@@ -35,7 +38,6 @@
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_libcpath.h"
-#include "libmodi_libcstring.h"
 #include "libmodi_libcthreads.h"
 #include "libmodi_libfcache.h"
 #include "libmodi_libfdata.h"
@@ -320,7 +322,7 @@ int libmodi_handle_set_bands_directory_path(
 
 		goto on_error;
 	}
-	basename_end = libcstring_narrow_string_search_character_reverse(
+	basename_end = narrow_string_search_character_reverse(
 	                filename,
 	                (int) LIBCPATH_SEPARATOR,
 	                filename_length + 1 );
@@ -381,7 +383,7 @@ int libmodi_handle_set_bands_directory_path(
 
 		goto on_error;
 	}
-	internal_handle->bands_directory_path = libcstring_system_string_allocate(
+	internal_handle->bands_directory_path = system_string_allocate(
 	                                         internal_handle->bands_directory_path_size );
 
 	if( internal_handle->bands_directory_path == NULL )
@@ -474,7 +476,7 @@ int libmodi_handle_set_bands_directory_path_wide(
 		goto on_error;
 	}
 /* TODO does this work for UTF-16 ? */
-	basename_end = libcstring_wide_string_search_character_reverse(
+	basename_end = wide_string_search_character_reverse(
 	                filename,
 	                (int) LIBCPATH_SEPARATOR,
 	                filename_length + 1 );
@@ -535,7 +537,7 @@ int libmodi_handle_set_bands_directory_path_wide(
 
 		goto on_error;
 	}
-	internal_handle->bands_directory_path = libcstring_system_string_allocate(
+	internal_handle->bands_directory_path = system_string_allocate(
 	                                         internal_handle->bands_directory_path_size );
 
 	if( internal_handle->bands_directory_path == NULL )
@@ -728,7 +730,7 @@ int libmodi_handle_open(
 #endif
 	if( is_directory == 1 )
 	{
-		filename_length = libcstring_narrow_string_length(
+		filename_length = narrow_string_length(
 		                   filename );
 
 		if( libcpath_path_join(
@@ -769,7 +771,7 @@ int libmodi_handle_open(
 	}
 	else
 	{
-		filename_length = libcstring_narrow_string_length(
+		filename_length = narrow_string_length(
 		                   filename );
 
 		if( libbfio_file_set_name(
@@ -821,7 +823,7 @@ int libmodi_handle_open(
 #endif
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
 	{
-		filename_length = libcstring_narrow_string_length(
+		filename_length = narrow_string_length(
 		                   filename );
 
 		if( libmodi_handle_set_bands_directory_path(
@@ -1027,7 +1029,7 @@ int libmodi_handle_open_wide(
 #endif
 	if( is_directory == 1 )
 	{
-		filename_length = libcstring_wide_string_length(
+		filename_length = wide_string_length(
 		                   filename );
 
 		if( libcpath_path_join_wide(
@@ -1066,7 +1068,7 @@ int libmodi_handle_open_wide(
 	}
 	else
 	{
-		filename_length = libcstring_wide_string_length(
+		filename_length = wide_string_length(
 		                   filename );
 
 		if( libbfio_file_set_name_wide(
@@ -1118,7 +1120,7 @@ int libmodi_handle_open_wide(
 #endif
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
 	{
-		filename_length = libcstring_wide_string_length(
+		filename_length = wide_string_length(
 		                   filename );
 
 		if( libmodi_handle_set_bands_directory_path_wide(
@@ -1349,16 +1351,16 @@ int libmodi_handle_open_band_data_files(
      libmodi_handle_t *handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t *band_data_file_location  = NULL;
-	libcstring_system_character_t *band_data_filename_start = NULL;
-        libbfio_pool_t *file_io_pool                            = NULL;
-	libmodi_internal_handle_t *internal_handle              = NULL;
-	static char *function                                   = "libmodi_handle_open_band_data_files";
-	size_t band_data_file_location_size                     = 0;
-	size_t band_data_filename_size                          = 0;
-	uint64_t number_of_bands                                = 0;
-	int band_index                                          = 0;
-	int result                                              = 0;
+        libbfio_pool_t *file_io_pool                 = NULL;
+	libmodi_internal_handle_t *internal_handle   = NULL;
+	system_character_t *band_data_file_location  = NULL;
+	system_character_t *band_data_filename_start = NULL;
+	static char *function                        = "libmodi_handle_open_band_data_files";
+	size_t band_data_file_location_size          = 0;
+	size_t band_data_filename_size               = 0;
+	uint64_t number_of_bands                     = 0;
+	int band_index                               = 0;
+	int result                                   = 0;
 
 	if( handle == NULL )
 	{
@@ -1485,7 +1487,7 @@ int libmodi_handle_open_band_data_files(
 	     band_index < (int) number_of_bands;
 	     band_index++ )
 	{
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		result = libmodi_handle_open_band_data_file_wide(
 			  internal_handle,
 			  file_io_pool,
@@ -1740,13 +1742,13 @@ int libmodi_handle_open_band_data_file(
 	}
 #endif
 /* TODO replace by safer function */
-	libcstring_narrow_string_snprintf(
+	narrow_string_snprintf(
 	 filename,
 	 16,
 	 "%x",
 	 band_index );
 
-	filename_length = libcstring_narrow_string_length(
+	filename_length = narrow_string_length(
 	                   filename );
 
 	if( libcpath_path_join(
@@ -1918,13 +1920,13 @@ int libmodi_handle_open_band_data_file_wide(
 	}
 #endif
 /* TODO replace by safer function */
-	libcstring_wide_string_snprintf(
+	wide_string_snprintf(
 	 filename,
 	 16,
 	 L"%x",
 	 band_index );
 
-	filename_length = libcstring_wide_string_length(
+	filename_length = wide_string_length(
 	                   filename );
 
 	if( libcpath_path_join(

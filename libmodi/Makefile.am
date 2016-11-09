@@ -2,7 +2,6 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -41,7 +40,6 @@ libmodi_la_SOURCES = \
 	libmodi_libclocale.h \
 	libmodi_libcnotify.h \
 	libmodi_libcpath.h \
-	libmodi_libcstring.h \
 	libmodi_libcthreads.h \
 	libmodi_libfcache.h \
 	libmodi_libfdata.h \
@@ -56,7 +54,6 @@ libmodi_la_SOURCES = \
 	modi_sparse_image_header.h
 
 libmodi_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCDATA_LIBADD@ \

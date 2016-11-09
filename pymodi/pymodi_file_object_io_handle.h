@@ -27,7 +27,6 @@
 
 #include "pymodi_libbfio.h"
 #include "pymodi_libcerror.h"
-#include "pymodi_libcstring.h"
 #include "pymodi_python.h"
 
 #if defined( __cplusplus )

@@ -33,7 +33,6 @@
 #include "pymodi_libbfio.h"
 #include "pymodi_libcerror.h"
 #include "pymodi_libclocale.h"
-#include "pymodi_libcstring.h"
 #include "pymodi_libmodi.h"
 #include "pymodi_metadata.h"
 #include "pymodi_python.h"
@@ -549,7 +548,7 @@ PyObject *pymodi_file_open(
 	char *mode                   = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -609,7 +608,7 @@ PyObject *pymodi_file_open(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS

@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <narrow_string.h>
 #include <types.h>
 
 #if defined( HAVE_STDLIB_H ) || defined( HAVE_WINAPI )
@@ -30,7 +31,6 @@
 #include "pymodi_disk_types.h"
 #include "pymodi_error.h"
 #include "pymodi_libcerror.h"
-#include "pymodi_libcstring.h"
 #include "pymodi_libmodi.h"
 #include "pymodi_file.h"
 #include "pymodi_file_object_io_handle.h"
@@ -106,7 +106,7 @@ PyObject *pymodi_get_version(
 
 	Py_END_ALLOW_THREADS
 
-	version_string_length = libcstring_narrow_string_length(
+	version_string_length = narrow_string_length(
 	                         version_string );
 
 	/* Pass the string length to PyUnicode_DecodeUTF8
@@ -134,7 +134,7 @@ PyObject *pymodi_check_file_signature(
 	const char *filename_narrow  = NULL;
 	int result                   = 0;
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	const wchar_t *filename_wide = NULL;
 #else
 	PyObject *utf8_string_object = NULL;
@@ -175,7 +175,7 @@ PyObject *pymodi_check_file_signature(
 	{
 		PyErr_Clear();
 
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS

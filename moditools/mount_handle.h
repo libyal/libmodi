@@ -29,7 +29,6 @@
 #include "moditools_libcdata.h"
 #include "moditools_libcerror.h"
 #include "moditools_libcnotify.h"
-#include "moditools_libcstring.h"
 #include "moditools_libmodi.h"
 
 #if defined( __cplusplus )
@@ -63,12 +62,12 @@ int mount_handle_signal_abort(
 
 int mount_handle_set_format(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *string,
+     const system_character_t *string,
      libcerror_error_t **error );
 
 int mount_handle_open_input(
      mount_handle_t *mount_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error );
 
 int mount_handle_close(

@@ -22,13 +22,13 @@
 #include <common.h>
 #include <byte_stream.h>
 #include <memory.h>
+#include <system_string.h>
 #include <types.h>
 
 #include "byte_size_string.h"
 #include "info_handle.h"
 #include "moditools_libcerror.h"
 #include "moditools_libcnotify.h"
-#include "moditools_libcstring.h"
 #include "moditools_libmodi.h"
 
 #define INFO_HANDLE_NOTIFY_STREAM		stdout
@@ -203,7 +203,7 @@ int info_handle_signal_abort(
  */
 int info_handle_open_input(
      info_handle_t *info_handle,
-     const libcstring_system_character_t *filename,
+     const system_character_t *filename,
      libcerror_error_t **error )
 {
 	static char *function = "info_handle_open_input";
@@ -219,7 +219,7 @@ int info_handle_open_input(
 
 		return( -1 );
 	}
-#if defined( LIBCSTRING_HAVE_WIDE_SYSTEM_CHARACTER )
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	if( libmodi_handle_open_wide(
 	     info_handle->input,
 	     filename,
@@ -299,7 +299,7 @@ int info_handle_input_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
-	libcstring_system_character_t byte_size_string[ 16 ];
+	system_character_t byte_size_string[ 16 ];
 
 	static char *function = "info_handle_input_fprint";
 	size64_t media_size   = 0;
@@ -349,7 +349,7 @@ int info_handle_input_fprint(
 	{
 		fprintf(
 		 info_handle->notify_stream,
-		 "\tMedia size:\t\t%" PRIs_LIBCSTRING_SYSTEM " (%" PRIu64 " bytes)\n",
+		 "\tMedia size:\t\t%" PRIs_SYSTEM " (%" PRIu64 " bytes)\n",
 		 byte_size_string,
 		 media_size );
 	}

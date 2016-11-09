@@ -2,7 +2,6 @@ if HAVE_PYTHON
 AM_CFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/common \
-	@LIBCSTRING_CPPFLAGS@ \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
 	@LIBCLOCALE_CPPFLAGS@ \
@@ -23,13 +22,11 @@ pymodi_la_SOURCES = \
 	pymodi_libbfio.h \
 	pymodi_libcerror.h \
 	pymodi_libclocale.h \
-	pymodi_libcstring.h \
 	pymodi_libmodi.h \
 	pymodi_python.h \
 	pymodi_unused.h
 
 pymodi_la_LIBADD = \
-	@LIBCSTRING_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCDATA_LIBADD@ \
