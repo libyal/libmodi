@@ -28,11 +28,10 @@
 #endif
 
 #include "pymodi.h"
-#include "pymodi_disk_types.h"
 #include "pymodi_error.h"
 #include "pymodi_libcerror.h"
 #include "pymodi_libmodi.h"
-#include "pymodi_file.h"
+#include "pymodi_handle.h"
 #include "pymodi_file_object_io_handle.h"
 #include "pymodi_python.h"
 #include "pymodi_unused.h"
@@ -69,18 +68,18 @@ PyMethodDef pymodi_module_methods[] = {
 	  "Checks if a file has a Virtual Hard Disk (VHD) image file signature using a file-like object." },
 
 	{ "open",
-	  (PyCFunction) pymodi_file_new_open,
+	  (PyCFunction) pymodi_handle_new_open,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
-	  "Opens a file." },
+	  "Opens a handle." },
 
 	{ "open_file_object",
-	  (PyCFunction) pymodi_file_new_open_file_object,
+	  (PyCFunction) pymodi_handle_new_open_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
-	  "Opens a file using a file-like object." },
+	  "Opens a handle using a file-like object." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -450,10 +449,9 @@ PyMODINIT_FUNC initpymodi(
                 void )
 #endif
 {
-	PyObject *module                     = NULL;
-	PyTypeObject *disk_types_type_object = NULL;
-	PyTypeObject *file_type_object       = NULL;
-	PyGILState_STATE gil_state           = 0;
+	PyObject *module                 = NULL;
+	PyTypeObject *handle_type_object = NULL;
+	PyGILState_STATE gil_state       = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libmodi_notify_set_stream(
@@ -488,48 +486,24 @@ PyMODINIT_FUNC initpymodi(
 
 	gil_state = PyGILState_Ensure();
 
-	/* Setup the file type object
+	/* Setup the handle type object
 	 */
-	pymodi_file_type_object.tp_new = PyType_GenericNew;
+	pymodi_handle_type_object.tp_new = PyType_GenericNew;
 
 	if( PyType_Ready(
-	     &pymodi_file_type_object ) < 0 )
+	     &pymodi_handle_type_object ) < 0 )
 	{
 		goto on_error;
 	}
 	Py_IncRef(
-	 (PyObject *) &pymodi_file_type_object );
+	 (PyObject *) &pymodi_handle_type_object );
 
-	file_type_object = &pymodi_file_type_object;
-
-	PyModule_AddObject(
-	 module,
-	 "file",
-	 (PyObject *) file_type_object );
-
-	/* Setup the disk types type object
-	 */
-	pymodi_disk_types_type_object.tp_new = PyType_GenericNew;
-
-	if( pymodi_disk_types_init_type(
-	     &pymodi_disk_types_type_object ) != 1 )
-	{
-		goto on_error;
-	}
-	if( PyType_Ready(
-	     &pymodi_disk_types_type_object ) < 0 )
-	{
-		goto on_error;
-	}
-	Py_IncRef(
-	 (PyObject *) &pymodi_disk_types_type_object );
-
-	disk_types_type_object = &pymodi_disk_types_type_object;
+	handle_type_object = &pymodi_handle_type_object;
 
 	PyModule_AddObject(
 	 module,
-	 "disk_types",
-	 (PyObject *) disk_types_type_object );
+	 "handle",
+	 (PyObject *) handle_type_object );
 
 	PyGILState_Release(
 	 gil_state );

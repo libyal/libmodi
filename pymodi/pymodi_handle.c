@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmodi file
+ * Python object definition of the libmodi handle
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -27,90 +27,82 @@
 #endif
 
 #include "pymodi_error.h"
-#include "pymodi_file.h"
+#include "pymodi_handle.h"
 #include "pymodi_file_object_io_handle.h"
 #include "pymodi_integer.h"
 #include "pymodi_libbfio.h"
 #include "pymodi_libcerror.h"
 #include "pymodi_libclocale.h"
 #include "pymodi_libmodi.h"
-#include "pymodi_metadata.h"
 #include "pymodi_python.h"
 #include "pymodi_unused.h"
 
 #if !defined( LIBMODI_HAVE_BFIO )
 
 LIBMODI_EXTERN \
-int libmodi_file_open_file_io_handle(
-     libmodi_file_t *file,
+int libmodi_handle_open_file_io_handle(
+     libmodi_handle_t *handle,
      libbfio_handle_t *file_io_handle,
      int access_flags,
      libmodi_error_t **error );
 
 #endif /* !defined( LIBMODI_HAVE_BFIO ) */
 
-PyMethodDef pymodi_file_object_methods[] = {
+PyMethodDef pymodi_handle_object_methods[] = {
 
 	{ "signal_abort",
-	  (PyCFunction) pymodi_file_signal_abort,
+	  (PyCFunction) pymodi_handle_signal_abort,
 	  METH_NOARGS,
 	  "signal_abort() -> None\n"
 	  "\n"
-	  "Signals the file to abort the current activity." },
+	  "Signals the handle to abort the current activity." },
 
-	/* Functions to access the file */
+	/* Functions to access the handle */
 
 	{ "open",
-	  (PyCFunction) pymodi_file_open,
+	  (PyCFunction) pymodi_handle_open,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> None\n"
 	  "\n"
-	  "Opens a file." },
+	  "Opens a handle." },
 
 	{ "open_file_object",
-	  (PyCFunction) pymodi_file_open_file_object,
+	  (PyCFunction) pymodi_handle_open_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> None\n"
 	  "\n"
-	  "Opens a file using a file-like object." },
-
-	{ "set_parent",
-	  (PyCFunction) pymodi_file_set_parent,
-	  METH_VARARGS | METH_KEYWORDS,
-	  "set_parent(parent_file) -> None\n"
-	  "\n"
-	  "Sets the parent file." },
+	  "Opens a handle using a file-like object." },
 
 	{ "close",
-	  (PyCFunction) pymodi_file_close,
+	  (PyCFunction) pymodi_handle_close,
 	  METH_NOARGS,
 	  "close() -> None\n"
 	  "\n"
-	  "Closes a file." },
+	  "Closes a handle." },
 
 	{ "read_buffer",
-	  (PyCFunction) pymodi_file_read_buffer,
+	  (PyCFunction) pymodi_handle_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read_buffer(size) -> String\n"
 	  "\n"
 	  "Reads a buffer of data." },
 
 	{ "read_buffer_at_offset",
-	  (PyCFunction) pymodi_file_read_buffer_at_offset,
+	  (PyCFunction) pymodi_handle_read_buffer_at_offset,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read_buffer_at_offset(size, offset) -> String\n"
 	  "\n"
 	  "Reads a buffer of data at a specific offset." },
 
 	{ "seek_offset",
-	  (PyCFunction) pymodi_file_seek_offset,
+	  (PyCFunction) pymodi_handle_seek_offset,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "seek_offset(offset, whence) -> None\n"
 	  "\n"
 	  "Seeks an offset within the data." },
 
 	{ "get_offset",
-	  (PyCFunction) pymodi_file_get_offset,
+	  (PyCFunction) pymodi_handle_get_offset,
 	  METH_NOARGS,
 	  "get_offset() -> Integer\n"
 	  "\n"
@@ -119,88 +111,62 @@ PyMethodDef pymodi_file_object_methods[] = {
 	/* Some Pythonesque aliases */
 
 	{ "read",
-	  (PyCFunction) pymodi_file_read_buffer,
+	  (PyCFunction) pymodi_handle_read_buffer,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "read(size) -> String\n"
 	  "\n"
 	  "Reads a buffer of data." },
 
 	{ "seek",
-	  (PyCFunction) pymodi_file_seek_offset,
+	  (PyCFunction) pymodi_handle_seek_offset,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "seek(offset, whence) -> None\n"
 	  "\n"
 	  "Seeks an offset within the data." },
 
 	{ "tell",
-	  (PyCFunction) pymodi_file_get_offset,
+	  (PyCFunction) pymodi_handle_get_offset,
 	  METH_NOARGS,
 	  "tell() -> Integer\n"
 	  "\n"
 	  "Retrieves the current offset within the data." },
 
-	/* Functions to access the file values */
+	/* Functions to access the handle values */
 
 	{ "get_media_size",
-	  (PyCFunction) pymodi_file_get_media_size,
+	  (PyCFunction) pymodi_handle_get_media_size,
 	  METH_NOARGS,
 	  "get_media_size() -> Integer\n"
 	  "\n"
 	  "Retrieves the size of the data." },
 
-	{ "get_parent_identifier",
-	  (PyCFunction) pymodi_file_get_parent_identifier,
-	  METH_NOARGS,
-	  "get_parent_identifier() -> Unicode string or None\n"
-	  "\n"
-	  "Retrieves the parent identifier (GUID)." },
-
-	{ "get_parent_filename",
-	  (PyCFunction) pymodi_file_get_parent_filename,
-	  METH_NOARGS,
-	  "get_parent_filename() -> Unicode string or None\n"
-	  "\n"
-	  "Retrieves the parent filename." },
-
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
 };
 
-PyGetSetDef pymodi_file_object_get_set_definitions[] = {
+PyGetSetDef pymodi_handle_object_get_set_definitions[] = {
 
 	{ "media_size",
-	  (getter) pymodi_file_get_media_size,
+	  (getter) pymodi_handle_get_media_size,
 	  (setter) 0,
 	  "The media size.",
-	  NULL },
-
-	{ "parent_identifier",
-	  (getter) pymodi_file_get_parent_identifier,
-	  (setter) 0,
-	  "The parent identifier (GUID).",
-	  NULL },
-
-	{ "parent_filename",
-	  (getter) pymodi_file_get_parent_filename,
-	  (setter) 0,
-	  "The parent filename.",
 	  NULL },
 
 	/* Sentinel */
 	{ NULL, NULL, NULL, NULL, NULL }
 };
 
-PyTypeObject pymodi_file_type_object = {
+PyTypeObject pymodi_handle_type_object = {
 	PyVarObject_HEAD_INIT( NULL, 0 )
 
 	/* tp_name */
-	"pymodi.file",
+	"pymodi.handle",
 	/* tp_basicsize */
-	sizeof( pymodi_file_t ),
+	sizeof( pymodi_handle_t ),
 	/* tp_itemsize */
 	0,
 	/* tp_dealloc */
-	(destructor) pymodi_file_free,
+	(destructor) pymodi_handle_free,
 	/* tp_print */
 	0,
 	/* tp_getattr */
@@ -232,7 +198,7 @@ PyTypeObject pymodi_file_type_object = {
 	/* tp_flags */
 	Py_TPFLAGS_DEFAULT,
 	/* tp_doc */
-	"pymodi file object (wraps libmodi_file_t)",
+	"pymodi handle object (wraps libmodi_handle_t)",
 	/* tp_traverse */
 	0,
 	/* tp_clear */
@@ -246,11 +212,11 @@ PyTypeObject pymodi_file_type_object = {
 	/* tp_iternext */
 	0,
 	/* tp_methods */
-	pymodi_file_object_methods,
+	pymodi_handle_object_methods,
 	/* tp_members */
 	0,
 	/* tp_getset */
-	pymodi_file_object_get_set_definitions,
+	pymodi_handle_object_get_set_definitions,
 	/* tp_base */
 	0,
 	/* tp_dict */
@@ -262,7 +228,7 @@ PyTypeObject pymodi_file_type_object = {
 	/* tp_dictoffset */
 	0,
 	/* tp_init */
-	(initproc) pymodi_file_init,
+	(initproc) pymodi_handle_init,
 	/* tp_alloc */
 	0,
 	/* tp_new */
@@ -285,122 +251,122 @@ PyTypeObject pymodi_file_type_object = {
 	0
 };
 
-/* Creates a new file object
+/* Creates a new handle object
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_new(
+PyObject *pymodi_handle_new(
            void )
 {
-	pymodi_file_t *pymodi_file = NULL;
-	static char *function      = "pymodi_file_new";
+	pymodi_handle_t *pymodi_handle = NULL;
+	static char *function          = "pymodi_handle_new";
 
-	pymodi_file = PyObject_New(
-	               struct pymodi_file,
-	               &pymodi_file_type_object );
+	pymodi_handle = PyObject_New(
+	                 struct pymodi_handle,
+	                 &pymodi_handle_type_object );
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
+		 "%s: unable to initialize handle.",
 		 function );
 
 		goto on_error;
 	}
-	if( pymodi_file_init(
-	     pymodi_file ) != 0 )
+	if( pymodi_handle_init(
+	     pymodi_handle ) != 0 )
 	{
 		PyErr_Format(
 		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
+		 "%s: unable to initialize handle.",
 		 function );
 
 		goto on_error;
 	}
-	return( (PyObject *) pymodi_file );
+	return( (PyObject *) pymodi_handle );
 
 on_error:
-	if( pymodi_file != NULL )
+	if( pymodi_handle != NULL )
 	{
 		Py_DecRef(
-		 (PyObject *) pymodi_file );
+		 (PyObject *) pymodi_handle );
 	}
 	return( NULL );
 }
 
-/* Creates a new file object and opens it
+/* Creates a new handle object and opens it
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_new_open(
+PyObject *pymodi_handle_new_open(
            PyObject *self PYMODI_ATTRIBUTE_UNUSED,
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *pymodi_file = NULL;
+	PyObject *pymodi_handle = NULL;
 
 	PYMODI_UNREFERENCED_PARAMETER( self )
 
-	pymodi_file = pymodi_file_new();
+	pymodi_handle = pymodi_handle_new();
 
-	pymodi_file_open(
-	 (pymodi_file_t *) pymodi_file,
+	pymodi_handle_open(
+	 (pymodi_handle_t *) pymodi_handle,
 	 arguments,
 	 keywords );
 
-	return( pymodi_file );
+	return( pymodi_handle );
 }
 
-/* Creates a new file object and opens it
+/* Creates a new handle object and opens it
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_new_open_file_object(
+PyObject *pymodi_handle_new_open_file_object(
            PyObject *self PYMODI_ATTRIBUTE_UNUSED,
            PyObject *arguments,
            PyObject *keywords )
 {
-	PyObject *pymodi_file = NULL;
+	PyObject *pymodi_handle = NULL;
 
 	PYMODI_UNREFERENCED_PARAMETER( self )
 
-	pymodi_file = pymodi_file_new();
+	pymodi_handle = pymodi_handle_new();
 
-	pymodi_file_open_file_object(
-	 (pymodi_file_t *) pymodi_file,
+	pymodi_handle_open_file_object(
+	 (pymodi_handle_t *) pymodi_handle,
 	 arguments,
 	 keywords );
 
-	return( pymodi_file );
+	return( pymodi_handle );
 }
 
-/* Intializes a file object
+/* Intializes a handle object
  * Returns 0 if successful or -1 on error
  */
-int pymodi_file_init(
-     pymodi_file_t *pymodi_file )
+int pymodi_handle_init(
+     pymodi_handle_t *pymodi_handle )
 {
-	static char *function    = "pymodi_file_init";
+	static char *function    = "pymodi_handle_init";
 	libcerror_error_t *error = NULL;
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( -1 );
 	}
-	pymodi_file->file           = NULL;
-	pymodi_file->file_io_handle = NULL;
+	pymodi_handle->handle         = NULL;
+	pymodi_handle->file_io_handle = NULL;
 
-	if( libmodi_file_initialize(
-	     &( pymodi_file->file ),
+	if( libmodi_handle_initialize(
+	     &( pymodi_handle->handle ),
 	     &error ) != 1 )
 	{
 		pymodi_error_raise(
 		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to initialize file.",
+		 "%s: unable to initialize handle.",
 		 function );
 
 		libcerror_error_free(
@@ -411,36 +377,36 @@ int pymodi_file_init(
 	return( 0 );
 }
 
-/* Frees a file object
+/* Frees a handle object
  */
-void pymodi_file_free(
-      pymodi_file_t *pymodi_file )
+void pymodi_handle_free(
+      pymodi_handle_t *pymodi_handle )
 {
 	libcerror_error_t *error    = NULL;
 	struct _typeobject *ob_type = NULL;
-	static char *function       = "pymodi_file_free";
+	static char *function       = "pymodi_handle_free";
 	int result                  = 0;
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return;
 	}
-	if( pymodi_file->file == NULL )
+	if( pymodi_handle->handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file - missing libmodi file.",
+		 "%s: invalid handle - missing libmodi handle.",
 		 function );
 
 		return;
 	}
 	ob_type = Py_TYPE(
-	           pymodi_file );
+	           pymodi_handle );
 
 	if( ob_type == NULL )
 	{
@@ -462,8 +428,8 @@ void pymodi_file_free(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libmodi_file_free(
-	          &( pymodi_file->file ),
+	result = libmodi_handle_free(
+	          &( pymodi_handle->handle ),
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -473,42 +439,42 @@ void pymodi_file_free(
 		pymodi_error_raise(
 		 error,
 		 PyExc_MemoryError,
-		 "%s: unable to free libmodi file.",
+		 "%s: unable to free libmodi handle.",
 		 function );
 
 		libcerror_error_free(
 		 &error );
 	}
 	ob_type->tp_free(
-	 (PyObject*) pymodi_file );
+	 (PyObject*) pymodi_handle );
 }
 
-/* Signals the file to abort the current activity
+/* Signals the handle to abort the current activity
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_signal_abort(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_signal_abort(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments PYMODI_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
-	static char *function    = "pymodi_file_signal_abort";
+	static char *function    = "pymodi_handle_signal_abort";
 	int result               = 0;
 
 	PYMODI_UNREFERENCED_PARAMETER( arguments )
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libmodi_file_signal_abort(
-	          pymodi_file->file,
+	result = libmodi_handle_signal_abort(
+	          pymodi_handle->handle,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -532,17 +498,17 @@ PyObject *pymodi_file_signal_abort(
 	return( Py_None );
 }
 
-/* Opens a file
+/* Opens a handle
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_open(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_open(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords )
 {
 	PyObject *string_object      = NULL;
 	libcerror_error_t *error     = NULL;
-	static char *function        = "pymodi_file_open";
+	static char *function        = "pymodi_handle_open";
 	static char *keyword_list[]  = { "filename", "mode", NULL };
 	const char *filename_narrow  = NULL;
 	char *mode                   = NULL;
@@ -554,11 +520,11 @@ PyObject *pymodi_file_open(
 	PyObject *utf8_string_object = NULL;
 #endif
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
@@ -613,8 +579,8 @@ PyObject *pymodi_file_open(
 		                             string_object );
 		Py_BEGIN_ALLOW_THREADS
 
-		result = libmodi_file_open_wide(
-		          pymodi_file->file,
+		result = libmodi_handle_open_wide(
+		          pymodi_handle->handle,
 	                  filename_wide,
 		          LIBMODI_OPEN_READ,
 		          &error );
@@ -642,8 +608,8 @@ PyObject *pymodi_file_open(
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
-		result = libmodi_file_open(
-		          pymodi_file->file,
+		result = libmodi_handle_open(
+		          pymodi_handle->handle,
 	                  filename_narrow,
 		          LIBMODI_OPEN_READ,
 		          &error );
@@ -658,7 +624,7 @@ PyObject *pymodi_file_open(
 			pymodi_error_raise(
 			 error,
 			 PyExc_IOError,
-			 "%s: unable to open file.",
+			 "%s: unable to open handle.",
 			 function );
 
 			libcerror_error_free(
@@ -704,8 +670,8 @@ PyObject *pymodi_file_open(
 #endif
 		Py_BEGIN_ALLOW_THREADS
 
-		result = libmodi_file_open(
-		          pymodi_file->file,
+		result = libmodi_handle_open(
+		          pymodi_handle->handle,
 	                  filename_narrow,
 		          LIBMODI_OPEN_READ,
 		          &error );
@@ -717,7 +683,7 @@ PyObject *pymodi_file_open(
 			pymodi_error_raise(
 			 error,
 			 PyExc_IOError,
-			 "%s: unable to open file.",
+			 "%s: unable to open handle.",
 			 function );
 
 			libcerror_error_free(
@@ -738,11 +704,11 @@ PyObject *pymodi_file_open(
 	return( NULL );
 }
 
-/* Opens a file using a file-like object
+/* Opens a handle using a file-like object
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_open_file_object(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_open_file_object(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords )
 {
@@ -750,14 +716,14 @@ PyObject *pymodi_file_open_file_object(
 	libcerror_error_t *error    = NULL;
 	char *mode                  = NULL;
 	static char *keyword_list[] = { "file_object", "mode", NULL };
-	static char *function       = "pymodi_file_open_file_object";
+	static char *function       = "pymodi_handle_open_file_object";
 	int result                  = 0;
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
@@ -784,7 +750,7 @@ PyObject *pymodi_file_open_file_object(
 		return( NULL );
 	}
 	if( pymodi_file_object_initialize(
-	     &( pymodi_file->file_io_handle ),
+	     &( pymodi_handle->file_io_handle ),
 	     file_object,
 	     &error ) != 1 )
 	{
@@ -801,9 +767,9 @@ PyObject *pymodi_file_open_file_object(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libmodi_file_open_file_io_handle(
-	          pymodi_file->file,
-	          pymodi_file->file_io_handle,
+	result = libmodi_handle_open_file_io_handle(
+	          pymodi_handle->handle,
+	          pymodi_handle->file_io_handle,
 	          LIBMODI_OPEN_READ,
 	          &error );
 
@@ -814,7 +780,7 @@ PyObject *pymodi_file_open_file_object(
 		pymodi_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to open file.",
+		 "%s: unable to open handle.",
 		 function );
 
 		libcerror_error_free(
@@ -828,102 +794,41 @@ PyObject *pymodi_file_open_file_object(
 	return( Py_None );
 
 on_error:
-	if( pymodi_file->file_io_handle != NULL )
+	if( pymodi_handle->file_io_handle != NULL )
 	{
 		libbfio_handle_free(
-		 &( pymodi_file->file_io_handle ),
+		 &( pymodi_handle->file_io_handle ),
 		 NULL );
 	}
 	return( NULL );
 }
 
-/* Sets the parent file
+/* Closes a handle
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_set_parent(
-           pymodi_file_t *pymodi_file,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	pymodi_file_t *pymodi_parent_file = NULL;
-	libcerror_error_t *error          = NULL;
-	static char *keyword_list[]       = { "parent_file", NULL };
-	static char *function             = "pymodi_file_set_parent";
-	int result                        = 0;
-
-	if( pymodi_file == NULL )
-	{
-		PyErr_Format(
-		 PyExc_ValueError,
-		 "%s: invalid file.",
-		 function );
-
-		return( NULL );
-	}
-	if( PyArg_ParseTupleAndKeywords(
-	     arguments,
-	     keywords,
-	     "O!",
-	     keyword_list,
-	     &pymodi_file_type_object,
-	     &pymodi_parent_file ) == 0)
-	{
-		return( NULL );
-	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libmodi_file_set_parent_file(
-	          pymodi_file->file,
-	          pymodi_parent_file->file,
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
-	{
-		pymodi_error_raise(
-		 error,
-		 PyExc_IOError,
-		 "%s: unable to set parent file.",
-		 function );
-
-		libcerror_error_free(
-		 &error );
-
-		return( NULL );
-	}
-	Py_IncRef(
-	 Py_None );
-
-	return( Py_None );
-}
-
-/* Closes a file
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymodi_file_close(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_close(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments PYMODI_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
-	static char *function    = "pymodi_file_close";
+	static char *function    = "pymodi_handle_close";
 	int result               = 0;
 
 	PYMODI_UNREFERENCED_PARAMETER( arguments )
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libmodi_file_close(
-	          pymodi_file->file,
+	result = libmodi_handle_close(
+	          pymodi_handle->handle,
 	          &error );
 
 	Py_END_ALLOW_THREADS
@@ -933,7 +838,7 @@ PyObject *pymodi_file_close(
 		pymodi_error_raise(
 		 error,
 		 PyExc_IOError,
-		 "%s: unable to close file.",
+		 "%s: unable to close handle.",
 		 function );
 
 		libcerror_error_free(
@@ -941,12 +846,12 @@ PyObject *pymodi_file_close(
 
 		return( NULL );
 	}
-	if( pymodi_file->file_io_handle != NULL )
+	if( pymodi_handle->file_io_handle != NULL )
 	{
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libbfio_handle_free(
-		          &( pymodi_file->file_io_handle ),
+		          &( pymodi_handle->file_io_handle ),
 		          &error );
 
 		Py_END_ALLOW_THREADS
@@ -974,26 +879,26 @@ PyObject *pymodi_file_close(
 /* Reads data at the current offset into a buffer
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_read_buffer(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_read_buffer(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords )
 {
 	libcerror_error_t *error    = NULL;
 	PyObject *integer_object    = NULL;
 	PyObject *string_object     = NULL;
-	static char *function       = "pymodi_file_read_buffer";
+	static char *function       = "pymodi_handle_read_buffer";
 	static char *keyword_list[] = { "size", NULL };
 	char *buffer                = NULL;
 	size64_t read_size          = 0;
 	ssize_t read_count          = 0;
 	int result                  = 0;
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
@@ -1071,8 +976,8 @@ PyObject *pymodi_file_read_buffer(
 	{
 		Py_BEGIN_ALLOW_THREADS
 
-		result = libmodi_file_get_media_size(
-			  pymodi_file->file,
+		result = libmodi_handle_get_media_size(
+			  pymodi_handle->handle,
 			  &read_size,
 			  &error );
 
@@ -1143,8 +1048,8 @@ PyObject *pymodi_file_read_buffer(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
-	read_count = libmodi_file_read_buffer(
-	              pymodi_file->file,
+	read_count = libmodi_handle_read_buffer(
+	              pymodi_handle->handle,
 	              (uint8_t *) buffer,
 	              (size_t) read_size,
 	              &error );
@@ -1190,15 +1095,15 @@ PyObject *pymodi_file_read_buffer(
 /* Reads data at a specific offset
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_read_buffer_at_offset(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_read_buffer_at_offset(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords )
 {
 	libcerror_error_t *error    = NULL;
 	PyObject *integer_object    = NULL;
 	PyObject *string_object     = NULL;
-	static char *function       = "pymodi_file_read_buffer_at_offset";
+	static char *function       = "pymodi_handle_read_buffer_at_offset";
 	static char *keyword_list[] = { "size", "offset", NULL };
 	char *buffer                = NULL;
 	off64_t read_offset         = 0;
@@ -1206,11 +1111,11 @@ PyObject *pymodi_file_read_buffer_at_offset(
 	ssize_t read_count          = 0;
 	int result                  = 0;
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
@@ -1281,8 +1186,8 @@ PyObject *pymodi_file_read_buffer_at_offset(
 	{
 		Py_BEGIN_ALLOW_THREADS
 
-		result = libmodi_file_get_media_size(
-			  pymodi_file->file,
+		result = libmodi_handle_get_media_size(
+			  pymodi_handle->handle,
 			  &read_size,
 			  &error );
 
@@ -1353,8 +1258,8 @@ PyObject *pymodi_file_read_buffer_at_offset(
 #endif
 	Py_BEGIN_ALLOW_THREADS
 
-	read_count = libmodi_file_read_buffer_at_offset(
-	              pymodi_file->file,
+	read_count = libmodi_handle_read_buffer_at_offset(
+	              pymodi_handle->handle,
 	              (uint8_t *) buffer,
 	              (size_t) read_size,
 	              (off64_t) read_offset,
@@ -1401,22 +1306,22 @@ PyObject *pymodi_file_read_buffer_at_offset(
 /* Seeks a certain offset in the data
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_seek_offset(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_seek_offset(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords )
 {
 	libcerror_error_t *error    = NULL;
-	static char *function       = "pymodi_file_seek_offset";
+	static char *function       = "pymodi_handle_seek_offset";
 	static char *keyword_list[] = { "offset", "whence", NULL };
 	off64_t offset              = 0;
 	int whence                  = 0;
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
@@ -1433,8 +1338,8 @@ PyObject *pymodi_file_seek_offset(
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	offset = libmodi_file_seek_offset(
-	          pymodi_file->file,
+	offset = libmodi_handle_seek_offset(
+	          pymodi_handle->handle,
 	          offset,
 	          whence,
 	          &error );
@@ -1463,31 +1368,31 @@ PyObject *pymodi_file_seek_offset(
 /* Retrieves the current offset in the data
  * Returns a Python object if successful or NULL on error
  */
-PyObject *pymodi_file_get_offset(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_get_offset(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments PYMODI_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	PyObject *integer_object = NULL;
-	static char *function    = "pymodi_file_get_offset";
+	static char *function    = "pymodi_handle_get_offset";
 	off64_t current_offset   = 0;
 	int result               = 0;
 
 	PYMODI_UNREFERENCED_PARAMETER( arguments )
 
-	if( pymodi_file == NULL )
+	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
 		 PyExc_TypeError,
-		 "%s: invalid file.",
+		 "%s: invalid handle.",
 		 function );
 
 		return( NULL );
 	}
 	Py_BEGIN_ALLOW_THREADS
 
-	result = libmodi_file_get_offset(
-	          pymodi_file->file,
+	result = libmodi_handle_get_offset(
+	          pymodi_handle->handle,
 	          &current_offset,
 	          &error );
 
@@ -1508,6 +1413,58 @@ PyObject *pymodi_file_get_offset(
 	}
 	integer_object = pymodi_integer_signed_new_from_64bit(
 	                  (int64_t) current_offset );
+
+	return( integer_object );
+}
+
+/* Retrieves the media size
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymodi_handle_get_media_size(
+           pymodi_handle_t *pymodi_handle,
+           PyObject *arguments PYMODI_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	PyObject *integer_object = NULL;
+	static char *function    = "pymodi_handle_get_media_size";
+	size64_t media_size      = 0;
+	int result               = 0;
+
+	PYMODI_UNREFERENCED_PARAMETER( arguments )
+
+	if( pymodi_handle == NULL )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: invalid handle.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmodi_handle_get_media_size(
+	          pymodi_handle->handle,
+	          &media_size,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymodi_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: failed to retrieve media size.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	integer_object = pymodi_integer_unsigned_new_from_64bit(
+	                  (uint64_t) media_size );
 
 	return( integer_object );
 }

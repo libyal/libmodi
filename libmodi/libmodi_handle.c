@@ -443,7 +443,7 @@ on_error:
  */
 int libmodi_handle_set_bands_directory_path_wide(
      libmodi_internal_handle_t *internal_handle,
-     const whcar_t *filename,
+     const wchar_t *filename,
      size_t filename_length,
      libcerror_error_t **error )
 {
@@ -1086,7 +1086,7 @@ int libmodi_handle_open_wide(
 
 			goto on_error;
 		}
-	{
+	}
 	if( libmodi_handle_open_file_io_handle(
 	     handle,
 	     file_io_handle,
@@ -1920,7 +1920,7 @@ int libmodi_handle_open_band_data_file_wide(
 	}
 #endif
 /* TODO replace by safer function */
-	wide_string_snprintf(
+	wide_string_snwprintf(
 	 filename,
 	 16,
 	 L"%x",
@@ -1929,7 +1929,7 @@ int libmodi_handle_open_band_data_file_wide(
 	filename_length = wide_string_length(
 	                   filename );
 
-	if( libcpath_path_join(
+	if( libcpath_path_join_wide(
 	     &bands_file_path,
 	     &bands_file_path_size,
 	     internal_handle->bands_directory_path,

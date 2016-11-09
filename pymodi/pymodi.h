@@ -57,5 +57,5 @@ PyMODINIT_FUNC initpymodi(
 }
 #endif
 
-#endif
+#endif /* !defined( _PYMODI_H ) */
 

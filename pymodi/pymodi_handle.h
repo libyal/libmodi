@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmodi file
+ * Python object definition of the libmodi handle
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYMODI_FILE_H )
-#define _PYMODI_FILE_H
+#if !defined( _PYMODI_HANDLE_H )
+#define _PYMODI_HANDLE_H
 
 #include <common.h>
 #include <types.h>
@@ -33,90 +33,89 @@
 extern "C" {
 #endif
 
-typedef struct pymodi_file pymodi_file_t;
+typedef struct pymodi_handle pymodi_handle_t;
 
-struct pymodi_file
+struct pymodi_handle
 {
 	/* Python object initialization
 	 */
 	PyObject_HEAD
 
-	/* The libmodi file
+	/* The libmodi handle
 	 */
-	libmodi_file_t *file;
+	libmodi_handle_t *handle;
 
 	/* The libbfio file IO handle
 	 */
 	libbfio_handle_t *file_io_handle;
 };
 
-extern PyMethodDef pymodi_file_object_methods[];
-extern PyTypeObject pymodi_file_type_object;
+extern PyMethodDef pymodi_handle_object_methods[];
+extern PyTypeObject pymodi_handle_type_object;
 
-PyObject *pymodi_file_new(
+PyObject *pymodi_handle_new(
            void );
 
-PyObject *pymodi_file_new_open(
+PyObject *pymodi_handle_new_open(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_file_new_open_file_object(
+PyObject *pymodi_handle_new_open_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );
 
-int pymodi_file_init(
-     pymodi_file_t *pymodi_file );
+int pymodi_handle_init(
+     pymodi_handle_t *pymodi_handle );
 
-void pymodi_file_free(
-      pymodi_file_t *pymodi_file );
+void pymodi_handle_free(
+      pymodi_handle_t *pymodi_handle );
 
-PyObject *pymodi_file_signal_abort(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_signal_abort(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments );
 
-PyObject *pymodi_file_open(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_open(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_file_open_file_object(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_open_file_object(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_file_set_parent(
-           pymodi_file_t *pymodi_file,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pymodi_file_close(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_close(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments );
 
-PyObject *pymodi_file_read_buffer(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_read_buffer(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_file_read_buffer_at_offset(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_read_buffer_at_offset(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_file_seek_offset(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_seek_offset(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_file_get_offset(
-           pymodi_file_t *pymodi_file,
+PyObject *pymodi_handle_get_offset(
+           pymodi_handle_t *pymodi_handle,
+           PyObject *arguments );
+
+PyObject *pymodi_handle_get_media_size(
+           pymodi_handle_t *pymodi_handle,
            PyObject *arguments );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _PYMODI_FILE_H ) */
+#endif /* !defined( _PYMODI_HANDLE_H ) */
 
