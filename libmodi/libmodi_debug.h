@@ -44,5 +44,5 @@ int libmodi_debug_print_read_offsets(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMODI_DEBUG_H ) */
 

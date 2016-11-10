@@ -45,5 +45,5 @@ void modioutput_version_detailed_fprint(
 }
 #endif
 
-#endif
+#endif /* !defined( _MODIOUTPUT_H ) */
 

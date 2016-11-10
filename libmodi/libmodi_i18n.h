@@ -51,5 +51,5 @@ int libmodi_i18n_initialize(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMODI_I18N_H ) */
 

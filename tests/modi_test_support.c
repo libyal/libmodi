@@ -808,7 +808,7 @@ int main(
 
 #if defined( LIBMODI_HAVE_BFIO )
 
-		/* TODO add test for libmodi_file_open_file_io_handle */
+		/* TODO add test for libmodi_check_file_file_io_handle */
 
 #endif /* defined( LIBMODI_HAVE_BFIO ) */
 	}

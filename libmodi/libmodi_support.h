@@ -84,5 +84,5 @@ int libmodi_check_file_signature_file_io_handle(
 }
 #endif
 
-#endif
+#endif /* !defined( _LIBMODI_SUPPORT_H ) */
 

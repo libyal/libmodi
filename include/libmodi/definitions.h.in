@@ -24,11 +24,11 @@
 
 #include <libmodi/types.h>
 
-#define LIBMODI_VERSION						@VERSION@
+#define LIBMODI_VERSION			@VERSION@
 
 /* The version string
  */
-#define LIBMODI_VERSION_STRING					"@VERSION@"
+#define LIBMODI_VERSION_STRING		"@VERSION@"
 
 /* The access flags definitions
  * bit 1        set to 1 for read access
@@ -37,18 +37,18 @@
  */
 enum LIBMODI_ACCESS_FLAGS
 {
-	LIBMODI_ACCESS_FLAG_READ				= 0x01,
+	LIBMODI_ACCESS_FLAG_READ	= 0x01,
 /* Reserved: not supported yet */
-	LIBMODI_ACCESS_FLAG_WRITE				= 0x02
+	LIBMODI_ACCESS_FLAG_WRITE	= 0x02
 };
 
 /* The file access macros
  */
-#define LIBMODI_OPEN_READ					( LIBMODI_ACCESS_FLAG_READ )
+#define LIBMODI_OPEN_READ		( LIBMODI_ACCESS_FLAG_READ )
 /* Reserved: not supported yet */
-#define LIBMODI_OPEN_WRITE					( LIBMODI_ACCESS_FLAG_WRITE )
+#define LIBMODI_OPEN_WRITE		( LIBMODI_ACCESS_FLAG_WRITE )
 /* Reserved: not supported yet */
-#define LIBMODI_OPEN_READ_WRITE					( LIBMODI_ACCESS_FLAG_READ | LIBMODI_ACCESS_FLAG_WRITE )
+#define LIBMODI_OPEN_READ_WRITE		( LIBMODI_ACCESS_FLAG_READ | LIBMODI_ACCESS_FLAG_WRITE )
 
 #endif /* !defined( _LIBMODI_DEFINITIONS_H ) */
 

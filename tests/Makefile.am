@@ -15,18 +15,16 @@ AM_CPPFLAGS = \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBMODI_DLL_IMPORT@
 
-if HAVE_PYTHON_TESTS
-TESTS_PYMODI =
-endif
-
 TESTS = \
 	test_api_functions.sh \
 	test_api_types.sh \
+	test_modiinfo.sh \
 	$(TESTS_PYMODI)
 
 check_SCRIPTS = \
 	test_api_functions.sh \
 	test_api_types.sh \
+	test_modiinfo.sh \
 	test_runner.sh
 
 EXTRA_DIST = \
@@ -55,8 +53,7 @@ modi_test_handle_SOURCES = \
 	modi_test_libmodi.h \
 	modi_test_libuna.h \
 	modi_test_macros.h \
-	modi_test_memory.c modi_test_memory.h \
-	modi_test_unused.h
+	modi_test_memory.c modi_test_memory.h
 
 modi_test_handle_LDADD = \
 	@LIBCSYSTEM_LIBADD@ \
@@ -65,7 +62,9 @@ modi_test_handle_LDADD = \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
 	../libmodi/libmodi.la \
-	@LIBCERROR_LIBADD@
+	@LIBCTHREADS_LIBADD@ \
+	@LIBCERROR_LIBADD@ \
+	@PTHREAD_LIBADD@
 
 modi_test_notify_SOURCES = \
 	modi_test_libmodi.h \
