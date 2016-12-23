@@ -12,6 +12,8 @@ configuration:
 install:
 - cmd: git clone https://github.com/libyal/libyal.git && move libyal ..\
 - ps: .\syncwinflexbison.ps1
+- ps: Invoke-WebRequest http://www.cygwin.com/setup-x86.exe -OutFile ..\setup-x86.exe
+- cmd: ..\setup-x86.exe -qnNdO -R C:\cygwin -s http://cygwin.mirror.constant.com -l C:\cygwin\var\cache\setup -P bison -P flex
 
 before_build:
 - cmd: xcopy /q /s C:\projects\libmodi C:\cygwin\home\appveyor\
