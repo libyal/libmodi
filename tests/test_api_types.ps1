@@ -10,7 +10,7 @@ $TestPrefix = Split-Path -path ${Pwd}.Path -parent
 $TestPrefix = Split-Path -path ${TestPrefix} -leaf
 $TestPrefix = ${TestPrefix}.Substring(3)
 
-$TestTypes = ""
+$TestTypes = "bands_table data_block io_handle"
 $TestTypesWithInput = "handle"
 
 $TestToolDirectory = "..\msvscpp\Release"

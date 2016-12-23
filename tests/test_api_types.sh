@@ -11,7 +11,7 @@ TEST_PREFIX=`dirname ${PWD}`;
 TEST_PREFIX=`basename ${TEST_PREFIX} | sed 's/^lib\([^-]*\).*$/\1/'`;
 
 TEST_PROFILE="lib${TEST_PREFIX}";
-TEST_TYPES="";
+TEST_TYPES="bands_table data_block io_handle";
 TEST_TYPES_WITH_INPUT="handle";
 OPTION_SETS="";
 

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_support"
-	ProjectGUID="{63E124BD-5CED-45F0-9671-12323DAF23FF}"
-	RootNamespace="modi_test_support"
+	Name="modi_test_data_block"
+	ProjectGUID="{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}"
+	RootNamespace="modi_test_data_block"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,11 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_getopt.c"
+				RelativePath="..\..\tests\modi_test_data_block.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\modi_test_support.c"
+				RelativePath="..\..\tests\modi_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -190,23 +190,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_getopt.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_libbfio.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\modi_test_libcerror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_libclocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_libcnotify.h"
 				>
 			</File>
 			<File
@@ -214,11 +198,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\modi_test_libuna.h"
+				RelativePath="..\..\tests\modi_test_macros.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\tests\modi_test_macros.h"
+				RelativePath="..\..\tests\modi_test_memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_unused.h"
 				>
 			</File>
 		</Filter>

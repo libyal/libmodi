@@ -1,5 +1,5 @@
 /*
- * The internal extern definition
+ * The internal libcnotify header
  *
  * Copyright (C) 2012-2016, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,28 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_INTERNAL_EXTERN_H )
-#define _LIBMODI_INTERNAL_EXTERN_H
+#if !defined( _MODI_TEST_LIBCNOTIFY_H )
+#define _MODI_TEST_LIBCNOTIFY_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBMODI for local use of libmodi
+/* Define HAVE_LOCAL_LIBCNOTIFY for local use of libcnotify
  */
-#if !defined( HAVE_LOCAL_LIBMODI )
+#if defined( HAVE_LOCAL_LIBCNOTIFY )
 
-/* If libtool DLL support is enabled set LIBMODI_DLL_EXPORT
- * before including libmodi/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBMODI_DLL_EXPORT
-#endif
-
-#include <libmodi/extern.h>
+#include <libcnotify_definitions.h>
+#include <libcnotify_print.h>
+#include <libcnotify_stream.h>
+#include <libcnotify_verbose.h>
 
 #else
-#define LIBMODI_EXTERN	/* extern */
 
-#endif /* !defined( HAVE_LOCAL_LIBMODI ) */
+/* If libtool DLL support is enabled set LIBCNOTIFY_DLL_IMPORT
+ * before including libcnotify.h
+ */
+#if defined( _WIN32 ) && defined( DLL_IMPORT )
+#define LIBCNOTIFY_DLL_IMPORT
+#endif
 
-#endif /* !defined( _LIBMODI_INTERNAL_EXTERN_H ) */
+#include <libcnotify.h>
+
+#endif /* defined( HAVE_LOCAL_LIBCNOTIFY ) */
+
+#endif /* !defined( _MODI_TEST_LIBCNOTIFY_H ) */
 

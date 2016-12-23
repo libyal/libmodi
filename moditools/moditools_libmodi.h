@@ -27,11 +27,11 @@
 /* If Cygwin libtool DLL support is enabled set LIBMODI_DLL_IMPORT
  * before including libmodi.h
  */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
+#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
 #define LIBMODI_DLL_IMPORT
 #endif
 
 #include <libmodi.h>
 
-#endif
+#endif /* !defined( _MODITOOLS_LIBMODI_H ) */
 
