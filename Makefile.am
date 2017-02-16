@@ -20,7 +20,6 @@ SUBDIRS = \
 	libfvalue \
 	libfplist \
 	libmodi \
-	libcsystem \
 	moditools \
 	pymodi \
 	pymodi-python2 \
@@ -131,7 +130,6 @@ splint:
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfplist && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libmodi && $(MAKE) splint $(AM_MAKEFLAGS))
-	(cd $(srcdir)/libcsystem && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/moditools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pymodi && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))

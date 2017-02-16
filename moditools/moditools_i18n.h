@@ -1,5 +1,5 @@
 /*
- * The libbfio header wrapper
+ * Internationalization (i18n) functions
  *
  * Copyright (C) 2012-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,36 +19,30 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _PYMODI_LIBBFIO_H )
-#define _PYMODI_LIBBFIO_H
+#if !defined( _MODITOOLS_I18N_H )
+#define _MODITOOLS_I18N_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBBFIO for local use of libbfio
- */
-#if defined( HAVE_LOCAL_LIBBFIO )
-
-#include <libbfio_definitions.h>
-#include <libbfio_file.h>
-#include <libbfio_file_pool.h>
-#include <libbfio_file_range.h>
-#include <libbfio_handle.h>
-#include <libbfio_memory_range.h>
-#include <libbfio_pool.h>
-#include <libbfio_types.h>
-
-#else
-
-/* If libtool DLL support is enabled set LIBBFIO_DLL_IMPORT
- * before including libbfio.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBBFIO_DLL_IMPORT
+#if defined( HAVE_LIBINTL_H )
+#include <libintl.h>
 #endif
 
-#include <libbfio.h>
+#if defined( __cplusplus )
+extern "C" {
+#endif
 
-#endif /* defined( HAVE_LOCAL_LIBBFIO ) */
+/* TODO for now do nothing i18n-like
+#define	_( string ) \
+	gettext( string )
+*/
 
-#endif /* !defined( _PYMODI_LIBBFIO_H ) */
+#define	_( string ) \
+	string
+
+#if defined( __cplusplus )
+}
+#endif
+
+#endif /* !defined( _MODITOOLS_I18N_H ) */
 

@@ -1,5 +1,5 @@
 /*
- * Python object definition of the libmodi handle
+ * Python object wrapper of libmodi_handle_t
  *
  * Copyright (C) 2012-2017, Joachim Metz <joachim.metz@gmail.com>
  *

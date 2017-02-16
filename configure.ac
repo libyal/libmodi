@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libmodi],
- [20161223],
+ [20170216],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -105,8 +105,8 @@ AX_LIBFPLIST_CHECK_ENABLE
 dnl Check for library function support
 AX_LIBMODI_CHECK_LOCAL
 
-dnl Check for enabling libcsystem for cross-platform C generic system functions
-AX_LIBCSYSTEM_CHECK_ENABLE
+dnl Check for moditools function support
+AX_MODITOOLS_CHECK_LOCAL
 
 dnl Check for libfuse Filesystem in Userspace (FUSE) support
 AX_LIBFUSE_CHECK_ENABLE
@@ -185,7 +185,7 @@ AS_IF(
  ])
 
 AS_IF(
- [test "x$ac_cv_libcsystem" = xyes || test "x$ac_cv_libfuse" != xno],
+ [test "x$ac_cv_libfuse" != xno],
  [AC_SUBST(
   [libmodi_spec_tools_build_requires],
   [BuildRequires:])
@@ -227,7 +227,6 @@ AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libfplist/Makefile])
 AC_CONFIG_FILES([libmodi/Makefile])
-AC_CONFIG_FILES([libcsystem/Makefile])
 AC_CONFIG_FILES([moditools/Makefile])
 AC_CONFIG_FILES([pymodi/Makefile])
 AC_CONFIG_FILES([pymodi-python2/Makefile])
@@ -274,7 +273,6 @@ Building:
    libfguid support:                          $ac_cv_libfguid
    libfvalue support:                         $ac_cv_libfvalue
    libfplist support:                         $ac_cv_libfplist
-   libcsystem support:                        $ac_cv_libcsystem
    FUSE support:                              $ac_cv_libfuse
 
 Features:

@@ -64,13 +64,15 @@
 #include <dokan.h>
 #endif
 
-#include "mount_handle.h"
-#include "modioutput.h"
+#include "moditools_getopt.h"
 #include "moditools_libcerror.h"
 #include "moditools_libclocale.h"
 #include "moditools_libcnotify.h"
-#include "moditools_libcsystem.h"
 #include "moditools_libmodi.h"
+#include "moditools_output.h"
+#include "moditools_signal.h"
+#include "moditools_unused.h"
+#include "mount_handle.h"
 
 mount_handle_t *modimount_mount_handle = NULL;
 int modimount_abort                    = 0;
@@ -102,12 +104,12 @@ void usage_fprint(
 /* Signal handler for modimount
  */
 void modimount_signal_handler(
-      libcsystem_signal_t signal LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      moditools_signal_t signal MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "modimount_signal_handler";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( signal )
+	MODITOOLS_UNREFERENCED_PARAMETER( signal )
 
 	modimount_abort = 1;
 
@@ -129,8 +131,13 @@ void modimount_signal_handler(
 	}
 	/* Force stdin to close otherwise any function reading it will remain blocked
 	 */
-	if( libcsystem_file_io_close(
+#if defined( WINAPI ) && !defined( __CYGWIN__ )
+	if( _close(
 	     0 ) != 0 )
+#else
+	if( close(
+	     0 ) != 0 )
+#endif
 	{
 		libcnotify_printf(
 		 "%s: unable to close stdin.\n",
@@ -563,8 +570,8 @@ int modimount_fuse_readdir(
      const char *path,
      void *buffer,
      fuse_fill_dir_t filler,
-     off_t offset LIBCSYSTEM_ATTRIBUTE_UNUSED,
-     struct fuse_file_info *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+     off_t offset MODITOOLS_ATTRIBUTE_UNUSED,
+     struct fuse_file_info *file_info MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	char modimount_fuse_path[ 10 ];
 
@@ -577,8 +584,8 @@ int modimount_fuse_readdir(
 	int result               = 0;
 	int string_index         = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( offset )
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	MODITOOLS_UNREFERENCED_PARAMETER( offset )
+	MODITOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -930,12 +937,12 @@ on_error:
 /* Cleans up when fuse is done
  */
 void modimount_fuse_destroy(
-      void *private_data LIBCSYSTEM_ATTRIBUTE_UNUSED )
+      void *private_data MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "modimount_fuse_destroy";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( private_data )
+	MODITOOLS_UNREFERENCED_PARAMETER( private_data )
 
 	if( modimount_mount_handle != NULL )
 	{
@@ -977,9 +984,9 @@ static size_t modimount_dokan_path_prefix_length = 5;
 int __stdcall modimount_dokan_CreateFile(
                const wchar_t *path,
                DWORD desired_access,
-               DWORD share_mode LIBCSYSTEM_ATTRIBUTE_UNUSED,
+               DWORD share_mode MODITOOLS_ATTRIBUTE_UNUSED,
                DWORD creation_disposition,
-               DWORD attribute_flags LIBCSYSTEM_ATTRIBUTE_UNUSED,
+               DWORD attribute_flags MODITOOLS_ATTRIBUTE_UNUSED,
                DOKAN_FILE_INFO *file_info )
 {
 	libcerror_error_t *error = NULL;
@@ -987,8 +994,8 @@ int __stdcall modimount_dokan_CreateFile(
 	size_t path_length       = 0;
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( share_mode )
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( attribute_flags )
+	MODITOOLS_UNREFERENCED_PARAMETER( share_mode )
+	MODITOOLS_UNREFERENCED_PARAMETER( attribute_flags )
 
 	if( path == NULL )
 	{
@@ -1111,14 +1118,14 @@ on_error:
  */
 int __stdcall modimount_dokan_OpenDirectory(
                const wchar_t *path,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "modimount_dokan_OpenDirectory";
 	size_t path_length       = 0;
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	MODITOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -1169,13 +1176,13 @@ on_error:
  */
 int __stdcall modimount_dokan_CloseFile(
                const wchar_t *path,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "modimount_dokan_CloseFile";
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	MODITOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -1212,7 +1219,7 @@ int __stdcall modimount_dokan_ReadFile(
                DWORD number_of_bytes_to_read,
                DWORD *number_of_bytes_read,
                LONGLONG offset,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "modimount_dokan_ReadFile";
@@ -1222,7 +1229,7 @@ int __stdcall modimount_dokan_ReadFile(
 	int result               = 0;
 	int string_index         = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	MODITOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( path == NULL )
 	{
@@ -1962,13 +1969,13 @@ int __stdcall modimount_dokan_GetVolumeInformation(
                DWORD *file_system_flags,
                wchar_t *file_system_name,
                DWORD file_system_name_size,
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
 	static char *function    = "modimount_dokan_GetVolumeInformation";
 	int result               = 0;
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	MODITOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	if( ( volume_name != NULL )
 	 && ( volume_name_size > (DWORD) ( sizeof( wchar_t ) * 5 ) ) )
@@ -2048,11 +2055,11 @@ on_error:
  * Returns 0 if successful or a negative error code otherwise
  */
 int __stdcall modimount_dokan_Unmount(
-               DOKAN_FILE_INFO *file_info LIBCSYSTEM_ATTRIBUTE_UNUSED )
+               DOKAN_FILE_INFO *file_info MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	static char *function = "modimount_dokan_Unmount";
 
-	LIBCSYSTEM_UNREFERENCED_PARAMETER( file_info )
+	MODITOOLS_UNREFERENCED_PARAMETER( file_info )
 
 	return( 0 );
 }
@@ -2104,13 +2111,13 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	if( libcsystem_initialize(
+	if( moditools_output_initialize(
              _IONBF,
              &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
-		 "Unable to initialize system values.\n" );
+		 "Unable to initialize output settings.\n" );
 
 		goto on_error;
 	}
@@ -2118,7 +2125,7 @@ int main( int argc, char * const argv[] )
 	 stdout,
 	 program );
 
-	while( ( option = libcsystem_getopt(
+	while( ( option = moditools_getopt(
 	                   argc,
 	                   argv,
 	                   _SYSTEM_STRING( "hvVX:" ) ) ) != (system_integer_t) -1 )

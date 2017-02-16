@@ -12,7 +12,6 @@ AM_CPPFLAGS = \
 	@LIBBFIO_CPPFLAGS@ \
 	@LIBFCACHE_CPPFLAGS@ \
 	@LIBFDATA_CPPFLAGS@ \
-	@LIBCSYSTEM_CPPFLAGS@ \
 	@LIBFUSE_CPPFLAGS@ \
 	@LIBMODI_DLL_IMPORT@
 
@@ -26,47 +25,51 @@ modiinfo_SOURCES = \
 	byte_size_string.c byte_size_string.h \
 	info_handle.c info_handle.h \
 	modiinfo.c \
-	modioutput.c modioutput.h \
+	moditools_getopt.c moditools_getopt.h \
+	moditools_i18n.h \
 	moditools_libbfio.h \
 	moditools_libcdata.h \
 	moditools_libcerror.h \
 	moditools_libclocale.h \
 	moditools_libcnotify.h \
-	moditools_libcsystem.h \
 	moditools_libmodi.h \
-	moditools_libuna.h
+	moditools_libuna.h \
+	moditools_output.c moditools_output.h \
+	moditools_signal.c moditools_signal.h \
+	moditools_unused.h
 
 modiinfo_LDADD = \
-	@LIBCSYSTEM_LIBADD@ \
-	../libmodi/libmodi.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
+	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 
 modimount_SOURCES = \
-	mount_handle.c mount_handle.h \
 	modimount.c \
-	modioutput.c modioutput.h \
+	moditools_getopt.c moditools_getopt.h \
+	moditools_i18n.h \
 	moditools_libbfio.h \
 	moditools_libcdata.h \
 	moditools_libcerror.h \
 	moditools_libclocale.h \
 	moditools_libcnotify.h \
 	moditools_libcpath.h \
-	moditools_libcsystem.h \
 	moditools_libmodi.h \
-	moditools_libuna.h
+	moditools_libuna.h \
+	moditools_output.c moditools_output.h \
+	moditools_signal.c moditools_signal.h \
+	moditools_unused.h \
+	mount_handle.c mount_handle.h
 
 modimount_LDADD = \
 	@LIBFUSE_LIBADD@ \
-	@LIBCSYSTEM_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
-	../libmodi/libmodi.la \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@ \
 	@LIBINTL@
 

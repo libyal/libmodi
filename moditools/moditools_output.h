@@ -19,16 +19,22 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _MODIOUTPUT_H )
-#define _MODIOUTPUT_H
+#if !defined( _MODITOOLS_OUTPUT_H )
+#define _MODITOOLS_OUTPUT_H
 
 #include <common.h>
 #include <file_stream.h>
 #include <types.h>
 
+#include "moditools_libcerror.h"
+
 #if defined( __cplusplus )
 extern "C" {
 #endif
+
+int moditools_output_initialize(
+     int stdio_mode,
+     libcerror_error_t **error );
 
 void modioutput_copyright_fprint(
       FILE *stream );
@@ -45,5 +51,5 @@ void modioutput_version_detailed_fprint(
 }
 #endif
 
-#endif /* !defined( _MODIOUTPUT_H ) */
+#endif /* !defined( _MODITOOLS_OUTPUT_H ) */
 

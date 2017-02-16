@@ -1285,6 +1285,334 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmodi_handle_read_buffer function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_handle_read_buffer(
+     libmodi_handle_t *handle )
+{
+	uint8_t buffer[ 16 ];
+
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	ssize_t read_count       = 0;
+	off64_t offset           = 0;
+
+	/* Determine size
+	 */
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_END,
+	          &error );
+
+	MODI_TEST_ASSERT_NOT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size = (size64_t) offset;
+
+	/* Reset offset to 0
+	 */
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	if( size > 16 )
+	{
+		read_count = libmodi_handle_read_buffer(
+		              handle,
+		              buffer,
+		              16,
+		              &error );
+
+		MODI_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) 16 );
+
+		MODI_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
+/* TODO read on size boundary */
+/* TODO read beyond size boundary */
+
+	/* Reset offset to 0
+	 */
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	read_count = libmodi_handle_read_buffer(
+	              NULL,
+	              buffer,
+	              16,
+	              &error );
+
+	MODI_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libmodi_handle_read_buffer(
+	              handle,
+	              NULL,
+	              16,
+	              &error );
+
+	MODI_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	read_count = libmodi_handle_read_buffer(
+	              handle,
+	              buffer,
+	              (size_t) SSIZE_MAX + 1,
+	              &error );
+
+	MODI_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libmodi_handle_seek_offset function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_handle_seek_offset(
+     libmodi_handle_t *handle )
+{
+	libcerror_error_t *error = NULL;
+	size64_t size            = 0;
+	off64_t offset           = 0;
+
+	/* Test regular cases
+	 */
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_END,
+	          &error );
+
+	MODI_TEST_ASSERT_NOT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	size = (size64_t) offset;
+
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          1024,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 1024 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          -512,
+	          SEEK_CUR,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 512 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          (off64_t) ( size + 512 ),
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) ( size + 512 ) );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Reset offset to 0
+	 */
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	offset = libmodi_handle_seek_offset(
+	          NULL,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          -1,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          -1,
+	          SEEK_CUR,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          (off64_t) ( -1 * ( size + 1 ) ),
+	          SEEK_END,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 /* Tests the libmodi_handle_get_offset function
  * Returns 1 if successful or 0 if not
  */
@@ -1497,7 +1825,10 @@ int main(
 
 #endif /* defined( __GNUC__ ) */
 
-		/* TODO: add tests for libmodi_handle_read_buffer */
+		MODI_TEST_RUN_WITH_ARGS(
+		 "libmodi_handle_read_buffer",
+		 modi_test_handle_read_buffer,
+		 handle );
 
 		/* TODO: add tests for libmodi_handle_read_buffer_at_offset */
 
@@ -1505,7 +1836,10 @@ int main(
 
 		/* TODO: add tests for libmodi_handle_write_buffer_at_offset */
 
-		/* TODO: add tests for libmodi_handle_seek_offset */
+		MODI_TEST_RUN_WITH_ARGS(
+		 "libmodi_handle_seek_offset",
+		 modi_test_handle_seek_offset,
+		 handle );
 
 		MODI_TEST_RUN_WITH_ARGS(
 		 "libmodi_handle_get_offset",
