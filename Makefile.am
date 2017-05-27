@@ -35,13 +35,12 @@ DPKG_FILES = \
 	dpkg/compat \
 	dpkg/control \
 	dpkg/copyright \
-	dpkg/copyright.in \
 	dpkg/rules \
-	dpkg/libmodi.docs \
-	dpkg/libmodi-dev.docs \
-	dpkg/libmodi-python.docs \
-	dpkg/libmodi-python3.docs \
-	dpkg/libmodi-tools.docs \
+	dpkg/libmodi.install \
+	dpkg/libmodi-dev.install \
+	dpkg/libmodi-python.install \
+	dpkg/libmodi-python3.install \
+	dpkg/libmodi-tools.install \
 	dpkg/source/format
 
 GETTEXT_FILES = \

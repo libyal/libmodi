@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libmodi],
- [20170216],
+ [20170527],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -245,7 +245,6 @@ AC_CONFIG_FILES([libmodi/libmodi_definitions.h])
 dnl Have configure make distribution specific files
 AC_CONFIG_FILES([common/types.h])
 AC_CONFIG_FILES([dpkg/changelog])
-AC_CONFIG_FILES([dpkg/copyright])
 AC_CONFIG_FILES([libmodi/libmodi.rc])
 AC_CONFIG_FILES([libmodi.pc])
 AC_CONFIG_FILES([libmodi.spec])
