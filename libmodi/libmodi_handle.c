@@ -1754,7 +1754,7 @@ int libmodi_handle_open_band_data_file(
 	if( libcpath_path_join(
 	     &bands_file_path,
 	     &bands_file_path_size,
-	     internal_handle->bands_directory_path,
+	     (char *) internal_handle->bands_directory_path,
 	     internal_handle->bands_directory_path_size - 1,
 	     filename,
 	     filename_length,
@@ -1932,7 +1932,7 @@ int libmodi_handle_open_band_data_file_wide(
 	if( libcpath_path_join_wide(
 	     &bands_file_path,
 	     &bands_file_path_size,
-	     internal_handle->bands_directory_path,
+	     (wchar_t *) internal_handle->bands_directory_path,
 	     internal_handle->bands_directory_path_size - 1,
 	     filename,
 	     filename_length,
