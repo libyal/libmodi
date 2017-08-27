@@ -1803,19 +1803,19 @@ int main(
 		 modi_test_handle_signal_abort,
 		 handle );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 		/* TODO: add tests for libmodi_handle_set_bands_directory_path */
 
 		/* TODO: add tests for libmodi_handle_set_bands_directory_path_wide */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 		/* TODO: add tests for libmodi_handle_open_band_data_files */
 
 		/* TODO: add tests for libmodi_handle_open_band_data_files_file_io_pool */
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 		/* TODO: add tests for libmodi_handle_open_band_data_file */
 
@@ -1823,7 +1823,7 @@ int main(
 
 		/* TODO: add tests for libmodi_handle_open_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 		MODI_TEST_RUN_WITH_ARGS(
 		 "libmodi_handle_read_buffer",

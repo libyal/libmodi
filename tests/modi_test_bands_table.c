@@ -35,7 +35,7 @@
 
 #include "../libmodi/libmodi_bands_table.h"
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 /* Tests the libmodi_bands_table_initialize function
  * Returns 1 if successful or 0 if not
@@ -393,7 +393,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -410,7 +410,7 @@ int main(
 	MODI_TEST_UNREFERENCED_PARAMETER( argc )
 	MODI_TEST_UNREFERENCED_PARAMETER( argv )
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 	MODI_TEST_RUN(
 	 "libmodi_bands_table_initialize",
@@ -428,7 +428,7 @@ int main(
 
 	/* TODO: add tests for libmodi_bands_table_read */
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 

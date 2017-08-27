@@ -1,15 +1,39 @@
-sudo: required
-dist: trusty
 language: c
-os:
-  - linux
-  - osx
-compiler:
-  - clang
-  - gcc
+env:
+  global:
+   # Encrypted COVERITY_SCAN_TOKEN
+   - secure: "mmblqOi/PVaaOA7SzUjkyalEmy1aXPL8MtWFenPvqrx8lGjX/+I5q9NoJ3jQInx5TYb6p6yfgUg64iiyvdKMaujMmM8unimf1xQrHr2mvDHfIwlEjZ0+ISjcr8YYEmeu5Xzg5stKpowMYZhs8RSgl7q4gWCug4IPMTVMv9DHksSJyApYy0cQ+24LtSIqjZ2le+GP/UoypNVH5ASpM3Tcf9N+6zqgGyn0kGN+rTwhtvgH04bCwk4qYHiJb0wOVINKpR1OcTsHEwV7SUunoSvmzXW4lTCPjxZHlNCNnpHnfP+IplTIxoeTobjRo5sEyyPQAcJ0FkAmT3RB9ucjXqeNG9ROnjzM4brUlUKTQDALvy7Js8DXyIlvmh2XwIZwubyuSgVzSzHenB3pP6F/ZX0pT/zxbR/O97QtJxM24nmaFjqeTrp9aKnHRR+3hm2TVeElWj69J1AtAqSTIqKyqlxHKjY4yd9l9AX+bi7DkTqUak0CHx60/a9Rs2FUET8vur8SRVY/WrFjzCRjD6gDxB26Zjr8qASG1r26Oll6wRU7GTciF2gjZ0VKdneMWLu9muiCm/XdexOqCk+Nmc/3+888QfWJXYt0GYCiQXHz0jclMzbi22BcZNJyVXglgSD0k3wqopkLRQXUbeC6v7CZ0x60CPR4qG95bMc6Jf2Vnc8PPMA="
+matrix:
+  include:
+  - compiler: clang
+    os: linux
+    dist: trusty
+    sudo: required
+    group: edge
+    addons:
+      coverity_scan:
+        project:
+          name: "libyal/libmodi"
+          description: "Build submitted via Travis CI"
+        notification_email: joachim.metz@gmail.com
+        build_command_prepend: "./synclibs.sh && ./autogen.sh && ./configure"
+        build_command: "make -j4"
+        branch_pattern: master
+  - compiler: gcc
+    os: linux
+    dist: trusty
+    sudo: required
+    group: edge
+  - compiler: clang
+    os: osx
+    osx_image: xcode8.1
+  - compiler: gcc
+    os: osx
+    osx_image: xcode8.1
 before_install:
-  - if test ${TRAVIS_OS_NAME} = "osx"; then brew update && brew install gettext gnu-sed && brew link --force gettext; fi
+  - if test ${TRAVIS_OS_NAME} = "linux"; then echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-; fi
   - if test ${TRAVIS_OS_NAME} = "linux"; then sudo apt-get update && sudo apt-mark hold oracle-java9-installer postgresql-9.2 postgresql-9.3 postgresql-9.4 postgresql-9.5 postgresql-9.6 postgresql-client postgresql-client-common postgresql-common postgresql-contrib-9.2 postgresql-contrib-9.3 postgresql-contrib-9.4 postgresql-contrib-9.5 postgresql-contrib-9.6 postgresql-doc && sudo apt-get --fix-missing -o Dpkg::Options::="--force-confold" upgrade -y && sudo apt-get install -y autopoint; fi
+  - if test ${TRAVIS_OS_NAME} = "osx"; then brew update && brew install gettext gnu-sed && brew link --force gettext; fi
 install:
   - if test ${TRAVIS_OS_NAME} = "osx"; then export SED="/usr/local/bin/gsed"; fi
   - ./synclibs.sh && ./autogen.sh
