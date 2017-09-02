@@ -64,13 +64,13 @@ int modi_test_bands_table_initialize(
 	 result,
 	 1 );
 
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "bands_table",
-         bands_table );
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bands_table",
+	 bands_table );
 
-        MODI_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	result = libmodi_bands_table_free(
 	          &bands_table,
@@ -81,13 +81,13 @@ int modi_test_bands_table_initialize(
 	 result,
 	 1 );
 
-        MODI_TEST_ASSERT_IS_NULL(
-         "bands_table",
-         bands_table );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bands_table",
+	 bands_table );
 
-        MODI_TEST_ASSERT_IS_NULL(
-         "error",
-         error );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test error cases
 	 */
@@ -100,9 +100,9 @@ int modi_test_bands_table_initialize(
 	 result,
 	 -1 );
 
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -118,9 +118,9 @@ int modi_test_bands_table_initialize(
 	 result,
 	 -1 );
 
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
@@ -252,9 +252,9 @@ int modi_test_bands_table_free(
 	 result,
 	 -1 );
 
-        MODI_TEST_ASSERT_IS_NOT_NULL(
-         "error",
-         error );
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
 	libcerror_error_free(
 	 &error );
