@@ -45,7 +45,6 @@ libmodi_la_SOURCES = \
 	libmodi_libfdata.h \
 	libmodi_libfplist.h \
 	libmodi_libuna.h \
-	libmodi_metadata.c libmodi_metadata.h \
 	libmodi_notify.c libmodi_notify.h \
 	libmodi_support.c libmodi_support.h \
 	libmodi_system_string.c libmodi_system_string.h \

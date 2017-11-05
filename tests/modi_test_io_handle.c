@@ -270,6 +270,134 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmodi_io_handle_clear function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_io_handle_clear(
+     void )
+{
+	libcerror_error_t *error       = NULL;
+	libmodi_io_handle_t *io_handle = NULL;
+	int result                     = 0;
+
+	/* Initialize test
+	 */
+	result = libmodi_io_handle_initialize(
+	          &io_handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "io_handle",
+	 io_handle );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
+	result = libmodi_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmodi_io_handle_clear(
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+#if defined( HAVE_EWF_TEST_MEMORY )
+
+	/* Test libmodi_io_handle_clear with memset failing
+	 */
+	modi_test_memset_attempts_before_fail = 0;
+
+	result = libmodi_io_handle_clear(
+	          io_handle,
+	          &error );
+
+	if( modi_test_memset_attempts_before_fail != -1 )
+	{
+		modi_test_memset_attempts_before_fail = -1;
+	}
+	else
+	{
+		EWF_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		EWF_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_EWF_TEST_MEMORY ) */
+
+	/* Clean up
+	 */
+	result = libmodi_io_handle_free(
+	          &io_handle,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "io_handle",
+	 io_handle );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( io_handle != NULL )
+	{
+		libmodi_io_handle_free(
+		 &io_handle,
+		 NULL );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 /* The main program
@@ -297,7 +425,9 @@ int main(
 	 "libmodi_io_handle_free",
 	 modi_test_io_handle_free );
 
-	/* TODO: add tests for libmodi_io_handle_clear */
+	MODI_TEST_RUN(
+	 "libmodi_io_handle_clear",
+	 modi_test_io_handle_clear );
 
 	/* TODO: add tests for libmodi_io_handle_read_sparse_image_header */
 

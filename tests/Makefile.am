@@ -27,11 +27,14 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_modiinfo.sh \
 	$(TESTS_PYMODI)
 
 check_SCRIPTS = \
+	pymodi_test_handle.py \
 	pymodi_test_support.py \
 	test_library.sh \
+	test_modiinfo.sh \
 	test_python_module.sh \
 	test_runner.sh
 
@@ -81,18 +84,25 @@ modi_test_error_LDADD = \
 	../libmodi/libmodi.la
 
 modi_test_handle_SOURCES = \
+	modi_test_functions.c modi_test_functions.h \
 	modi_test_getopt.c modi_test_getopt.h \
 	modi_test_handle.c \
+	modi_test_libbfio.h \
 	modi_test_libcerror.h \
 	modi_test_libclocale.h \
 	modi_test_libcnotify.h \
 	modi_test_libmodi.h \
 	modi_test_libuna.h \
 	modi_test_macros.h \
-	modi_test_memory.c modi_test_memory.h
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h
 
 modi_test_handle_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
@@ -123,6 +133,7 @@ modi_test_notify_LDADD = \
 	../libmodi/libmodi.la
 
 modi_test_support_SOURCES = \
+	modi_test_functions.c modi_test_functions.h \
 	modi_test_getopt.c modi_test_getopt.h \
 	modi_test_libbfio.h \
 	modi_test_libcerror.h \
@@ -131,7 +142,8 @@ modi_test_support_SOURCES = \
 	modi_test_libmodi.h \
 	modi_test_libuna.h \
 	modi_test_macros.h \
-	modi_test_support.c
+	modi_test_support.c \
+	modi_test_unused.h
 
 modi_test_support_LDADD = \
 	@LIBBFIO_LIBADD@ \

@@ -202,10 +202,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libmodi\libmodi_metadata.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libmodi\libmodi_notify.c"
 				>
 			</File>
@@ -305,10 +301,6 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_libuna.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libmodi\libmodi_metadata.h"
 				>
 			</File>
 			<File

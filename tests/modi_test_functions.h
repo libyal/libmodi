@@ -1,5 +1,5 @@
 /*
- * Meta data functions
+ * Functions for testing
  *
  * Copyright (C) 2012-2017, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,29 +19,37 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_METADATA_H )
-#define _LIBMODI_METADATA_H
+#if !defined( _MODI_TEST_FUNCTIONS_H )
+#define _MODI_TEST_FUNCTIONS_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libmodi_extern.h"
-#include "libmodi_libcerror.h"
-#include "libmodi_types.h"
+#include "modi_test_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-LIBMODI_EXTERN \
-int libmodi_handle_get_media_size(
-     libmodi_handle_t *handle,
-     size64_t *media_size,
+int modi_test_get_narrow_source(
+     const system_character_t *source,
+     char *narrow_string,
+     size_t narrow_string_size,
      libcerror_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+int modi_test_get_wide_source(
+     const system_character_t *source,
+     wchar_t *wide_string,
+     size_t wide_string_size,
+     libcerror_error_t **error );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_METADATA_H ) */
+#endif /* !defined( _MODI_TEST_FUNCTIONS_H ) */
 

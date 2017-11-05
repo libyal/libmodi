@@ -35,15 +35,6 @@
 #include "libmodi_libfcache.h"
 #include "libmodi_libfdata.h"
 
-#if defined( _MSC_VER ) || defined( __BORLANDC__ ) || defined( __MINGW32_VERSION ) || defined( __MINGW64_VERSION_MAJOR )
-
-/* This inclusion is needed otherwise some linkers
- * mess up exporting the legacy and metadata functions
- */
-#include "libmodi_metadata.h"
-
-#endif
-
 #if defined( __cplusplus )
 extern "C" {
 #endif
@@ -279,6 +270,12 @@ LIBMODI_EXTERN \
 int libmodi_handle_set_maximum_number_of_open_handles(
      libmodi_handle_t *handle,
      int maximum_number_of_open_handles,
+     libcerror_error_t **error );
+
+LIBMODI_EXTERN \
+int libmodi_handle_get_media_size(
+     libmodi_handle_t *handle,
+     size64_t *media_size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
