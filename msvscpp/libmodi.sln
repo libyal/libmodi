@@ -54,6 +54,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_notify", "modi_test_notify\modi_test_notify.vcproj", "{3E5F223D-5DA3-47DF-8F5F-EFFDBE2F231B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1660EB10-5241-431C-B3A2-607341435A83} = {1660EB10-5241-431C-B3A2-607341435A83}
+		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_support", "modi_test_support\modi_test_support.vcproj", "{63E124BD-5CED-45F0-9671-12323DAF23FF}"

@@ -124,13 +124,15 @@ modi_test_io_handle_LDADD = \
 	@LIBCERROR_LIBADD@
 
 modi_test_notify_SOURCES = \
+	modi_test_libcerror.h \
 	modi_test_libmodi.h \
 	modi_test_macros.h \
 	modi_test_notify.c \
 	modi_test_unused.h
 
 modi_test_notify_LDADD = \
-	../libmodi/libmodi.la
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
 
 modi_test_support_SOURCES = \
 	modi_test_functions.c modi_test_functions.h \
@@ -142,6 +144,7 @@ modi_test_support_SOURCES = \
 	modi_test_libmodi.h \
 	modi_test_libuna.h \
 	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
 	modi_test_support.c \
 	modi_test_unused.h
 
