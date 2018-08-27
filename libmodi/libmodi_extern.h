@@ -28,17 +28,13 @@
  */
 #if !defined( HAVE_LOCAL_LIBMODI )
 
-/* If libtool DLL support is enabled set LIBMODI_DLL_EXPORT
- * before including libmodi/extern.h
- */
-#if defined( _WIN32 ) && defined( DLL_EXPORT )
-#define LIBMODI_DLL_EXPORT
-#endif
-
 #include <libmodi/extern.h>
 
+#define LIBMODI_EXTERN_VARIABLE	LIBMODI_EXTERN
+
 #else
-#define LIBMODI_EXTERN	/* extern */
+#define LIBMODI_EXTERN		/* extern */
+#define LIBMODI_EXTERN_VARIABLE	extern
 
 #endif /* !defined( HAVE_LOCAL_LIBMODI ) */
 

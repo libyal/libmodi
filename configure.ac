@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libmodi],
- [20180403],
+ [20180827],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -112,10 +112,7 @@ dnl Check if libmodi required headers and functions are available
 AX_LIBMODI_CHECK_LOCAL
 
 dnl Check if libmodi Python bindings (pymodi) required headers and functions are available
-AX_PYTHON_CHECK_PYPREFIX
 AX_PYTHON_CHECK_ENABLE
-AX_PYTHON2_CHECK_ENABLE
-AX_PYTHON3_CHECK_ENABLE
 
 AS_IF(
   [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
@@ -129,10 +126,6 @@ AS_IF(
       [1])
     ])
   ])
-
-AM_CONDITIONAL(
-  HAVE_PYTHON_TESTS,
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno])
 
 dnl Check if libfuse or required headers and functions are available
 AX_LIBFUSE_CHECK_ENABLE
@@ -148,7 +141,7 @@ AS_IF(
  [test "x$enable_shared" = xyes],
  [AS_CASE(
   [$host],
-  [*cygwin* | *mingw*],
+  [*cygwin* | *mingw* | *msys*],
   [AC_DEFINE(
    [HAVE_DLLMAIN],
    [1],
@@ -157,7 +150,10 @@ AS_IF(
    [HAVE_DLLMAIN],
    [1])
 
-  dnl Used in tests
+  AC_SUBST(
+   [LIBMODI_DLL_EXPORT],
+   ["-DLIBMODI_DLL_EXPORT"])
+
   AC_SUBST(
    [LIBMODI_DLL_IMPORT],
    ["-DLIBMODI_DLL_IMPORT"])
@@ -268,8 +264,6 @@ Features:
    Wide character type support:               $ac_cv_enable_wide_character_type
    moditools are build as static executables: $ac_cv_enable_static_executables
    Python (pymodi) support:                   $ac_cv_enable_python
-   Python version 2 (pymodi) support:         $ac_cv_enable_python2
-   Python version 3 (pymodi) support:         $ac_cv_enable_python3
    Verbose output:                            $ac_cv_enable_verbose_output
    Debug output:                              $ac_cv_enable_debug_output
 ]);

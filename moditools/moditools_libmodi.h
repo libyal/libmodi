@@ -1,5 +1,5 @@
 /*
- * The internal libmodi header
+ * The libmodi header wrapper
  *
  * Copyright (C) 2012-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -23,13 +23,6 @@
 #define _MODITOOLS_LIBMODI_H
 
 #include <common.h>
-
-/* If Cygwin libtool DLL support is enabled set LIBMODI_DLL_IMPORT
- * before including libmodi.h
- */
-#if defined( _WIN32 ) && defined( DLL_IMPORT ) && !defined( HAVE_STATIC_EXECUTABLES )
-#define LIBMODI_DLL_IMPORT
-#endif
 
 #include <libmodi.h>
 

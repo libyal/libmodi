@@ -113,6 +113,8 @@ int modi_test_io_handle_initialize(
 	          &io_handle,
 	          &error );
 
+	io_handle = NULL;
+
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -124,8 +126,6 @@ int modi_test_io_handle_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	io_handle = NULL;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
 
@@ -332,7 +332,7 @@ int modi_test_io_handle_clear(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_EWF_TEST_MEMORY )
+#if defined( HAVE_MODI_TEST_MEMORY )
 
 	/* Test libmodi_io_handle_clear with memset failing
 	 */
@@ -348,19 +348,19 @@ int modi_test_io_handle_clear(
 	}
 	else
 	{
-		EWF_TEST_ASSERT_EQUAL_INT(
+		MODI_TEST_ASSERT_EQUAL_INT(
 		 "result",
 		 result,
 		 -1 );
 
-		EWF_TEST_ASSERT_IS_NOT_NULL(
+		MODI_TEST_ASSERT_IS_NOT_NULL(
 		 "error",
 		 error );
 
 		libcerror_error_free(
 		 &error );
 	}
-#endif /* defined( HAVE_EWF_TEST_MEMORY ) */
+#endif /* defined( HAVE_MODI_TEST_MEMORY ) */
 
 	/* Clean up
 	 */
