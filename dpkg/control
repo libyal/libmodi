@@ -9,9 +9,11 @@ Homepage: https://github.com/libyal/libmodi
 Package: libmodi
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libmodi1
+Replaces: libmodi1
 Suggests: libmodi-dbg
-Description: Library to access the Mac OS disk image formats
- libmodi is a library to access the Mac OS disk image formats.
+Description: Library to access the MacOS disk image formats
+ libmodi is a library to access the MacOS disk image formats.
 
 Package: libmodi-dbg
 Architecture: any
@@ -31,8 +33,10 @@ Package: libmodi-tools
 Section: utils
 Architecture: any
 Depends: libmodi (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
-Description: Several tools for reading Mac OS disk images
- Several tools for reading Mac OS disk images.
+Conflicts: libmodi-utils
+Replaces: libmodi-utils
+Description: Several tools for reading MacOS disk images
+ Several tools for reading MacOS disk images.
 
 Package: libmodi-tools-dbg
 Section: debug
@@ -45,6 +49,8 @@ Package: libmodi-python
 Section: python
 Architecture: any
 Depends: libmodi (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python-libmodi
+Replaces: python-libmodi
 Suggests: libmodi-python-dbg
 Description: Python 2 bindings for libmodi
  Python 2 bindings for libmodi.
@@ -60,6 +66,8 @@ Package: libmodi-python3
 Section: python
 Architecture: any
 Depends: libmodi (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: python3-libmodi
+Replaces: python3-libmodi
 Suggests: libmodi-python3-dbg
 Description: Python 3 bindings for libmodi
  Python 3 bindings for libmodi.

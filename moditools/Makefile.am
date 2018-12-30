@@ -60,6 +60,10 @@ modimount_SOURCES = \
 	moditools_output.c moditools_output.h \
 	moditools_signal.c moditools_signal.h \
 	moditools_unused.h \
+	mount_dokan.c mount_dokan.h \
+	mount_file_entry.c mount_file_entry.h \
+	mount_file_system.c mount_file_system.h \
+	mount_fuse.c mount_fuse.h \
 	mount_handle.c mount_handle.h
 
 modimount_LDADD = \

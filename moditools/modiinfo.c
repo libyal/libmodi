@@ -157,7 +157,7 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	modioutput_version_fprint(
+	moditools_output_version_fprint(
 	 stdout,
 	 program );
 
@@ -192,7 +192,7 @@ int main( int argc, char * const argv[] )
 				break;
 
 			case (system_integer_t) 'V':
-				modioutput_copyright_fprint(
+				moditools_output_copyright_fprint(
 				 stdout );
 
 				return( EXIT_SUCCESS );

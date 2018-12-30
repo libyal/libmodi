@@ -130,7 +130,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modiinfo", "modiinfo\modiin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modimount", "modimount\modimount.vcproj", "{EBB64683-6310-47ED-8075-033263494660}"
 	ProjectSection(ProjectDependencies) = postProject
-		{78B1BB9F-799B-43FF-85AD-AF4E498D977F} = {78B1BB9F-799B-43FF-85AD-AF4E498D977F}
 		{B6C825BF-B923-407E-9C17-40C4A8933CD6} = {B6C825BF-B923-407E-9C17-40C4A8933CD6}
 		{7FAFFA48-E3B8-45E7-A2F7-147FE5A47B91} = {7FAFFA48-E3B8-45E7-A2F7-147FE5A47B91}
 		{1D64364E-E88B-443E-88E0-5595FCB697DA} = {1D64364E-E88B-443E-88E0-5595FCB697DA}
@@ -221,8 +220,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcsplit", "libcsplit\libc
 	ProjectSection(ProjectDependencies) = postProject
 		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dokan", "dokan\dokan.vcproj", "{78B1BB9F-799B-43FF-85AD-AF4E498D977F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -338,10 +335,6 @@ Global
 		{7FAFFA48-E3B8-45E7-A2F7-147FE5A47B91}.Release|Win32.Build.0 = Release|Win32
 		{7FAFFA48-E3B8-45E7-A2F7-147FE5A47B91}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{7FAFFA48-E3B8-45E7-A2F7-147FE5A47B91}.VSDebug|Win32.Build.0 = VSDebug|Win32
-		{78B1BB9F-799B-43FF-85AD-AF4E498D977F}.Release|Win32.ActiveCfg = Release|Win32
-		{78B1BB9F-799B-43FF-85AD-AF4E498D977F}.Release|Win32.Build.0 = Release|Win32
-		{78B1BB9F-799B-43FF-85AD-AF4E498D977F}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
-		{78B1BB9F-799B-43FF-85AD-AF4E498D977F}.VSDebug|Win32.Build.0 = VSDebug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
