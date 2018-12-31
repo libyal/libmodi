@@ -1,5 +1,6 @@
 MSVSCPP_FILES = \
 	libbfio/libbfio.vcproj \
+	libcaes/libcaes.vcproj \
 	libcdata/libcdata.vcproj \
 	libcdirectory/libcdirectory.vcproj \
 	libcerror/libcerror.vcproj \

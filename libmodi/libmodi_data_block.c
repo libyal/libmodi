@@ -190,13 +190,13 @@ int libmodi_data_block_free(
 /* Reads data block
  * Returns 1 if successful or -1 on error
  */
-int libmodi_data_block_read(
+int libmodi_data_block_read_file_io_handle(
      libmodi_data_block_t *data_block,
      libbfio_handle_t *file_io_handle,
      off64_t data_block_offset,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_data_block_read";
+	static char *function = "libmodi_data_block_read_file_io_handle";
 	ssize_t read_count    = 0;
 
 	if( data_block == NULL )

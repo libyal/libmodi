@@ -24,7 +24,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libmodi_bands_table.h"
 #include "libmodi_data_block.h"
 #include "libmodi_definitions.h"
 #include "libmodi_io_handle.h"
@@ -37,9 +36,8 @@
 #include "libmodi_libuna.h"
 #include "libmodi_unused.h"
 
-#include "modi_sparse_image_header.h"
-
-const uint8_t *modi_sparse_image_signature = (uint8_t *) "sprs";
+const uint8_t *modi_sparse_image_signature       = (uint8_t *) "sprs";
+const uint8_t *modi_udif_resource_file_signature = (uint8_t *) "koly";
 
 /* Creates an IO handle
  * Make sure the value io_handle is referencing, is set to NULL
@@ -186,271 +184,6 @@ int libmodi_io_handle_clear(
 		return( -1 );
 	}
 	return( 1 );
-}
-
-/* Reads the sparse image header
- * Returns 1 if successful, 0 if the signature is not supported or -1 on error
- */
-int libmodi_io_handle_read_sparse_image_header(
-     libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libmodi_bands_table_t *bands_table,
-     libcerror_error_t **error )
-{
-	uint8_t *sparse_image_header_data = NULL;
-	static char *function             = "libmodi_io_handle_read_sparse_image_header";
-	size_t band_array_data_size       = 0;
-	size_t sparse_image_header_offset = 0;
-	size_t sparse_image_header_size   = 4096;
-	ssize_t read_count                = 0;
-	uint32_t number_of_bands          = 0;
-	uint32_t number_of_sectors        = 0;
-	uint32_t sectors_per_band         = 0;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	size_t trailing_data_size         = 0;
-	uint32_t value_32bit              = 0;
-#endif
-
-	if( io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: reading sparse image header at offset: 0.\n",
-		 function );
-	}
-#endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     0,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek sparse image header offset: 0.",
-		 function );
-
-		goto on_error;
-	}
-	sparse_image_header_data = (uint8_t *) memory_allocate(
-	                                        sparse_image_header_size );
-
-	if( sparse_image_header_data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_MEMORY,
-		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create sparse image header data.",
-		 function );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
-	              file_io_handle,
-	              sparse_image_header_data,
-	              sparse_image_header_size,
-	              error );
-
-	if( read_count != (ssize_t) sparse_image_header_size )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read sparse image header.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: sparse image header data:\n",
-		 function );
-		libcnotify_print_data(
-		 sparse_image_header_data,
-		 sizeof( modi_sparse_image_header_t ),
-		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-	}
-#endif
-	if( memory_compare(
-	     ( (modi_sparse_image_header_t *) sparse_image_header_data )->signature,
-	     modi_sparse_image_signature,
-	     4 ) != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: unsupported file signature.",
-		 function );
-
-		goto on_error;
-	}
-	io_handle->image_type = LIBMODI_IMAGE_TYPE_SPARSE_IMAGE;
-
-	byte_stream_copy_to_uint32_big_endian(
-	 ( (modi_sparse_image_header_t *) sparse_image_header_data )->sectors_per_band,
-	 sectors_per_band );
-
-	byte_stream_copy_to_uint32_big_endian(
-	 ( (modi_sparse_image_header_t *) sparse_image_header_data )->number_of_sectors,
-	 number_of_sectors );
-
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: signature\t\t\t: %c%c%c%c\n",
-		 function,
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->signature[ 0 ],
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->signature[ 1 ],
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->signature[ 2 ],
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->signature[ 3 ] );
-
-		byte_stream_copy_to_uint32_big_endian(
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->unknown1,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown1\t\t\t: %" PRIu32 "\n",
-		 function,
-		 value_32bit );
-
-		libcnotify_printf(
-		 "%s: sectors per band\t\t: %" PRIu32 "\n",
-		 function,
-		 sectors_per_band );
-
-		byte_stream_copy_to_uint32_big_endian(
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->unknown2,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown2\t\t\t: %" PRIu32 "\n",
-		 function,
-		 value_32bit );
-
-		libcnotify_printf(
-		 "%s: number of sectors\t\t: %" PRIu32 "\n",
-		 function,
-		 number_of_sectors );
-
-		libcnotify_printf(
-		 "%s: unknown3:\n",
-		 function );
-		libcnotify_print_data(
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->unknown3,
-		 12,
-		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-
-		byte_stream_copy_to_uint32_big_endian(
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->unknown4,
-		 value_32bit );
-		libcnotify_printf(
-		 "%s: unknown4\t\t\t: 0x%08" PRIx32 "\n",
-		 function,
-		 value_32bit );
-
-		libcnotify_printf(
-		 "%s: unknown5:\n",
-		 function );
-		libcnotify_print_data(
-		 ( (modi_sparse_image_header_t *) sparse_image_header_data )->unknown5,
-		 28,
-		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-	}
-#endif
-	sparse_image_header_offset = sizeof( modi_sparse_image_header_t );
-
-	if( sectors_per_band == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid sectors per band value out of bounds.",
-		 function );
-
-		goto on_error;
-	}
-	io_handle->media_size        = (size64_t) number_of_sectors * 512;
-	io_handle->bands_data_offset = (off64_t) sparse_image_header_size;
-	io_handle->band_data_size    = (size64_t) sectors_per_band * 512;
-
-	number_of_bands = number_of_sectors / sectors_per_band;
-
-	if( ( number_of_sectors % sectors_per_band ) != 0 )
-	{
-		number_of_bands++;
-	}
-/* TODO check bounds number of bands */
-/* TODO check if file size matches 4096 + media_size */
-
-	if( number_of_bands > 0 )
-	{
-		if( libmodi_bands_table_read(
-		     bands_table,
-		     &( sparse_image_header_data[ sparse_image_header_offset ] ),
-		     band_array_data_size,
-		     number_of_bands,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read bands table.",
-			 function );
-
-			goto on_error;
-		}
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		trailing_data_size = sparse_image_header_size - sparse_image_header_offset;
-
-		if( trailing_data_size > 0 )
-		{
-			libcnotify_printf(
-			 "%s: trailing data:\n",
-			 function );
-			libcnotify_print_data(
-			 &( sparse_image_header_data[ sparse_image_header_offset ] ),
-			 trailing_data_size,
-			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-		}
-	}
-#endif
-	memory_free(
-	 sparse_image_header_data );
-
-	sparse_image_header_data = NULL;
-
-	return( 1 );
-
-on_error:
-	if( sparse_image_header_data != NULL )
-	{
-		memory_free(
-		 sparse_image_header_data );
-	}
-	return( -1 );
 }
 
 /* Reads the info.plist
@@ -910,7 +643,7 @@ int libmodi_io_handle_read_data_block(
 
 		goto on_error;
 	}
-	if( libmodi_data_block_read(
+	if( libmodi_data_block_read_file_io_handle(
 	     data_block,
 	     file_io_handle,
              element_data_offset,

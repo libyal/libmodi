@@ -19,6 +19,7 @@ SUBDIRS = \
 	libfguid \
 	libfvalue \
 	libfplist \
+	libcaes \
 	libmodi \
 	moditools \
 	pymodi \
@@ -96,6 +97,7 @@ library:
 	(cd $(srcdir)/libfguid && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfplist && $(MAKE) $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcaes && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libmodi && $(MAKE) $(AM_MAKEFLAGS))
 	(cd $(srcdir)/po && $(MAKE) $(AM_MAKEFLAGS))
 
@@ -128,6 +130,7 @@ splint:
 	(cd $(srcdir)/libfguid && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfvalue && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libfplist && $(MAKE) splint $(AM_MAKEFLAGS))
+	(cd $(srcdir)/libcaes && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/libmodi && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/moditools && $(MAKE) splint $(AM_MAKEFLAGS))
 	(cd $(srcdir)/pymodi && $(MAKE) splint $(AM_MAKEFLAGS))

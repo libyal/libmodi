@@ -1,5 +1,5 @@
 /*
- * Data block functions
+ * Sparse image header functions
  *
  * Copyright (C) 2012-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,12 +19,13 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_DATA_BLOCK_H )
-#define _LIBMODI_DATA_BLOCK_H
+#if !defined( _LIBMODI_SPARSE_IMAGE_HEADER_H )
+#define _LIBMODI_SPARSE_IMAGE_HEADER_H
 
 #include <common.h>
 #include <types.h>
 
+#include "libmodi_bands_table.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
 
@@ -32,37 +33,44 @@
 extern "C" {
 #endif
 
-typedef struct libmodi_data_block libmodi_data_block_t;
+typedef struct libmodi_sparse_image_header libmodi_sparse_image_header_t;
 
-struct libmodi_data_block
+struct libmodi_sparse_image_header
 {
-	/* The data
+	/* The (number of) sectors per band
 	 */
-	uint8_t *data;
+	uint32_t sectors_per_band;
 
-	/* The data size
+	/* The number of sectors
 	 */
-	size_t data_size;
+	uint32_t number_of_sectors;
 };
 
-int libmodi_data_block_initialize(
-     libmodi_data_block_t **data_block,
+int libmodi_sparse_image_header_initialize(
+     libmodi_sparse_image_header_t **sparse_image_header,
+     libcerror_error_t **error );
+
+int libmodi_sparse_image_header_free(
+     libmodi_sparse_image_header_t **sparse_image_header,
+     libcerror_error_t **error );
+
+int libmodi_sparse_image_header_read_data(
+     libmodi_sparse_image_header_t *sparse_image_header,
+     const uint8_t *data,
      size_t data_size,
+     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error );
 
-int libmodi_data_block_free(
-     libmodi_data_block_t **data_block,
-     libcerror_error_t **error );
-
-int libmodi_data_block_read_file_io_handle(
-     libmodi_data_block_t *data_block,
+int libmodi_sparse_image_header_read_file_io_handle(
+     libmodi_sparse_image_header_t *sparse_image_header,
      libbfio_handle_t *file_io_handle,
-     off64_t data_offset,
+     off64_t offset,
+     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_DATA_BLOCK_H ) */
+#endif /* !defined( _LIBMODI_SPARSE_IMAGE_HEADER_H ) */
 

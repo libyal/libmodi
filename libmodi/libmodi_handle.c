@@ -41,7 +41,9 @@
 #include "libmodi_libcthreads.h"
 #include "libmodi_libfcache.h"
 #include "libmodi_libfdata.h"
+#include "libmodi_sparse_image_header.h"
 #include "libmodi_system_string.h"
+#include "libmodi_udif_resource_file.h"
 
 /* Creates a handle
  * Make sure the value handle is referencing, is set to NULL
@@ -2220,10 +2222,12 @@ int libmodi_handle_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_handle_open_read";
-	size64_t file_size    = 0;
-	int result            = 0;
-	int segment_index     = 0;
+	libmodi_sparse_image_header_t *sparse_image_header = NULL;
+	libmodi_udif_resource_file_t *udif_resource_file   = NULL;
+	static char *function                              = "libmodi_handle_open_read";
+	size64_t file_size                                 = 0;
+	int result                                         = 0;
+	int segment_index                                  = 0;
 
 	if( internal_handle == NULL )
 	{
@@ -2322,7 +2326,68 @@ int libmodi_handle_open_read(
 
 		goto on_error;
 	}
-	if( file_size >= 4096 )
+	if( file_size >= 512 )
+	{
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "Reading Universal Disk Image Format (UDIF) resource file:\n" );
+		}
+#endif
+		if( libmodi_udif_resource_file_initialize(
+		     &udif_resource_file,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create UDIF resource file.",
+			 function );
+
+			goto on_error;
+		}
+		result = libmodi_udif_resource_file_read_file_io_handle(
+		          udif_resource_file,
+		          file_io_handle,
+		          file_size - 512,
+		          error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read UDIF resource file at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 file_size - 512,
+			 file_size - 512 );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED;
+			internal_handle->io_handle->media_size = (size64_t) udif_resource_file->number_of_sectors * 512;
+		}
+		if( libmodi_udif_resource_file_free(
+		     &udif_resource_file,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to free UDIF resource file.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
+	 && ( file_size >= 4096 ) )
 	{
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -2331,17 +2396,53 @@ int libmodi_handle_open_read(
 			 "Reading sparse image header:\n" );
 		}
 #endif
-		if( libmodi_io_handle_read_sparse_image_header(
-		     internal_handle->io_handle,
-		     file_io_handle,
-		     internal_handle->bands_table,
-		     error ) == -1 )
+		if( libmodi_sparse_image_header_initialize(
+		     &sparse_image_header,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create sparse image header.",
+			 function );
+
+			goto on_error;
+		}
+		result = libmodi_sparse_image_header_read_file_io_handle(
+		          sparse_image_header,
+		          file_io_handle,
+		          0,
+		          internal_handle->bands_table,
+		          error );
+
+		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read sparse image header.",
+			 "%s: unable to read sparse image header at offset: 0 (0x00000000).",
+			 function );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			internal_handle->io_handle->image_type        = LIBMODI_IMAGE_TYPE_SPARSE_IMAGE;
+			internal_handle->io_handle->media_size        = (size64_t) sparse_image_header->number_of_sectors * 512;
+			internal_handle->io_handle->bands_data_offset = (off64_t) 4096;
+			internal_handle->io_handle->band_data_size    = (size64_t) sparse_image_header->sectors_per_band * 512;
+		}
+		if( libmodi_sparse_image_header_free(
+		     &sparse_image_header,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to free sparse image header.",
 			 function );
 
 			goto on_error;
@@ -2384,7 +2485,8 @@ int libmodi_handle_open_read(
 	}
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
 	{
-		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_DMG;
+/* TODO check MBR sector signature */
+		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED;
 	}
 /* TODO clone function ? */
 	if( libfdata_vector_initialize(
@@ -2467,6 +2569,18 @@ on_error:
 	{
 		libfdata_vector_free(
 		 &( internal_handle->bands_vector ),
+		 NULL );
+	}
+	if( sparse_image_header != NULL )
+	{
+		libmodi_sparse_image_header_free(
+		 &sparse_image_header,
+		 NULL );
+	}
+	if( udif_resource_file != NULL )
+	{
+		libmodi_udif_resource_file_free(
+		 &udif_resource_file,
 		 NULL );
 	}
 	if( internal_handle->bands_table != NULL )
@@ -2588,7 +2702,7 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 			 internal_handle->current_offset );
 		}
 #endif
-		if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_DMG )
+		if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED )
 		{
 			return( -1 );
 /* TODO

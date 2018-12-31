@@ -6,17 +6,8 @@ TODO:
   - add open band files function, NULL is non-existing band file?
   - use libvmdk like approach
 
-20161104
-* worked on sparse bundle format support
-
-20161103
-* worked on sparse image format support
-
-20161031
-* worked on sparse image format support
-
 20161030
-* applied updates
+* see `git log' for more recent change log
 * worked on sparse image format support
 
 20120723

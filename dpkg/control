@@ -12,8 +12,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libmodi1
 Replaces: libmodi1
 Suggests: libmodi-dbg
-Description: Library to access the MacOS disk image formats
- libmodi is a library to access the MacOS disk image formats.
+Description: Library to access the Mac OS disk image formats
+ libmodi is a library to access the Mac OS disk image formats.
 
 Package: libmodi-dbg
 Architecture: any
@@ -35,8 +35,8 @@ Architecture: any
 Depends: libmodi (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libmodi-utils
 Replaces: libmodi-utils
-Description: Several tools for reading MacOS disk images
- Several tools for reading MacOS disk images.
+Description: Several tools for reading Mac OS disk images
+ Several tools for reading Mac OS disk images.
 
 Package: libmodi-tools-dbg
 Section: debug

@@ -137,6 +137,7 @@ stamp-h[1-9]
 
 # Local library dependencies specific files
 /libbfio
+/libcaes
 /libcdata
 /libcdirectory
 /libcerror

@@ -1,5 +1,5 @@
 /*
- * Mounts a MacOS disk image file
+ * Mounts a Mac OS disk image file
  *
  * Copyright (C) 2012-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -64,11 +64,11 @@ void usage_fprint(
 	{
 		return;
 	}
-	fprintf( stream, "Use modimount to mount a MacOS disk image file\n\n" );
+	fprintf( stream, "Use modimount to mount a Mac OS disk image file\n\n" );
 
 	fprintf( stream, "Usage: modimount [ -X extended_options ] [ -hvV ] image mount_point\n\n" );
 
-	fprintf( stream, "\timage:       a MacOS disk image file\n\n" );
+	fprintf( stream, "\timage:       a Mac OS disk image file\n\n" );
 	fprintf( stream, "\tmount_point: the directory to serve as mount point\n\n" );
 
 	fprintf( stream, "\t-h:          shows this help\n" );
@@ -160,7 +160,7 @@ int main( int argc, char * const argv[] )
 	 1 );
 
 	if( libclocale_initialize(
-             "moditools",
+	     "moditools",
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -170,8 +170,8 @@ int main( int argc, char * const argv[] )
 		goto on_error;
 	}
 	if( moditools_output_initialize(
-             _IONBF,
-             &error ) != 1 )
+	     _IONBF,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
@@ -374,7 +374,7 @@ int main( int argc, char * const argv[] )
 	                         &modimount_fuse_operations,
 	                         sizeof( struct fuse_operations ),
 	                         modimount_mount_handle );
-	
+
 	if( modimount_fuse_handle == NULL )
 	{
 		fprintf(

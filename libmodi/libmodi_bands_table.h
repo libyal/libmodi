@@ -44,9 +44,9 @@ struct libmodi_bands_table
 	 */
 	uint32_t *references;
 
-	/* The size
+	/* The data size
 	 */
-	size_t size;
+	size_t data_size;
 };
 
 int libmodi_bands_table_initialize(
@@ -68,7 +68,7 @@ int libmodi_bands_table_get_reference_by_index(
      uint32_t *reference,
      libcerror_error_t **error );
 
-int libmodi_bands_table_read(
+int libmodi_bands_table_read_data(
      libmodi_bands_table_t *bands_table,
      const uint8_t *data,
      size_t data_size,

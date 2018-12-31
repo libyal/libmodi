@@ -1,5 +1,5 @@
 /*
- * Data block functions
+ * Universal Disk Image Format (UDIF) resource file functions
  *
  * Copyright (C) 2012-2018, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_DATA_BLOCK_H )
-#define _LIBMODI_DATA_BLOCK_H
+#if !defined( _LIBMODI_UDIF_RESOURCE_FILE_H )
+#define _LIBMODI_UDIF_RESOURCE_FILE_H
 
 #include <common.h>
 #include <types.h>
@@ -32,37 +32,38 @@
 extern "C" {
 #endif
 
-typedef struct libmodi_data_block libmodi_data_block_t;
+typedef struct libmodi_udif_resource_file libmodi_udif_resource_file_t;
 
-struct libmodi_data_block
+struct libmodi_udif_resource_file
 {
-	/* The data
+	/* The number of sectors
 	 */
-	uint8_t *data;
-
-	/* The data size
-	 */
-	size_t data_size;
+	uint32_t number_of_sectors;
 };
 
-int libmodi_data_block_initialize(
-     libmodi_data_block_t **data_block,
+int libmodi_udif_resource_file_initialize(
+     libmodi_udif_resource_file_t **udif_resource_file,
+     libcerror_error_t **error );
+
+int libmodi_udif_resource_file_free(
+     libmodi_udif_resource_file_t **udif_resource_file,
+     libcerror_error_t **error );
+
+int libmodi_udif_resource_file_read_data(
+     libmodi_udif_resource_file_t *udif_resource_file,
+     const uint8_t *data,
      size_t data_size,
      libcerror_error_t **error );
 
-int libmodi_data_block_free(
-     libmodi_data_block_t **data_block,
-     libcerror_error_t **error );
-
-int libmodi_data_block_read_file_io_handle(
-     libmodi_data_block_t *data_block,
+int libmodi_udif_resource_file_read_file_io_handle(
+     libmodi_udif_resource_file_t *udif_resource_file,
      libbfio_handle_t *file_io_handle,
-     off64_t data_offset,
+     off64_t offset,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_DATA_BLOCK_H ) */
+#endif /* !defined( _LIBMODI_UDIF_RESOURCE_FILE_H ) */
 

@@ -206,11 +206,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_sparse_image_header.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_support.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_system_string.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_udif_resource_file.c"
 				>
 			</File>
 		</Filter>
@@ -308,6 +316,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_sparse_image_header.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_support.h"
 				>
 			</File>
@@ -320,11 +332,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_udif_resource_file.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_unused.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\libmodi\modi_sparse_image_header.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\modi_udif_resource_file.h"
 				>
 			</File>
 		</Filter>

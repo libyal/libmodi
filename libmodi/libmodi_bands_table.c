@@ -238,14 +238,14 @@ int libmodi_bands_table_get_reference_by_index(
 /* Reads the bands table
  * Returns 1 if successful or -1 on error
  */
-int libmodi_bands_table_read(
+int libmodi_bands_table_read_data(
      libmodi_bands_table_t *bands_table,
      const uint8_t *data,
      size_t data_size,
      uint32_t number_of_bands,
      libcerror_error_t **error )
 {
-	static char *function          = "libmodi_bands_table_read";
+	static char *function          = "libmodi_bands_table_read_data";
 	size_t data_offset             = 0;
 	uint32_t bands_table_reference = 0;
 	int bands_table_index          = 0;
@@ -272,19 +272,29 @@ int libmodi_bands_table_read(
 
 		return( -1 );
 	}
-	if( number_of_bands == 0 )
+	if( data == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid number of bands value out of bounds.",
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data.",
 		 function );
 
 		return( -1 );
 	}
-/* TODO improve check ? */
-	if( (size_t) number_of_bands > (size_t) INT_MAX )
+	if( data_size > (size_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( (size_t) number_of_bands > (size_t) ( SSIZE_MAX / 4 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -295,23 +305,39 @@ int libmodi_bands_table_read(
 
 		return( -1 );
 	}
-	bands_table->size = number_of_bands * sizeof( uint32_t );
+	if( number_of_bands == 0 )
+	{
+		return( 1 );
+	}
+	bands_table->data_size = number_of_bands * sizeof( uint32_t );
 
-	if( bands_table->size > (size_t) SSIZE_MAX )
+	if( bands_table->data_size > data_size )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid bands table size value exceeds maximum.",
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid bands table - data size value out of bounds.",
 		 function );
 
 		return( -1 );
 	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "%s: bands table data:\n",
+		 function );
+		libcnotify_print_data(
+		 data,
+		 bands_table->data_size,
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+	}
+#endif
 	bands_table->number_of_references = (int) number_of_bands;
 
 	bands_table->references = (uint32_t *) memory_allocate(
-	                                        bands_table->size );
+	                                        bands_table->data_size );
 
 	if( bands_table->references == NULL )
 	{
@@ -327,7 +353,7 @@ int libmodi_bands_table_read(
 	if( memory_set(
 	     bands_table->references,
 	     0xff,
-	     bands_table->size ) == NULL )
+	     bands_table->data_size ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -338,18 +364,6 @@ int libmodi_bands_table_read(
 
 		goto on_error;
 	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libcnotify_verbose != 0 )
-	{
-		libcnotify_printf(
-		 "%s: bands table data:\n",
-		 function );
-		libcnotify_print_data(
-		 data,
-		 bands_table->size,
-		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
-	}
-#endif
 	for( bands_table_index = 0;
 	     bands_table_index < bands_table->number_of_references;
 	     bands_table_index++ )

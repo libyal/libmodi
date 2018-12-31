@@ -2,7 +2,7 @@ AC_PREREQ( 2.59 )
 
 AC_INIT(
  [libmodi],
- [20181230],
+ [20181231],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -111,6 +111,13 @@ AX_LIBFVALUE_CHECK_ENABLE
 dnl Check if libfplist or required headers and functions are available
 AX_LIBFPLIST_CHECK_ENABLE
 
+dnl Check if zlib or required headers and functions are available
+AX_ZLIB_CHECK_ENABLE
+AX_ZLIB_CHECK_UNCOMPRESS
+
+dnl Check if libcaes or required headers and functions are available
+AX_LIBCAES_CHECK_ENABLE
+
 dnl Check if libmodi required headers and functions are available
 AX_LIBMODI_CHECK_LOCAL
 
@@ -168,7 +175,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcdirectory" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfplist" = xyes],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcdirectory" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfplist" = xyes || test "x$ac_cv_zlib" != xno || test "x$ac_cv_libcaes" = xyes || test "x$ac_cv_libcrypto" != xno],
  [AC_SUBST(
   [libmodi_spec_requires],
   [Requires:])
@@ -211,6 +218,7 @@ AC_CONFIG_FILES([libfdata/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
 AC_CONFIG_FILES([libfplist/Makefile])
+AC_CONFIG_FILES([libcaes/Makefile])
 AC_CONFIG_FILES([libmodi/Makefile])
 AC_CONFIG_FILES([pymodi/Makefile])
 AC_CONFIG_FILES([pymodi-python2/Makefile])
@@ -257,6 +265,11 @@ Building:
    libfguid support:                          $ac_cv_libfguid
    libfvalue support:                         $ac_cv_libfvalue
    libfplist support:                         $ac_cv_libfplist
+   DEFLATE compression support:               $ac_cv_uncompress
+   SHA256 support:                            $ac_cv_libhmac_sha256
+   libcaes support:                           $ac_cv_libcaes
+   AES support:                               $ac_cv_libcaes_aes
+   FUSE support:                              $ac_cv_libfuse
    FUSE support:                              $ac_cv_libfuse
 
 Features:

@@ -1,13 +1,28 @@
-libmodi is a library to access the Mac OS disk image format.
+libmodi is a library to access the Mac OS disk image formats.
 
 Project information:
 
 * Status: experimental
 * Licence: LGPLv3+
 
+Supported Mac OS image formats:
+
+* Sparse disk image
+
+Unsupported Mac OS image formats:
+
+* Sparse bundle disk image
+* ADC compressed Universal Disk Image Format (UDIF) image
+* bzip2 compressed Universal Disk Image Format (UDIF) image
+* LZFSE compressed Universal Disk Image Format (UDIF) image
+* Uncompressed Universal Disk Image Format (UDIF) image
+* zlib/DEFLATE compressed Universal Disk Image Format (UDIF) image
+* encrypted images
+
 Work in progress:
 
 * Finish library
+* Finish Python bindings
 
 For more information see:
 

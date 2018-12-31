@@ -48,10 +48,10 @@ AC_DEFUN([AX_MODITOOLS_CHECK_LOCAL],
 
   AC_HEADER_TIME
 
-  dnl Functions included in moditools/modimount.c
+  dnl Functions included in moditools/mount_file_system.c and moditools/mount_file_entry.c
   AS_IF(
     [test "x$ac_cv_enable_winapi" = xno],
-    [AC_CHECK_FUNCS([getegid geteuid time])
+    [AC_CHECK_FUNCS([clock_gettime getegid geteuid time])
   ])
 
   dnl Check if tools should be build as static executables

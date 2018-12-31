@@ -27,6 +27,7 @@
 #include <wide_string.h>
 
 #include "moditools_libcerror.h"
+#include "moditools_libcpath.h"
 #include "moditools_libmodi.h"
 #include "mount_file_entry.h"
 #include "mount_file_system.h"
@@ -346,6 +347,7 @@ int mount_handle_close(
 	static char *function    = "mount_handle_close";
 	int handle_index         = 0;
 	int number_of_handles    = 0;
+
 	if( mount_handle == NULL )
 	{
 		libcerror_error_set(
@@ -369,7 +371,7 @@ int mount_handle_close(
 		 "%s: unable to retrieve number of handles.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	for( handle_index = number_of_handles - 1;
 	     handle_index > 0;
@@ -389,8 +391,10 @@ int mount_handle_close(
 			 function,
 			 handle_index );
 
-			return( -1 );
+			goto on_error;
 		}
+/* TODO remove handle from file system */
+
 		if( libmodi_handle_close(
 		     handle,
 		     error ) != 0 )
@@ -403,7 +407,7 @@ int mount_handle_close(
 			 function,
 			 handle_index );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( libmodi_handle_free(
 		     &handle,
@@ -417,10 +421,19 @@ int mount_handle_close(
 			 function,
 			 handle_index );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( 0 );
+
+on_error:
+	if( handle != NULL )
+	{
+		libmodi_handle_free(
+		 &handle,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Retrieves a file entry for a specific path
@@ -435,6 +448,8 @@ int mount_handle_get_file_entry_by_path(
 	libmodi_handle_t *handle           = NULL;
 	const system_character_t *filename = NULL;
 	static char *function              = "mount_handle_get_file_entry_by_path";
+	size_t filename_length             = 0;
+	size_t path_index                  = 0;
 	size_t path_length                 = 0;
 	int result                         = 0;
 
@@ -472,7 +487,34 @@ int mount_handle_get_file_entry_by_path(
 		 "%s: invalid path length value out of bounds.",
 		 function );
 
-		return( -1 );
+		goto on_error;
+	}
+	if( ( path_length >= 2 )
+	 && ( path[ path_length - 1 ] == LIBCPATH_SEPARATOR ) )
+	{
+		path_length--;
+	}
+	path_index = path_length;
+
+	while( path_index > 0 )
+	{
+		if( path[ path_index ] == LIBCPATH_SEPARATOR )
+		{
+			break;
+		}
+		path_index--;
+	}
+	/* Ignore the name of the root item
+	 */
+	if( path_length == 0 )
+	{
+		filename        = _SYSTEM_STRING( "" );
+		filename_length = 0;
+	}
+	else
+	{
+		filename        = &( path[ path_index + 1 ] );
+		filename_length = path_length - ( path_index + 1 );
 	}
 	result = mount_file_system_get_handle_by_path(
 	          mount_handle->file_system,
@@ -490,22 +532,15 @@ int mount_handle_get_file_entry_by_path(
 		 "%s: unable to retrieve handle.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	else if( result != 0 )
 	{
-		if( handle == NULL )
-		{
-			filename = "";
-		}
-		else
-		{
-			filename = &( path[ 0 ] );
-		}
 		if( mount_file_entry_initialize(
 		     file_entry,
 		     mount_handle->file_system,
 		     filename,
+		     filename_length,
 		     handle,
 		     error ) != 1 )
 		{
@@ -513,12 +548,15 @@ int mount_handle_get_file_entry_by_path(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to initialize file entry for handle.",
+			 "%s: unable to initialize file entry.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 	}
 	return( result );
+
+on_error:
+	return( -1 );
 }
 

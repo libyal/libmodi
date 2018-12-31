@@ -1,7 +1,7 @@
 Name: libmodi
 Version: @VERSION@
 Release: 1
-Summary: Library to access the MacOS disk image formats
+Summary: Library to access the Mac OS disk image formats
 Group: System Environment/Libraries
 License: LGPL
 Source: %{name}-%{version}.tar.gz
@@ -11,7 +11,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: gcc @ax_libbfio_spec_build_requires@ @ax_libcdata_spec_build_requires@ @ax_libcdirectory_spec_build_requires@ @ax_libcerror_spec_build_requires@ @ax_libcfile_spec_build_requires@ @ax_libclocale_spec_build_requires@ @ax_libcnotify_spec_build_requires@ @ax_libcpath_spec_build_requires@ @ax_libcsplit_spec_build_requires@ @ax_libcthreads_spec_build_requires@ @ax_libfcache_spec_build_requires@ @ax_libfdata_spec_build_requires@ @ax_libfguid_spec_build_requires@ @ax_libfplist_spec_build_requires@ @ax_libfvalue_spec_build_requires@ @ax_libuna_spec_build_requires@
 
 %description -n libmodi
-Library to access the MacOS disk image formats
+Library to access the Mac OS disk image formats
 
 %package -n libmodi-devel
 Summary: Header files and libraries for developing applications for libmodi
@@ -42,13 +42,13 @@ BuildRequires: python3-devel
 Python 3 bindings for libmodi
 
 %package -n libmodi-tools
-Summary: Several tools for reading MacOS disk images
+Summary: Several tools for reading Mac OS disk images
 Group: Applications/System
 Requires: libmodi = %{version}-%{release} @ax_libfuse_spec_requires@
 @libmodi_spec_tools_build_requires@ @ax_libfuse_spec_build_requires@
 
 %description -n libmodi-tools
-Several tools for reading MacOS disk images
+Several tools for reading Mac OS disk images
 
 %prep
 %setup -q

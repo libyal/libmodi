@@ -25,7 +25,7 @@
 #include <common.h>
 #include <types.h>
 
-#include "libmodi_bands_table.h"
+#include "libmodi_extern.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libfcache.h"
@@ -36,7 +36,11 @@
 extern "C" {
 #endif
 
-extern const uint8_t *modi_sparse_image_signature;
+LIBMODI_EXTERN_VARIABLE \
+const uint8_t *modi_sparse_image_signature;
+
+LIBMODI_EXTERN_VARIABLE \
+const uint8_t *modi_udif_resource_file_signature;
 
 typedef struct libmodi_io_handle libmodi_io_handle_t;
 
@@ -73,12 +77,6 @@ int libmodi_io_handle_free(
 
 int libmodi_io_handle_clear(
      libmodi_io_handle_t *io_handle,
-     libcerror_error_t **error );
-
-int libmodi_io_handle_read_sparse_image_header(
-     libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error );
 
 int libmodi_io_handle_read_info_plist(
