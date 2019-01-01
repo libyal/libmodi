@@ -33,7 +33,9 @@
 #include "modi_test_functions.h"
 #include "modi_test_getopt.h"
 #include "modi_test_libbfio.h"
+#include "modi_test_libcdirectory.h"
 #include "modi_test_libcerror.h"
+#include "modi_test_libcpath.h"
 #include "modi_test_libmodi.h"
 #include "modi_test_macros.h"
 #include "modi_test_memory.h"
@@ -70,10 +72,12 @@ int libmodi_handle_open_file_io_handle(
  */
 int modi_test_handle_open_source(
      libmodi_handle_t **handle,
+     const system_character_t *source,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
 	static char *function = "modi_test_handle_open_source";
+	size_t string_length  = 0;
 	int result            = 0;
 
 	if( handle == NULL )
@@ -124,6 +128,54 @@ int modi_test_handle_open_source(
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_OPEN_FAILED,
 		 "%s: unable to open handle.",
+		 function );
+
+		goto on_error;
+	}
+	string_length = system_string_length(
+	                 source );
+
+	while( string_length > 0 )
+	{
+		if( source[ string_length - 1 ] == '/' )
+		{
+			break;
+		}
+		string_length--;
+	}
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	result = libmodi_handle_set_band_data_files_path(
+	          *handle,
+	          source,
+	          string_length,
+	          error );
+#else
+	result = libmodi_handle_set_band_data_files_path(
+	          *handle,
+	          source,
+	          string_length,
+	          error );
+#endif
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set band data files path.",
+		 function );
+
+		goto on_error;
+	}
+	if( libmodi_handle_open_band_data_files(
+	     *handle,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_OPEN_FAILED,
+		 "%s: unable to open band data files.",
 		 function );
 
 		goto on_error;
@@ -783,11 +835,15 @@ on_error:
 int modi_test_handle_open_file_io_handle(
      const system_character_t *source )
 {
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-	libmodi_handle_t *handle         = NULL;
-	size_t string_length             = 0;
-	int result                       = 0;
+	libbfio_handle_t *file_io_handle     = NULL;
+	libcdirectory_directory_t *directory = NULL;
+	libcerror_error_t *error             = NULL;
+	libmodi_handle_t *handle             = NULL;
+	system_character_t *info_plist_path  = NULL;
+	size_t info_plist_path_size          = 0;
+	size_t string_length                 = 0;
+	int is_directory                     = 0;
+	int result                           = 0;
 
 	/* Initialize test
 	 */
@@ -808,22 +864,120 @@ int modi_test_handle_open_file_io_handle(
          "error",
          error );
 
+	result = libcdirectory_directory_initialize(
+	          &directory,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+        MODI_TEST_ASSERT_IS_NOT_NULL(
+         "directory",
+         directory );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+	is_directory = libcdirectory_directory_open_wide(
+	                directory,
+	                source,
+	                NULL );
+#else
+	is_directory = libcdirectory_directory_open(
+	                directory,
+	                source,
+	                NULL );
+#endif
+
+	result = libcdirectory_directory_free(
+	          &directory,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+         "directory",
+         directory );
+
+        MODI_TEST_ASSERT_IS_NULL(
+         "error",
+         error );
+
 	string_length = system_string_length(
 	                 source );
 
+	if( is_directory == 1 )
+	{
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libbfio_file_set_name_wide(
-	          file_io_handle,
-	          source,
-	          string_length,
-	          &error );
+		result = libcpath_path_join_wide(
+		          &info_plist_path,
+		          &info_plist_path_size,
+		          source,
+		          string_length,
+		          L"Info.plist",
+		          10,
+		          &error );
 #else
-	result = libbfio_file_set_name(
-	          file_io_handle,
-	          source,
-	          string_length,
-	          &error );
+		result = libcpath_path_join(
+		          &info_plist_path,
+		          &info_plist_path_size,
+		          source,
+		          string_length,
+		          "Info.plist",
+		          10,
+		          &error );
 #endif
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        MODI_TEST_ASSERT_IS_NOT_NULL(
+	         "info_plist_path",
+	         info_plist_path );
+
+	        MODI_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libbfio_file_set_name_wide(
+		          file_io_handle,
+		          info_plist_path,
+		          info_plist_path_size - 1,
+		          &error );
+#else
+		result = libbfio_file_set_name(
+		          file_io_handle,
+		          info_plist_path,
+		          info_plist_path_size - 1,
+		          &error );
+#endif
+	}
+	else
+	{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		result = libbfio_file_set_name_wide(
+		          file_io_handle,
+		          source,
+		          string_length,
+		          &error );
+#else
+		result = libbfio_file_set_name(
+		          file_io_handle,
+		          source,
+		          string_length,
+		          &error );
+#endif
+	}
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -833,6 +987,13 @@ int modi_test_handle_open_file_io_handle(
          "error",
          error );
 
+	if( info_plist_path != NULL )
+	{
+		memory_free(
+		 info_plist_path );
+
+		info_plist_path = NULL;
+	} 
 	result = libmodi_handle_initialize(
 	          &handle,
 	          &error );
@@ -997,6 +1158,17 @@ on_error:
 	{
 		libbfio_handle_free(
 		 &file_io_handle,
+		 NULL );
+	}
+	if( info_plist_path != NULL )
+	{
+		memory_free(
+		 info_plist_path );
+	}
+	if( directory != NULL )
+	{
+		libcdirectory_directory_free(
+		 &directory,
 		 NULL );
 	}
 	return( 0 );
@@ -1950,13 +2122,17 @@ int main(
      char * const argv[] )
 #endif
 {
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-	libmodi_handle_t *handle         = NULL;
-	system_character_t *source       = NULL;
-	system_integer_t option          = 0;
-	size_t string_length             = 0;
-	int result                       = 0;
+	libbfio_handle_t *file_io_handle     = NULL;
+	libcdirectory_directory_t *directory = NULL;
+	libcerror_error_t *error             = NULL;
+	libmodi_handle_t *handle             = NULL;
+	system_character_t *info_plist_path  = NULL;
+	system_character_t *source           = NULL;
+	system_integer_t option              = 0;
+	size_t info_plist_path_size          = 0;
+	size_t string_length                 = 0;
+	int is_directory                     = 0;
+	int result                           = 0;
 
 	while( ( option = modi_test_getopt(
 	                   argc,
@@ -1998,6 +2174,52 @@ int main(
 #if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
 	if( source != NULL )
 	{
+		result = libcdirectory_directory_initialize(
+		          &directory,
+		          &error );
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+	        MODI_TEST_ASSERT_IS_NOT_NULL(
+	         "directory",
+	         directory );
+
+	        MODI_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+		is_directory = libcdirectory_directory_open_wide(
+		                directory,
+		                source,
+		                NULL );
+#else
+		is_directory = libcdirectory_directory_open(
+		                directory,
+		                source,
+		                NULL );
+#endif
+
+		result = libcdirectory_directory_free(
+		          &directory,
+		          &error );
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		MODI_TEST_ASSERT_IS_NULL(
+	         "directory",
+	         directory );
+
+	        MODI_TEST_ASSERT_IS_NULL(
+	         "error",
+	         error );
+
 		result = libbfio_file_initialize(
 		          &file_io_handle,
 		          &error );
@@ -2018,19 +2240,71 @@ int main(
 		string_length = system_string_length(
 		                 source );
 
+		if( is_directory == 1 )
+		{
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libbfio_file_set_name_wide(
-		          file_io_handle,
-		          source,
-		          string_length,
-		          &error );
+			result = libcpath_path_join_wide(
+			          &info_plist_path,
+			          &info_plist_path_size,
+			          source,
+			          string_length,
+			          L"Info.plist",
+			          10,
+			          &error );
 #else
-		result = libbfio_file_set_name(
-		          file_io_handle,
-		          source,
-		          string_length,
-		          &error );
+			result = libcpath_path_join(
+			          &info_plist_path,
+			          &info_plist_path_size,
+			          source,
+			          string_length,
+			          "Info.plist",
+			          10,
+			          &error );
 #endif
+
+			MODI_TEST_ASSERT_EQUAL_INT(
+			 "result",
+			 result,
+			 1 );
+
+		        MODI_TEST_ASSERT_IS_NOT_NULL(
+		         "info_plist_path",
+		         info_plist_path );
+
+		        MODI_TEST_ASSERT_IS_NULL(
+		         "error",
+		         error );
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libbfio_file_set_name_wide(
+			          file_io_handle,
+			          info_plist_path,
+			          info_plist_path_size - 1,
+			          &error );
+#else
+			result = libbfio_file_set_name(
+			          file_io_handle,
+			          info_plist_path,
+			          info_plist_path_size - 1,
+			          &error );
+#endif
+		}
+		else
+		{
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+			result = libbfio_file_set_name_wide(
+			          file_io_handle,
+			          source,
+			          string_length,
+			          &error );
+#else
+			result = libbfio_file_set_name(
+			          file_io_handle,
+			          source,
+			          string_length,
+			          &error );
+#endif
+		}
 		MODI_TEST_ASSERT_EQUAL_INT(
 		 "result",
 		 result,
@@ -2040,6 +2314,13 @@ int main(
 	         "error",
 	         error );
 
+		if( info_plist_path != NULL )
+		{
+			memory_free(
+			 info_plist_path );
+
+			info_plist_path = NULL;
+		} 
 		result = libmodi_check_file_signature_file_io_handle(
 		          file_io_handle,
 		          &error );
@@ -2087,6 +2368,7 @@ int main(
 		 */
 		result = modi_test_handle_open_source(
 		          &handle,
+		          source,
 		          file_io_handle,
 		          &error );
 
@@ -2225,6 +2507,17 @@ on_error:
 	{
 		libbfio_handle_free(
 		 &file_io_handle,
+		 NULL );
+	}
+	if( info_plist_path != NULL )
+	{
+		memory_free(
+		 info_plist_path );
+	}
+	if( directory != NULL )
+	{
+		libcdirectory_directory_free(
+		 &directory,
 		 NULL );
 	}
 	return( EXIT_FAILURE );

@@ -64,7 +64,7 @@ int libmodi_data_block_read_file_io_handle(
 
 int libmodi_io_handle_read_data_block(
      libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
+     intptr_t *file_io_handle,
      libfdata_vector_t *vector,
      libfdata_cache_t *cache,
      int element_index,

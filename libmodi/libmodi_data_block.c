@@ -25,6 +25,7 @@
 #include <types.h>
 
 #include "libmodi_data_block.h"
+#include "libmodi_definitions.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
@@ -274,7 +275,7 @@ int libmodi_data_block_read_file_io_handle(
  */
 int libmodi_io_handle_read_data_block(
      libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
+     intptr_t *file_io_handle,
      libfdata_vector_t *vector,
      libfdata_cache_t *cache,
      int element_index,
@@ -285,6 +286,7 @@ int libmodi_io_handle_read_data_block(
      uint8_t read_flags LIBMODI_ATTRIBUTE_UNUSED,
      libcerror_error_t **error )
 {
+	libbfio_handle_t *bfio_handle    = NULL;
 	libmodi_data_block_t *data_block = NULL;
 	static char *function            = "libmodi_io_handle_read_data_block";
 
@@ -301,8 +303,8 @@ int libmodi_io_handle_read_data_block(
 
 		return( -1 );
 	}
-/* TODO remove restriction for sparse bundle */
-	if( element_data_file_index != 0 )
+	if( ( io_handle->image_type != LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	 && ( element_data_file_index != 0 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -357,9 +359,32 @@ int libmodi_io_handle_read_data_block(
 	}
 	else
 	{
+		if( io_handle->image_type != LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+		{
+			bfio_handle = (libbfio_handle_t *) file_io_handle;
+		}
+		else
+		{
+			if( libbfio_pool_get_handle(
+			     (libbfio_pool_t *) file_io_handle,
+			     element_data_file_index,
+			     &bfio_handle,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve handle: %d from file IO pool.",
+				 function,
+				 element_data_file_index );
+
+				return( -1 );
+			}
+		}
 		if( libmodi_data_block_read_file_io_handle(
 		     data_block,
-		     file_io_handle,
+		     bfio_handle,
 		     element_data_offset,
 		     error ) != 1 )
 		{

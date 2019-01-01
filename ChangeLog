@@ -1,11 +1,14 @@
 TODO:
-* improve check signature to detect sparse bundle
-* add compressed dmg support
-  - add support for resource fork
+* libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
 * sparse bundle
   - add open band files function, NULL is non-existing band file?
   - use libvmdk like approach
-* add encrypted image support
+* fix tests
+  - call libmodi_handle_open_band_data_files in handle test
+* add compressed dmg support
+  - add support for resource fork
+* add support for encrypted disk images
+* improve check signature to detect sparse bundle
 
 20161030
 * see `git log' for more recent change log

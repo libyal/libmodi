@@ -210,6 +210,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\modi_test_libcdirectory.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\modi_test_libcerror.h"
 				>
 			</File>
@@ -219,6 +223,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_libcnotify.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_libcpath.h"
 				>
 			</File>
 			<File

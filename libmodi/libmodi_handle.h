@@ -116,18 +116,18 @@ int libmodi_handle_signal_abort(
      libmodi_handle_t *handle,
      libcerror_error_t **error );
 
-int libmodi_handle_set_bands_directory_path(
+int libmodi_internal_handle_set_bands_directory_path(
      libmodi_internal_handle_t *internal_handle,
-     const char *filename,
-     size_t filename_length,
+     const char *path,
+     size_t path_length,
      libcerror_error_t **error );
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-int libmodi_handle_set_bands_directory_path_wide(
+int libmodi_internal_handle_set_bands_directory_path_wide(
      libmodi_internal_handle_t *internal_handle,
-     const wchar_t *filename,
-     size_t filename_length,
+     const wchar_t *path,
+     size_t path_length,
      libcerror_error_t **error );
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
@@ -168,7 +168,12 @@ int libmodi_handle_open_band_data_files_file_io_pool(
      libbfio_pool_t *file_io_pool,
      libcerror_error_t **error );
 
-int libmodi_handle_open_band_data_file(
+int libmodi_internal_handle_open_band_data_files_file_io_pool(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_pool_t *file_io_pool,
+     libcerror_error_t **error );
+
+int libmodi_internal_handle_open_band_data_file(
      libmodi_internal_handle_t *internal_handle,
      libbfio_pool_t *file_io_pool,
      int band_index,
@@ -176,7 +181,7 @@ int libmodi_handle_open_band_data_file(
 
 #if defined( HAVE_WIDE_CHARACTER_TYPE )
 
-int libmodi_handle_open_band_data_file_wide(
+int libmodi_internal_handle_open_band_data_file_wide(
      libmodi_internal_handle_t *internal_handle,
      libbfio_pool_t *file_io_pool,
      int band_index,
@@ -189,7 +194,7 @@ int libmodi_handle_close(
      libmodi_handle_t *handle,
      libcerror_error_t **error );
 
-int libmodi_handle_open_read(
+int libmodi_internal_handle_open_read(
      libmodi_internal_handle_t *internal_handle,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
@@ -266,6 +271,24 @@ int libmodi_handle_set_maximum_number_of_open_handles(
      libmodi_handle_t *handle,
      int maximum_number_of_open_handles,
      libcerror_error_t **error );
+
+LIBMODI_EXTERN \
+int libmodi_handle_set_band_data_files_path(
+     libmodi_handle_t *handle,
+     const char *path,
+     size_t path_length,
+     libcerror_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+LIBMODI_EXTERN \
+int libmodi_handle_set_band_data_files_path_wide(
+     libmodi_handle_t *handle,
+     const wchar_t *path,
+     size_t path_length,
+     libcerror_error_t **error );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 LIBMODI_EXTERN \
 int libmodi_handle_get_media_size(

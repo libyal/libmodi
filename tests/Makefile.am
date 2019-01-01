@@ -75,9 +75,11 @@ modi_test_handle_SOURCES = \
 	modi_test_getopt.c modi_test_getopt.h \
 	modi_test_handle.c \
 	modi_test_libbfio.h \
+	modi_test_libcdirectory.h \
 	modi_test_libcerror.h \
 	modi_test_libclocale.h \
 	modi_test_libcnotify.h \
+	modi_test_libcpath.h \
 	modi_test_libmodi.h \
 	modi_test_libuna.h \
 	modi_test_macros.h \
@@ -88,6 +90,7 @@ modi_test_handle_LDADD = \
 	@LIBBFIO_LIBADD@ \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
+	@LIBCDIRECTORY_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \

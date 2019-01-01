@@ -102,7 +102,7 @@ run_test_with_input()
 				fi
 			done
 		else
-			for INPUT_FILE in `ls -1 ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB}`;
+			for INPUT_FILE in `ls -1d ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB}`;
 			do
 				if test "${OSTYPE}" = "msys";
 				then

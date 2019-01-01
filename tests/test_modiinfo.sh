@@ -100,7 +100,7 @@ do
 			fi
 		done
 	else
-		for INPUT_FILE in `ls -1 ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB}`;
+		for INPUT_FILE in `ls -1d ${TEST_SET_INPUT_DIRECTORY}/${INPUT_GLOB}`;
 		do
 			run_test_on_input_file_with_options "${TEST_SET_DIRECTORY}" "modiinfo" "with_stdout_reference" "${OPTION_SETS}" "${TEST_EXECUTABLE}" "${INPUT_FILE}" "${OPTIONS[@]}";
 			RESULT=$?;

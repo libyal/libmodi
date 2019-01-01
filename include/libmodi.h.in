@@ -375,6 +375,30 @@ int libmodi_handle_set_maximum_number_of_open_handles(
      int maximum_number_of_open_handles,
      libmodi_error_t **error );
 
+/* Sets the path to the band data files
+ * Returns 1 if successful or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_handle_set_band_data_files_path(
+     libmodi_handle_t *handle,
+     const char *path,
+     size_t path_length,
+     libmodi_error_t **error );
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Sets the path to the band data files
+ * Returns 1 if successful or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_handle_set_band_data_files_path_wide(
+     libmodi_handle_t *handle,
+     const wchar_t *path,
+     size_t path_length,
+     libmodi_error_t **error );
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
+
 /* -------------------------------------------------------------------------
  * Meta data functions
  * ------------------------------------------------------------------------- */

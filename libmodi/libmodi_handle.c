@@ -291,17 +291,15 @@ int libmodi_handle_signal_abort(
 /* Sets the bands directory path
  * Returns 1 if successful or -1 on error
  */
-int libmodi_handle_set_bands_directory_path(
+int libmodi_internal_handle_set_bands_directory_path(
      libmodi_internal_handle_t *internal_handle,
-     const char *filename,
-     size_t filename_length,
+     const char *path,
+     size_t path_length,
      libcerror_error_t **error )
 {
 	char *bands_directory_path       = NULL;
-	char *basename_end               = NULL;
-	static char *function            = "libmodi_handle_set_bands_directory_path";
+	static char *function            = "libmodi_internal_handle_set_bands_directory_path";
 	size_t bands_directory_path_size = 0;
-	size_t basename_length           = 0;
 
 	if( internal_handle == NULL )
 	{
@@ -314,33 +312,13 @@ int libmodi_handle_set_bands_directory_path(
 
 		return( -1 );
 	}
-	if( filename == NULL )
+	if( path == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		goto on_error;
-	}
-	basename_end = narrow_string_search_character_reverse(
-	                filename,
-	                (int) LIBCPATH_SEPARATOR,
-	                filename_length + 1 );
-
-	if( basename_end != NULL )
-	{
-		basename_length = (size_t) ( basename_end - filename );
-	}
-	if( basename_length == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
+		 "%s: invalid path.",
 		 function );
 
 		goto on_error;
@@ -356,8 +334,8 @@ int libmodi_handle_set_bands_directory_path(
 	if( libcpath_path_join(
 	     &bands_directory_path,
 	     &bands_directory_path_size,
-	     filename,
-	     basename_length,
+	     path,
+	     path_length,
 	     "bands",
 	     5,
 	     error ) != 1 )
@@ -444,17 +422,15 @@ on_error:
 /* Sets the bands directory path
  * Returns 1 if successful or -1 on error
  */
-int libmodi_handle_set_bands_directory_path_wide(
+int libmodi_internal_handle_set_bands_directory_path_wide(
      libmodi_internal_handle_t *internal_handle,
-     const wchar_t *filename,
-     size_t filename_length,
+     const wchar_t *path,
+     size_t path_length,
      libcerror_error_t **error )
 {
 	wchar_t *bands_directory_path    = NULL;
-	wchar_t *basename_end            = NULL;
-	static char *function            = "libmodi_handle_set_bands_directory_path_wide";
+	static char *function            = "libmodi_internal_handle_set_bands_directory_path_wide";
 	size_t bands_directory_path_size = 0;
-	size_t basename_length           = 0;
 
 	if( internal_handle == NULL )
 	{
@@ -467,34 +443,13 @@ int libmodi_handle_set_bands_directory_path_wide(
 
 		return( -1 );
 	}
-	if( filename == NULL )
+	if( path == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
-		 function );
-
-		goto on_error;
-	}
-/* TODO does this work for UTF-16 ? */
-	basename_end = wide_string_search_character_reverse(
-	                filename,
-	                (int) LIBCPATH_SEPARATOR,
-	                filename_length + 1 );
-
-	if( basename_end != NULL )
-	{
-		basename_length = (size_t) ( basename_end - filename );
-	}
-	if( basename_length == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid filename.",
+		 "%s: invalid path.",
 		 function );
 
 		goto on_error;
@@ -510,8 +465,8 @@ int libmodi_handle_set_bands_directory_path_wide(
 	if( libcpath_path_join_wide(
 	     &bands_directory_path,
 	     &bands_directory_path_size,
-	     filename,
-	     basename_length,
+	     path,
+	     path_length,
 	     L"bands",
 	     5,
 	     error ) != 1 )
@@ -607,8 +562,10 @@ int libmodi_handle_open(
 	libbfio_handle_t *file_io_handle           = NULL;
 	libcdirectory_directory_t *directory       = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
-	char *info_plist_path                      = NULL;
+	char *basename_end                         = NULL;
 	static char *function                      = "libmodi_handle_open";
+	char *info_plist_path                      = NULL;
+	size_t basename_length                     = 0;
 	size_t filename_length                     = 0;
 	size_t info_plist_path_size                = 0;
 	int is_directory                           = 0;
@@ -757,7 +714,7 @@ int libmodi_handle_open(
 		if( libbfio_file_set_name(
 		     file_io_handle,
 		     info_plist_path,
-		     info_plist_path_size,
+		     info_plist_path_size - 1,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -780,7 +737,7 @@ int libmodi_handle_open(
 		if( libbfio_file_set_name(
 		     file_io_handle,
 		     filename,
-		     filename_length + 1,
+		     filename_length,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -829,20 +786,32 @@ int libmodi_handle_open(
 		filename_length = narrow_string_length(
 		                   filename );
 
-		if( libmodi_handle_set_bands_directory_path(
-		     internal_handle,
-		     filename,
-		     filename_length,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set bands directory path.",
-			 function );
+		basename_end = narrow_string_search_character_reverse(
+		                filename,
+		                (int) LIBCPATH_SEPARATOR,
+		                filename_length + 1 );
 
-			goto on_error;
+		if( basename_end != NULL )
+		{
+			basename_length = (size_t) ( basename_end - filename );
+		}
+		if( basename_length > 0 )
+		{
+			if( libmodi_internal_handle_set_bands_directory_path(
+			     internal_handle,
+			     filename,
+			     basename_length,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set bands directory path.",
+				 function );
+
+				goto on_error;
+			}
 		}
 	}
 	internal_handle->file_io_handle_created_in_library = 1;
@@ -906,8 +875,10 @@ int libmodi_handle_open_wide(
 	libbfio_handle_t *file_io_handle           = NULL;
 	libcdirectory_directory_t *directory       = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
+	wchar_t *basename_end                      = NULL;
 	wchar_t *info_plist_path                   = NULL;
 	static char *function                      = "libmodi_handle_open_wide";
+	size_t basename_length                     = 0;
 	size_t filename_length                     = 0;
 	size_t info_plist_path_size                = 0;
 	int is_directory                           = 0;
@@ -1056,7 +1027,7 @@ int libmodi_handle_open_wide(
 		if( libbfio_file_set_name_wide(
 		     file_io_handle,
 		     info_plist_path,
-		     info_plist_path_size,
+		     info_plist_path_size - 1,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1077,7 +1048,7 @@ int libmodi_handle_open_wide(
 		if( libbfio_file_set_name_wide(
 		     file_io_handle,
 		     filename,
-		     filename_length + 1,
+		     filename_length,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1126,20 +1097,33 @@ int libmodi_handle_open_wide(
 		filename_length = wide_string_length(
 		                   filename );
 
-		if( libmodi_handle_set_bands_directory_path_wide(
-		     internal_handle,
-		     filename,
-		     filename_length,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-			 "%s: unable to set bands directory path.",
-			 function );
+/* TODO does this work for UTF-16 ? */
+		basename_end = wide_string_search_character_reverse(
+		                filename,
+		                (int) LIBCPATH_SEPARATOR,
+		                filename_length + 1 );
 
-			goto on_error;
+		if( basename_end != NULL )
+		{
+			basename_length = (size_t) ( basename_end - filename );
+		}
+		if( basename_length > 0 )
+		{
+			if( libmodi_internal_handle_set_bands_directory_path_wide(
+			     internal_handle,
+			     filename,
+			     basename_length,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+				 "%s: unable to set bands directory path.",
+				 function );
+
+				goto on_error;
+			}
 		}
 	}
 	internal_handle->file_io_handle_created_in_library = 1;
@@ -1174,6 +1158,11 @@ on_error:
 		libbfio_handle_free(
 		 &file_io_handle,
 		 NULL );
+	}
+	if( info_plist_path != NULL )
+	{
+		memory_free(
+		 info_plist_path );
 	}
 	if( directory != NULL )
 	{
@@ -1285,7 +1274,7 @@ int libmodi_handle_open_file_io_handle(
 		}
 		file_io_handle_opened_in_library = 1;
 	}
-	if( libmodi_handle_open_read(
+	if( libmodi_internal_handle_open_read(
 	     internal_handle,
 	     file_io_handle,
 	     error ) != 1 )
@@ -1354,16 +1343,12 @@ int libmodi_handle_open_band_data_files(
      libmodi_handle_t *handle,
      libcerror_error_t **error )
 {
-        libbfio_pool_t *file_io_pool                 = NULL;
-	libmodi_internal_handle_t *internal_handle   = NULL;
-	system_character_t *band_data_file_location  = NULL;
-	system_character_t *band_data_filename_start = NULL;
-	static char *function                        = "libmodi_handle_open_band_data_files";
-	size_t band_data_file_location_size          = 0;
-	size_t band_data_filename_size               = 0;
-	uint64_t number_of_bands                     = 0;
-	int band_index                               = 0;
-	int result                                   = 0;
+        libbfio_pool_t *file_io_pool               = NULL;
+	libmodi_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libmodi_handle_open_band_data_files";
+	uint64_t number_of_bands                   = 0;
+	int band_index                             = 0;
+	int result                                 = 0;
 
 	if( handle == NULL )
 	{
@@ -1412,7 +1397,8 @@ int libmodi_handle_open_band_data_files(
 
 		return( -1 );
 	}
-	if( internal_handle->io_handle->band_data_size == 0 )
+	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	 && ( internal_handle->io_handle->band_data_size == 0 ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -1421,7 +1407,7 @@ int libmodi_handle_open_band_data_files(
 		 "%s: invalid handle - invalid IO handle - missing band data size.",
 		 function );
 
-		goto on_error;
+		return( -1 );
 	}
 	if( internal_handle->band_data_file_io_pool != NULL )
 	{
@@ -1433,10 +1419,6 @@ int libmodi_handle_open_band_data_files(
 		 function );
 
 		return( -1 );
-	}
-	if( internal_handle->io_handle->image_type != LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
-	{
-		return( 1 );
 	}
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
@@ -1453,73 +1435,87 @@ int libmodi_handle_open_band_data_files(
 		return( -1 );
 	}
 #endif
-	number_of_bands = internal_handle->io_handle->media_size / internal_handle->io_handle->band_data_size;
+	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		number_of_bands = internal_handle->io_handle->media_size / internal_handle->io_handle->band_data_size;
 
-	if( ( internal_handle->io_handle->media_size % internal_handle->io_handle->band_data_size ) != 0 )
-	{
-		number_of_bands++;
-	}
-	if( ( number_of_bands == 0 )
-	 || ( number_of_bands > (uint64_t) INT_MAX ) )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid number of bands value out of bounds.",
-		 function );
+		if( ( internal_handle->io_handle->media_size % internal_handle->io_handle->band_data_size ) != 0 )
+		{
+			number_of_bands++;
+		}
+		if( ( number_of_bands == 0 )
+		 || ( number_of_bands > (uint64_t) INT_MAX ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid number of bands value out of bounds.",
+			 function );
 
-		return( -1 );
-	}
-	if( libbfio_pool_initialize(
-	     &file_io_pool,
-	     number_of_bands,
-	     internal_handle->maximum_number_of_open_handles,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file IO pool.",
-		 function );
+			goto on_error;
+		}
+		if( libbfio_pool_initialize(
+		     &file_io_pool,
+		     number_of_bands,
+		     internal_handle->maximum_number_of_open_handles,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create file IO pool.",
+			 function );
 
-		goto on_error;
-	}
-	for( band_index = 0;
-	     band_index < (int) number_of_bands;
-	     band_index++ )
-	{
+			goto on_error;
+		}
+		for( band_index = 0;
+		     band_index < (int) number_of_bands;
+		     band_index++ )
+		{
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-		result = libmodi_handle_open_band_data_file_wide(
-			  internal_handle,
-			  file_io_pool,
-			  band_index,
-			  error );
+			result = libmodi_internal_handle_open_band_data_file_wide(
+				  internal_handle,
+				  file_io_pool,
+				  band_index,
+				  error );
 #else
-		result = libmodi_handle_open_band_data_file(
-			  internal_handle,
-			  file_io_pool,
-			  band_index,
-			  error );
+			result = libmodi_internal_handle_open_band_data_file(
+				  internal_handle,
+				  file_io_pool,
+				  band_index,
+				  error );
 #endif
-		if( result != 1 )
+			if( result != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_OPEN_FAILED,
+				 "%s: unable to open band data file: %x.",
+				 function,
+				 band_index );
+
+				goto on_error;
+			}
+		}
+		if( libmodi_internal_handle_open_band_data_files_file_io_pool(
+		     internal_handle,
+		     file_io_pool,
+		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_OPEN_FAILED,
-			 "%s: unable to open band data file: %x.",
-			 function,
-			 band_index );
+			 "%s: unable to open band data files from file IO pool.",
+			 function );
 
 			goto on_error;
 		}
+		internal_handle->band_data_file_io_pool_created_in_library = 1;
 	}
-/* TODO fill bands table */
-	internal_handle->band_data_file_io_pool                    = file_io_pool;
-	internal_handle->band_data_file_io_pool_created_in_library = 1;
-
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_handle->read_write_lock,
@@ -1546,12 +1542,6 @@ on_error:
 		libbfio_pool_free(
 		 &file_io_pool,
 		 NULL );
-	}
-	if( ( band_data_file_location != NULL )
-	 && ( band_data_file_location != band_data_filename_start ) )
-	{
-		memory_free(
-		 band_data_file_location );
 	}
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	libcthreads_read_write_lock_release_for_write(
@@ -1632,10 +1622,6 @@ int libmodi_handle_open_band_data_files_file_io_pool(
 
 		return( -1 );
 	}
-	if( internal_handle->io_handle->image_type != LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
-	{
-		return( 1 );
-	}
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_grab_for_write(
 	     internal_handle->read_write_lock,
@@ -1651,10 +1637,23 @@ int libmodi_handle_open_band_data_files_file_io_pool(
 		return( -1 );
 	}
 #endif
-/* TODO fill bands table */
+	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		if( libmodi_internal_handle_open_band_data_files_file_io_pool(
+		     internal_handle,
+		     file_io_pool,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open band data files from file IO pool.",
+			 function );
 
-	internal_handle->band_data_file_io_pool = file_io_pool;
-
+			goto on_error;
+		}
+	}
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_handle->read_write_lock,
@@ -1681,10 +1680,165 @@ on_error:
 	return( -1 );
 }
 
+/* Opens the band data files using a Basic File IO (bfio) pool
+ * This function assumes the band data files are in order and
+ * non-existing band data files are set to NULL
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_internal_handle_open_band_data_files_file_io_pool(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_pool_t *file_io_pool,
+     libcerror_error_t **error )
+{
+	libbfio_handle_t *file_io_handle = NULL;
+	static char *function            = "libmodi_internal_handle_open_band_data_files_file_io_pool";
+	size64_t file_size               = 0;
+	uint32_t band_data_range_flags   = 0;
+	int file_io_handle_index         = 0;
+	int number_of_file_io_handles    = 0;
+	int segment_index                = 0;
+
+	if( internal_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->band_data_file_io_pool != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid handle - band data file IO pool already exists.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->io_handle->band_data_size == 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - invalid IO handle - missing band data size.",
+		 function );
+
+		return( -1 );
+	}
+	if( libbfio_pool_get_number_of_handles(
+	     file_io_pool,
+	     &number_of_file_io_handles,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of handles in file IO pool.",
+		 function );
+
+		return( -1 );
+	}
+	for( file_io_handle_index = 0;
+	     file_io_handle_index < number_of_file_io_handles;
+	     file_io_handle_index++ )
+	{
+		if( libbfio_pool_get_handle(
+		     file_io_pool,
+		     file_io_handle_index,
+		     &file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve handle: %d from file IO pool.",
+			 function,
+			 file_io_handle_index );
+
+			return( -1 );
+		}
+		if( file_io_handle == NULL )
+		{
+			band_data_range_flags = LIBFDATA_RANGE_FLAG_IS_SPARSE;
+		}
+		else
+		{
+			if( libbfio_handle_get_size(
+			     file_io_handle,
+			     &file_size,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve file size.",
+				 function );
+
+				return( -1 );
+			}
+			if( file_size != internal_handle->io_handle->band_data_size )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+				 "%s: invalid band data file: %d - file size does not match band data size.",
+				 function,
+				 file_io_handle_index );
+
+				return( -1 );
+			}
+			band_data_range_flags = 0;
+		}
+		if( libfdata_vector_append_segment(
+		     internal_handle->bands_vector,
+		     &segment_index,
+		     file_io_handle_index,
+		     0,
+		     internal_handle->io_handle->band_data_size,
+		     band_data_range_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append band data file: %d as segment to bands vector.",
+			 function,
+			 file_io_handle_index );
+
+			return( -1 );
+		}
+	}
+	internal_handle->band_data_file_io_pool = file_io_pool;
+
+	return( 1 );
+}
+
 /* Opens a specific band data file
  * Returns 1 if successful or -1 on error
  */
-int libmodi_handle_open_band_data_file(
+int libmodi_internal_handle_open_band_data_file(
      libmodi_internal_handle_t *internal_handle,
      libbfio_pool_t *file_io_pool,
      int band_index,
@@ -1694,7 +1848,7 @@ int libmodi_handle_open_band_data_file(
 
 	libbfio_handle_t *file_io_handle = NULL;
 	char *bands_file_path            = NULL;
-	static char *function            = "libmodi_handle_open_band_data_file";
+	static char *function            = "libmodi_internal_handle_open_band_data_file";
 	size_t bands_file_path_size      = 0;
 	size_t filename_length           = 0;
 	int bfio_access_flags            = 0;
@@ -1862,7 +2016,7 @@ on_error:
 /* Opens a specific band data file
  * Returns 1 if successful or -1 on error
  */
-int libmodi_handle_open_band_data_file_wide(
+int libmodi_internal_handle_open_band_data_file_wide(
      libmodi_internal_handle_t *internal_handle,
      libbfio_pool_t *file_io_pool,
      int band_index,
@@ -1872,7 +2026,7 @@ int libmodi_handle_open_band_data_file_wide(
 
 	libbfio_handle_t *file_io_handle = NULL;
 	wchar_t *bands_file_path         = NULL;
-	static char *function            = "libmodi_handle_open_band_data_file_wide";
+	static char *function            = "libmodi_internal_handle_open_band_data_file_wide";
 	size_t bands_file_path_size      = 0;
 	size_t filename_length           = 0;
 	int bfio_access_flags            = 0;
@@ -2205,7 +2359,7 @@ int libmodi_handle_close(
 /* Opens a handle for reading
  * Returns 1 if successful or -1 on error
  */
-int libmodi_handle_open_read(
+int libmodi_internal_handle_open_read(
      libmodi_internal_handle_t *internal_handle,
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
@@ -2214,7 +2368,7 @@ int libmodi_handle_open_read(
 	libmodi_sparse_image_header_t *sparse_image_header         = NULL;
 	libmodi_udif_resource_file_t *udif_resource_file           = NULL;
 	libmodi_udif_xml_plist_t *udif_xml_plist                   = NULL;
-	static char *function                                      = "libmodi_handle_open_read";
+	static char *function                                      = "libmodi_internal_handle_open_read";
 	size64_t band_data_size                                    = 0;
 	size64_t file_size                                         = 0;
 	off64_t band_data_offset                                   = 0;
@@ -3666,6 +3820,230 @@ int libmodi_handle_set_maximum_number_of_open_handles(
 #endif
 	return( result );
 }
+
+/* Sets the path to the band data files
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_handle_set_band_data_files_path(
+     libmodi_handle_t *handle,
+     const char *path,
+     size_t path_length,
+     libcerror_error_t **error )
+{
+	libmodi_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libmodi_handle_set_band_data_files_path";
+	int result                                 = 1;
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libmodi_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( path == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid path.",
+		 function );
+
+		return( -1 );
+	}
+	if( path_length > (size_t) ( SSIZE_MAX - 1 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid path length value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		if( libmodi_internal_handle_set_bands_directory_path(
+		     internal_handle,
+		     path,
+		     path_length,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set bands directory path.",
+			 function );
+
+			result = -1;
+		}
+	}
+#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( result );
+}
+
+#if defined( HAVE_WIDE_CHARACTER_TYPE )
+
+/* Sets the path to the band data files
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_handle_set_band_data_files_path_wide(
+     libmodi_handle_t *handle,
+     const wchar_t *path,
+     size_t path_length,
+     libcerror_error_t **error )
+{
+	libmodi_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libmodi_handle_set_band_data_files_path_wide";
+	int result                                 = 1;
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libmodi_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( path == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid path.",
+		 function );
+
+		return( -1 );
+	}
+	if( path_length > (size_t) ( SSIZE_MAX - 1 ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid path length value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		if( libmodi_internal_handle_set_bands_directory_path_wide(
+		     internal_handle,
+		     path,
+		     path_length,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set bands directory path.",
+			 function );
+
+			result = -1;
+		}
+	}
+#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_write(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for writing.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( result );
+}
+
+#endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Retrieves the media size
  * Returns the 1 if succesful or -1 on error
