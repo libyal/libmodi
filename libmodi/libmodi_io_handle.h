@@ -36,6 +36,12 @@ LIBMODI_EXTERN_VARIABLE \
 const uint8_t modi_mbr_boot_signature[ 2 ];
 
 LIBMODI_EXTERN_VARIABLE \
+const uint8_t modi_hfsplus_signature[ 2 ];
+
+LIBMODI_EXTERN_VARIABLE \
+const uint8_t modi_hfsx_signature[ 2 ];
+
+LIBMODI_EXTERN_VARIABLE \
 const uint8_t modi_sparse_image_signature[ 4 ];
 
 LIBMODI_EXTERN_VARIABLE \

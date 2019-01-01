@@ -1,10 +1,5 @@
 TODO:
 * libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
-* sparse bundle
-  - add open band files function, NULL is non-existing band file?
-  - use libvmdk like approach
-* fix tests
-  - call libmodi_handle_open_band_data_files in handle test
 * add compressed dmg support
   - add support for resource fork
 * add support for encrypted disk images

@@ -7,12 +7,12 @@ Project information:
 
 Supported Mac OS image formats:
 
+* Sparse bundle disk image
 * Sparse disk image
 * Uncompressed Universal Disk Image Format (UDIF) image
 
 Unsupported Mac OS image formats:
 
-* Sparse bundle disk image
 * ADC compressed Universal Disk Image Format (UDIF) image
 * bzip2 compressed Universal Disk Image Format (UDIF) image
 * LZFSE compressed Universal Disk Image Format (UDIF) image

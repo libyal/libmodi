@@ -30,6 +30,12 @@
 const uint8_t modi_mbr_boot_signature[ 2 ] = {
 	0x55, 0xaa };
 
+const uint8_t modi_hfsplus_signature[ 2 ] = {
+	'H', '+' };
+
+const uint8_t modi_hfsx_signature[ 2 ] = {
+	'H', 'X' };
+
 const uint8_t modi_sparse_image_signature[ 4 ] = {
 	's', 'p', 'r', 's' };
 

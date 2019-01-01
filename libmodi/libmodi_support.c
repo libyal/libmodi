@@ -514,6 +514,7 @@ int libmodi_check_file_signature_file_io_handle(
      libcerror_error_t **error )
 {
 	uint8_t header_signature[ 5 ];
+	uint8_t hfs_signature[ 2 ];
 	uint8_t mbr_boot_signature[ 2 ];
 	uint8_t resource_file_signature[ 4 ];
 
@@ -682,6 +683,41 @@ int libmodi_check_file_signature_file_io_handle(
 			goto on_error;
 		}
 	}
+	if( file_size >= 1536 )
+	{
+		if( libbfio_handle_seek_offset(
+		     file_io_handle,
+		     1024,
+		     SEEK_SET,
+		     error ) == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_SEEK_FAILED,
+			 "%s: unable to seek sparse disk image file header offset: 510.",
+			 function );
+
+			goto on_error;
+		}
+		read_count = libbfio_handle_read_buffer(
+		              file_io_handle,
+		              hfs_signature,
+		              2,
+		              error );
+
+		if( read_count != 2 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read HFS signature.",
+			 function );
+
+			goto on_error;
+		}
+	}
 	if( file_io_handle_is_open == 0 )
 	{
 		file_io_handle_is_open = 1;
@@ -727,7 +763,24 @@ int libmodi_check_file_signature_file_io_handle(
 			return( 1 );
 		}
 	}
-/* TODO improve check */
+	if( file_size >= 1536 )
+	{
+		if( memory_compare(
+		     hfs_signature,
+		     modi_hfsplus_signature,
+		     2 ) == 0 )
+		{
+			return( 1 );
+		}
+		if( memory_compare(
+		     hfs_signature,
+		     modi_hfsx_signature,
+		     2 ) == 0 )
+		{
+			return( 1 );
+		}
+	}
+/* TODO improve check for sparse bundles and uncompressed UDIF */
 	if( memory_compare(
 	     header_signature,
 	     "<?xml",

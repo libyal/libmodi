@@ -2796,7 +2796,7 @@ int libmodi_internal_handle_open_read(
 	}
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
 	{
-/* TODO check MBR sector signature */
+/* TODO check MBR boot and HFS+/HFSX signatures */
 		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED;
 		internal_handle->io_handle->media_size = file_size;
 
