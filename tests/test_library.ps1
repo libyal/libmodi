@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "bands_table data_block error io_handle notify"
+$LibraryTests = "data_block error io_handle notify"
 $LibraryTestsWithInput = "handle support"
 
 $InputGlob = "*"

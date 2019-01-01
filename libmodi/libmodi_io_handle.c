@@ -20,22 +20,21 @@
  */
 
 #include <common.h>
-#include <byte_stream.h>
 #include <memory.h>
 #include <types.h>
 
-#include "libmodi_data_block.h"
 #include "libmodi_definitions.h"
 #include "libmodi_io_handle.h"
-#include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
-#include "libmodi_libcnotify.h"
-#include "libmodi_libfdata.h"
-#include "libmodi_libuna.h"
-#include "libmodi_unused.h"
 
-const uint8_t *modi_sparse_image_signature       = (uint8_t *) "sprs";
-const uint8_t *modi_udif_resource_file_signature = (uint8_t *) "koly";
+const uint8_t modi_mbr_boot_signature[ 2 ] = {
+	0x55, 0xaa };
+
+const uint8_t modi_sparse_image_signature[ 4 ] = {
+	's', 'p', 'r', 's' };
+
+const uint8_t modi_udif_resource_file_signature[ 4 ] = {
+	'k', 'o', 'l', 'y' };
 
 /* Creates an IO handle
  * Make sure the value io_handle is referencing, is set to NULL
@@ -182,121 +181,5 @@ int libmodi_io_handle_clear(
 		return( -1 );
 	}
 	return( 1 );
-}
-
-/* Reads a data block
- * Callback function for the data block vector
- * Returns 1 if successful or -1 on error
- */
-int libmodi_io_handle_read_data_block(
-     libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libfdata_vector_t *vector,
-     libfdata_cache_t *cache,
-     int element_index,
-     int element_data_file_index,
-     off64_t element_data_offset,
-     size64_t element_data_size,
-     uint32_t element_data_flags LIBMODI_ATTRIBUTE_UNUSED,
-     uint8_t read_flags LIBMODI_ATTRIBUTE_UNUSED,
-     libcerror_error_t **error )
-{
-	libmodi_data_block_t *data_block = NULL;
-	static char *function            = "libmodi_io_handle_read_data_block";
-
-	LIBMODI_UNREFERENCED_PARAMETER( element_data_flags );
-	LIBMODI_UNREFERENCED_PARAMETER( read_flags );
-
-	if( io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( element_data_file_index != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid element data file index value out of bounds.",
-		 function );
-
-		return( -1 );
-	}
-	if( element_data_size > (size64_t) SSIZE_MAX )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid element data size value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( libmodi_data_block_initialize(
-	     &data_block,
-	     (size_t) element_data_size,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create data block.",
-		 function );
-
-		goto on_error;
-	}
-	if( libmodi_data_block_read_file_io_handle(
-	     data_block,
-	     file_io_handle,
-             element_data_offset,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read data block.",
-		 function );
-
-		goto on_error;
-	}
-	if( libfdata_vector_set_element_value_by_index(
-	     vector,
-	     (intptr_t *) file_io_handle,
-	     cache,
-	     element_index,
-	     (intptr_t *) data_block,
-	     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_data_block_free,
-	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set data block as element value.",
-		 function );
-
-		goto on_error;
-	}
-	return( 1 );
-
-on_error:
-	if( data_block != NULL )
-	{
-		libmodi_data_block_free(
-		 &data_block,
-		 NULL );
-	}
-	return( -1 );
 }
 

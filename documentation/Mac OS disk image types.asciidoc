@@ -358,8 +358,7 @@ contains the following key/value pairs.
 | Identifier | Description
 | CFBundleInfoDictionaryVersion | The version of the information property list format. +
 Consists of a string containing a floating point +
-As of Mac OS X v10.0 +
-The value should be 6.0
+The value should be 6.0 as of Mac OS X 10.0
 | band-size | The (maximum) size of a band (file) in bytes +
 Consists of a string containing an unsigned integer
 | bundle-backingstore-version | [yellow-background]*Unknown* +
@@ -368,9 +367,28 @@ The value should be: 1
 | diskimage-bundle-type | The bundle type +
 Consists of a string +
 The value should be: com.apple.diskimage.sparsebundle
-| size | The non-sparse image size in bytes +
+| size | The media size in bytes +
 Consists of a string containing an unsigned integer
 |===
+
+....
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CFBundleInfoDictionaryVersion</key>
+        <string>6.0</string>
+        <key>band-size</key>
+        <integer>8388608</integer>
+        <key>bundle-backingstore-version</key>
+        <integer>1</integer>
+        <key>diskimage-bundle-type</key>
+        <string>com.apple.diskimage.sparsebundle</string>
+        <key>size</key>
+        <integer>4194304</integer>
+</dict>
+</plist>
+....
 
 === Token
 

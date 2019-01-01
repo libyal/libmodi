@@ -26,7 +26,6 @@
 #include <types.h>
 #include <wide_string.h>
 
-#include "libmodi_bands_table.h"
 #include "libmodi_data_block.h"
 #include "libmodi_debug.h"
 #include "libmodi_definitions.h"
@@ -1419,7 +1418,7 @@ int libmodi_handle_open_band_data_files(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid IO handle- missing band data size.",
+		 "%s: invalid handle - invalid IO handle - missing band data size.",
 		 function );
 
 		goto on_error;
@@ -2185,19 +2184,6 @@ int libmodi_handle_close(
 
 		result = -1;
 	}
-	if( libmodi_bands_table_free(
-	     &( internal_handle->bands_table ),
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free bands table.",
-		 function );
-
-		result = -1;
-	}
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_write(
 	     internal_handle->read_write_lock,
@@ -2229,7 +2215,12 @@ int libmodi_handle_open_read(
 	libmodi_udif_resource_file_t *udif_resource_file           = NULL;
 	libmodi_udif_xml_plist_t *udif_xml_plist                   = NULL;
 	static char *function                                      = "libmodi_handle_open_read";
+	size64_t band_data_size                                    = 0;
 	size64_t file_size                                         = 0;
+	off64_t band_data_offset                                   = 0;
+	uint32_t band_data_range_flags                             = 0;
+	uint32_t band_reference                                    = 0;
+	uint32_t band_reference_index                              = 0;
 	int result                                                 = 0;
 	int segment_index                                          = 0;
 
@@ -2251,17 +2242,6 @@ int libmodi_handle_open_read(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_handle->bands_table != NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid file - bands table already set.",
 		 function );
 
 		return( -1 );
@@ -2317,15 +2297,23 @@ int libmodi_handle_open_read(
 
 		goto on_error;
 	}
-	if( libmodi_bands_table_initialize(
-	     &( internal_handle->bands_table ),
+/* TODO clone function ? */
+	if( libfdata_vector_initialize(
+	     &( internal_handle->bands_vector ),
+	     (size64_t) 512,
+	     (intptr_t *) internal_handle->io_handle,
+	     NULL,
+	     NULL,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfdata_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libmodi_io_handle_read_data_block,
+	     NULL,
+	     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bands table.",
+		 "%s: unable to create bands vector.",
 		 function );
 
 		goto on_error;
@@ -2374,8 +2362,6 @@ int libmodi_handle_open_read(
 		}
 		else if( result != 0 )
 		{
-			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED;
-
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -2429,6 +2415,27 @@ int libmodi_handle_open_read(
 
 				goto on_error;
 			}
+			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED;
+			internal_handle->io_handle->media_size = 0;
+
+			if( libfdata_vector_append_segment(
+			     internal_handle->bands_vector,
+			     &segment_index,
+			     0,
+			     udif_resource_file->data_fork_offset,
+			     udif_resource_file->data_fork_size,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append data fork as segment to bands vector.",
+				 function );
+
+				goto on_error;
+			}
 		}
 		if( libmodi_udif_resource_file_free(
 		     &udif_resource_file,
@@ -2471,7 +2478,6 @@ int libmodi_handle_open_read(
 		          sparse_image_header,
 		          file_io_handle,
 		          0,
-		          internal_handle->bands_table,
 		          error );
 
 		if( result == -1 )
@@ -2487,10 +2493,76 @@ int libmodi_handle_open_read(
 		}
 		else if( result != 0 )
 		{
-			internal_handle->io_handle->image_type        = LIBMODI_IMAGE_TYPE_SPARSE_IMAGE;
-			internal_handle->io_handle->media_size        = (size64_t) sparse_image_header->number_of_sectors * 512;
-			internal_handle->io_handle->bands_data_offset = (off64_t) 4096;
-			internal_handle->io_handle->band_data_size    = (size64_t) sparse_image_header->sectors_per_band * 512;
+			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_SPARSE_IMAGE;
+			internal_handle->io_handle->media_size = (size64_t) sparse_image_header->number_of_sectors * 512;
+
+			band_data_size = (size64_t) sparse_image_header->sectors_per_band * 512;
+
+			for( band_reference_index = 0;
+			     band_reference_index < sparse_image_header->number_of_bands;
+			     band_reference_index++ )
+			{
+				band_reference = sparse_image_header->band_references[ band_reference_index ];
+
+#if defined( HAVE_DEBUG_OUTPUT )
+				if( libcnotify_verbose != 0 )
+				{
+					libcnotify_printf(
+					 "%s: band reference: %03" PRIu32 "\t\t: 0x%08" PRIx32 "",
+					 function,
+					 band_reference_index,
+					 band_reference );
+
+					if( band_reference == 0xffffffffUL )
+					{
+						libcnotify_printf(
+						 " (sparse)\n" );
+					}
+					else
+					{
+						libcnotify_printf(
+						 " (data offset: 0x%08" PRIx64 ")\n",
+						 4096 + ( band_reference * band_data_size ) );
+					}
+				}
+#endif
+				if( band_reference == 0xffffffffUL )
+				{
+					band_data_offset      = 0;
+					band_data_range_flags = LIBFDATA_RANGE_FLAG_IS_SPARSE;
+				}
+				else
+				{
+					band_data_offset      = 4096 + ( band_reference * band_data_size );
+					band_data_range_flags = 0;
+				}
+				if( libfdata_vector_append_segment(
+				     internal_handle->bands_vector,
+				     &segment_index,
+				     0,
+				     band_data_offset,
+				     band_data_size,
+				     band_data_range_flags,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append band reference: %" PRIu32 " as segment to bands vector.",
+					 function,
+					 band_reference_index );
+
+					goto on_error;
+				}
+			}
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "\n" );
+			}
+#endif
 		}
 		if( libmodi_sparse_image_header_free(
 		     &sparse_image_header,
@@ -2548,10 +2620,12 @@ int libmodi_handle_open_read(
 		}
 		else if( result != 0 )
 		{
-			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
-			internal_handle->io_handle->media_size = (size64_t) udif_resource_file->number_of_sectors * 512;
-		}
+			internal_handle->io_handle->image_type     = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
+			internal_handle->io_handle->band_data_size = (size64_t) sparse_bundle_xml_plist->band_data_size;
+			internal_handle->io_handle->media_size     = (size64_t) sparse_bundle_xml_plist->media_size;
+
 /* TODO fill bands table */
+		}
 		if( libmodi_sparse_bundle_xml_plist_free(
 		     &sparse_bundle_xml_plist,
 		     error ) != 1 )
@@ -2570,45 +2644,26 @@ int libmodi_handle_open_read(
 	{
 /* TODO check MBR sector signature */
 		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED;
-	}
-/* TODO clone function ? */
-	if( libfdata_vector_initialize(
-	     &( internal_handle->bands_vector ),
-	     (size64_t) 512,
-	     (intptr_t *) internal_handle->io_handle,
-	     NULL,
-	     NULL,
-	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfdata_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libmodi_io_handle_read_data_block,
-	     NULL,
-	     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bands vector.",
-		 function );
+		internal_handle->io_handle->media_size = file_size;
 
-		goto on_error;
-	}
-	if( libfdata_vector_append_segment(
-	     internal_handle->bands_vector,
-	     &segment_index,
-	     0,
-	     internal_handle->io_handle->bands_data_offset,
-	     file_size - internal_handle->io_handle->bands_data_offset,
-	     0,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to append segment to bands vector.",
-		 function );
+		if( libfdata_vector_append_segment(
+		     internal_handle->bands_vector,
+		     &segment_index,
+		     0,
+		     0,
+		     file_size,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append segment to bands vector.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
 	}
 	if( libfcache_cache_initialize(
 	     &( internal_handle->bands_cache ),
@@ -2648,12 +2703,6 @@ on_error:
 		 &( internal_handle->bands_cache ),
 		 NULL );
 	}
-	if( internal_handle->bands_vector != NULL )
-	{
-		libfdata_vector_free(
-		 &( internal_handle->bands_vector ),
-		 NULL );
-	}
 	if( sparse_bundle_xml_plist != NULL )
 	{
 		libmodi_sparse_bundle_xml_plist_free(
@@ -2678,10 +2727,10 @@ on_error:
 		 &udif_resource_file,
 		 NULL );
 	}
-	if( internal_handle->bands_table != NULL )
+	if( internal_handle->bands_vector != NULL )
 	{
-		libmodi_bands_table_free(
-		 &( internal_handle->bands_table ),
+		libfdata_vector_free(
+		 &( internal_handle->bands_vector ),
 		 NULL );
 	}
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
@@ -2705,16 +2754,10 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 {
 	libmodi_data_block_t *data_block = NULL;
 	static char *function            = "libmodi_internal_handle_read_buffer_from_file_io_handle";
-	off64_t band_file_offset         = 0;
 	off64_t element_data_offset      = 0;
+	size_t available_block_size      = 0;
 	size_t buffer_offset             = 0;
 	size_t read_size                 = 0;
-	ssize_t read_count               = 0;
-	uint64_t band_offset             = 0;
-	uint64_t band_sector_offset      = 0;
-	uint64_t bands_table_index       = 0;
-	uint32_t bands_table_entry       = 0;
-	uint8_t band_is_sparse           = 0;
 
 	if( internal_handle == NULL )
 	{
@@ -2734,17 +2777,6 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing IO handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( internal_handle->io_handle->band_data_size == 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid IO handle- missing band data size.",
 		 function );
 
 		return( -1 );
@@ -2788,220 +2820,91 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 	}
 	while( buffer_offset < buffer_size )
 	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+		if( libfdata_vector_get_element_value_at_offset(
+		     internal_handle->bands_vector,
+		     (intptr_t *) file_io_handle,
+		     (libfdata_cache_t *) internal_handle->bands_cache,
+		     internal_handle->current_offset,
+		     &element_data_offset,
+		     (intptr_t **) &data_block,
+		     0,
+		     error ) != 1 )
 		{
-			libcnotify_printf(
-			 "%s: requested offset\t\t: 0x%08" PRIx64 "\n",
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve band at offset: %" PRIi64 " (0x%08" PRIx64 ").",
 			 function,
+			 internal_handle->current_offset,
 			 internal_handle->current_offset );
-		}
-#endif
-		if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED )
-		{
+
 			return( -1 );
-/* TODO
-			band_offset      = internal_handle->current_offset;
-			band_file_offset = ( band_offset / 512 ) * 512;
-			band_offset     -= band_file_offset;
-			read_size        = (size_t) ( 512 - band_offset );
-			band_is_sparse   = 0;
-*/
 		}
-		else if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_IMAGE )
-		      || ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE ) )
+		if( data_block == NULL )
 		{
-			bands_table_index = internal_handle->current_offset
-			                  / internal_handle->io_handle->band_data_size;
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid data block.",
+			 function );
 
-			if( bands_table_index > (uint64_t) INT_MAX )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: invalid bands table index value out of bounds.",
-				 function );
-
-				return( -1 );
-			}
-			if( libmodi_bands_table_get_reference_by_index(
-			     internal_handle->bands_table,
-			     (int) bands_table_index,
-			     &bands_table_entry,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve entry: %" PRIu64 " from bands table.",
-				 function,
-				 bands_table_index );
-
-				return( -1 );
-			}
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: bands table index\t\t: %" PRIu64 "\n",
-				 function,
-				 bands_table_index );
-
-				libcnotify_printf(
-				 "%s: bands table entry\t\t: %" PRIu64 "\n",
-				 function,
-				 bands_table_entry );
-			}
-#endif
-			band_offset = internal_handle->current_offset
-				    % internal_handle->io_handle->band_data_size;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: band offset\t\t\t: 0x%08" PRIx64 "\n",
-				 function,
-				 band_offset );
-			}
-#endif
-			band_sector_offset = ( band_offset / 512 ) * 512;
-			band_offset       -= band_sector_offset;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "%s: band sector offset\t\t: 0x%08" PRIx64 "\n",
-				 function,
-				 band_sector_offset );
-			}
-#endif
-			if( bands_table_entry == 0xffffffffUL )
-			{
-				band_is_sparse = 1;
-			}
-/* TODO read per band make sure to correct initial offset ? */
-			else
-			{
-				band_file_offset = ( bands_table_entry * internal_handle->io_handle->band_data_size )
-				                 + band_sector_offset;
-
-#if defined( HAVE_DEBUG_OUTPUT )
-				if( libcnotify_verbose != 0 )
-				{
-					libcnotify_printf(
-					 "%s: band file offset\t\t: 0x%08" PRIx64 " (base: 0x%08" PRIx64 ")\n",
-					 function,
-					 band_file_offset,
-					 internal_handle->io_handle->bands_data_offset );
-
-					libcnotify_printf(
-					 "\n" );
-				}
-#endif
-			}
-/* TODO optimize read ? */
-			read_size = 512 - (size_t) band_offset;
+			return( -1 );
 		}
-		if( ( (size64_t) internal_handle->current_offset + read_size ) > internal_handle->io_handle->media_size )
+		if( data_block->data == NULL )
 		{
-			read_size = (size_t) ( internal_handle->io_handle->media_size - internal_handle->current_offset );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+			 "%s: invalid data block - missing data.",
+			 function );
+
+			return( -1 );
 		}
-		if( ( buffer_offset + read_size ) > buffer_size )
+		if( element_data_offset > (off64_t) data_block->data_size )
 		{
-			read_size = buffer_size - buffer_offset;
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid element data offset value out of bounds.",
+			 function );
+
+			return( -1 );
 		}
-		if( band_is_sparse == 0 )
+		available_block_size = data_block->data_size - (size_t) element_data_offset;
+
+		if( buffer_size < available_block_size )
 		{
-			if( libfdata_vector_get_element_value_at_offset(
-			     internal_handle->bands_vector,
-			     (intptr_t *) file_io_handle,
-			     (libfdata_cache_t *) internal_handle->bands_cache,
-			     band_file_offset,
-			     &element_data_offset,
-			     (intptr_t **) &data_block,
-			     0,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve band at offset: %" PRIu32 ".",
-				 function,
-				 band_file_offset );
-
-				return( -1 );
-			}
-			if( data_block == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid data block.",
-				 function );
-
-				return( -1 );
-			}
-			if( data_block->data == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-				 "%s: invalid data block - missing data.",
-				 function );
-
-				return( -1 );
-			}
-			if( memory_copy(
-			     &( ( (uint8_t *) buffer )[ buffer_offset ] ),
-			     &( data_block->data[ band_offset ] ),
-			     read_size ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
-				 "%s: unable to copy band data to buffer.",
-				 function );
-
-				return( -1 );
-			}
+			read_size = buffer_size;
 		}
 		else
 		{
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "\n" );
-			}
-#endif
-			/* Handle sparse band
-			 */
-			if( memory_set(
-			     &( ( (uint8_t *) buffer )[ buffer_offset ] ),
-			     0,
-			     read_size ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to set sparse data in buffer.",
-				 function );
-
-				return( -1 );
-			}
+			read_size = available_block_size;
 		}
-		internal_handle->current_offset += read_size;
+		if( read_size > ( internal_handle->io_handle->media_size - internal_handle->current_offset ) )
+		{
+			read_size = (size_t) ( internal_handle->io_handle->media_size - internal_handle->current_offset );
+		}
+		if( memory_copy(
+		     &( ( (uint8_t *) buffer )[ buffer_offset ] ),
+		     &( data_block->data[ element_data_offset ] ),
+		     read_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_COPY_FAILED,
+			 "%s: unable to copy block data to buffer.",
+			 function );
 
+			return( -1 );
+		}
 		buffer_offset += read_size;
+
+		internal_handle->current_offset += read_size;
 
 		if( (size64_t) internal_handle->current_offset >= internal_handle->io_handle->media_size )
 		{

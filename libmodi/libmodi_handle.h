@@ -25,7 +25,6 @@
 #include <common.h>
 #include <types.h>
 
-#include "libmodi_bands_table.h"
 #include "libmodi_extern.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
@@ -82,10 +81,6 @@ struct libmodi_internal_handle
 	/* The access flags
 	 */
 	int access_flags;
-
-	/* The bands table
-	 */
-	libmodi_bands_table_t *bands_table;
 
 	/* The bands vector
 	 */

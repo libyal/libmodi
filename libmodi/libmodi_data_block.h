@@ -25,8 +25,10 @@
 #include <common.h>
 #include <types.h>
 
+#include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
+#include "libmodi_libfdata.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -58,6 +60,19 @@ int libmodi_data_block_read_file_io_handle(
      libmodi_data_block_t *data_block,
      libbfio_handle_t *file_io_handle,
      off64_t data_offset,
+     libcerror_error_t **error );
+
+int libmodi_io_handle_read_data_block(
+     libmodi_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libfdata_vector_t *vector,
+     libfdata_cache_t *cache,
+     int element_index,
+     int element_data_file_index,
+     off64_t element_data_offset,
+     size64_t element_data_size,
+     uint32_t element_data_flags,
+     uint8_t read_flags,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

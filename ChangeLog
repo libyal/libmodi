@@ -1,10 +1,11 @@
 TODO:
-* add dmg support
+* improve check signature to detect sparse bundle
 * add compressed dmg support
-* add encrypted image support
+  - add support for resource fork
 * sparse bundle
   - add open band files function, NULL is non-existing band file?
   - use libvmdk like approach
+* add encrypted image support
 
 20161030
 * see `git log' for more recent change log

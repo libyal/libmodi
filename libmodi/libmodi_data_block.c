@@ -25,9 +25,12 @@
 #include <types.h>
 
 #include "libmodi_data_block.h"
+#include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
+#include "libmodi_libfdata.h"
+#include "libmodi_unused.h"
 
 /* Creates a data block
  * Make sure the value data_block is referencing, is set to NULL
@@ -62,13 +65,14 @@ int libmodi_data_block_initialize(
 
 		return( -1 );
 	}
-	if( data_size > (size_t) SSIZE_MAX )
+	if( ( data_size == 0 )
+	 || ( data_size > (size_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -106,24 +110,22 @@ int libmodi_data_block_initialize(
 
 		return( -1 );
 	}
-	if( data_size > 0 )
+	( *data_block )->data = (uint8_t *) memory_allocate(
+	                                     sizeof( uint8_t ) * data_size );
+
+	if( ( *data_block )->data == NULL )
 	{
-		( *data_block )->data = (uint8_t *) memory_allocate(
-		                                     sizeof( uint8_t ) * data_size );
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create data.",
+		 function );
 
-		if( ( *data_block )->data == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-			 "%s: unable to create data.",
-			 function );
-
-			goto on_error;
-		}
-		( *data_block )->data_size = data_size;
+		goto on_error;
 	}
+	( *data_block )->data_size = data_size;
+
 	return( 1 );
 
 on_error:
@@ -160,25 +162,23 @@ int libmodi_data_block_free(
 	}
 	if( *data_block != NULL )
 	{
-		if( ( *data_block )->data != NULL )
+		if( memory_set(
+		     ( *data_block )->data,
+		     0,
+		     ( *data_block )->data_size ) == NULL )
 		{
-			if( memory_set(
-			     ( *data_block )->data,
-			     0,
-			     ( *data_block )->data_size ) == NULL )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_MEMORY,
-				 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-				 "%s: unable to clear data.",
-				 function );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear data.",
+			 function );
 
-				result = -1;
-			}
-			memory_free(
-			 ( *data_block )->data );
+			result = -1;
 		}
+		memory_free(
+		 ( *data_block )->data );
+
 		memory_free(
 		 *data_block );
 
@@ -206,17 +206,6 @@ int libmodi_data_block_read_file_io_handle(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid data block.",
-		 function );
-
-		return( -1 );
-	}
-	if( data_block->data == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid data block - missing data.",
 		 function );
 
 		return( -1 );
@@ -277,5 +266,143 @@ int libmodi_data_block_read_file_io_handle(
 	}
 #endif
 	return( 1 );
+}
+
+/* Reads a data block
+ * Callback function for the data block vector
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_io_handle_read_data_block(
+     libmodi_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libfdata_vector_t *vector,
+     libfdata_cache_t *cache,
+     int element_index,
+     int element_data_file_index,
+     off64_t element_data_offset,
+     size64_t element_data_size,
+     uint32_t element_data_flags,
+     uint8_t read_flags LIBMODI_ATTRIBUTE_UNUSED,
+     libcerror_error_t **error )
+{
+	libmodi_data_block_t *data_block = NULL;
+	static char *function            = "libmodi_io_handle_read_data_block";
+
+	LIBMODI_UNREFERENCED_PARAMETER( read_flags );
+
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+/* TODO remove restriction for sparse bundle */
+	if( element_data_file_index != 0 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid element data file index value out of bounds.",
+		 function );
+
+		return( -1 );
+	}
+	if( element_data_size > (size64_t) SSIZE_MAX )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+		 "%s: invalid element data size value exceeds maximum.",
+		 function );
+
+		return( -1 );
+	}
+	if( libmodi_data_block_initialize(
+	     &data_block,
+	     (size_t) element_data_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create data block.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( element_data_flags & LIBFDATA_RANGE_FLAG_IS_SPARSE ) != 0 )
+	{
+		if( memory_set(
+		     data_block->data,
+		     0,
+		     data_block->data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear data block.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	else
+	{
+		if( libmodi_data_block_read_file_io_handle(
+		     data_block,
+		     file_io_handle,
+		     element_data_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read data block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 element_data_offset,
+			 element_data_offset );
+
+			goto on_error;
+		}
+	}
+	if( libfdata_vector_set_element_value_by_index(
+	     vector,
+	     (intptr_t *) file_io_handle,
+	     cache,
+	     element_index,
+	     (intptr_t *) data_block,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_data_block_free,
+	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set data block as element value.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( data_block != NULL )
+	{
+		libmodi_data_block_free(
+		 &data_block,
+		 NULL );
+	}
+	return( -1 );
 }
 

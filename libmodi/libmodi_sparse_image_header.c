@@ -24,7 +24,6 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libmodi_bands_table.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
@@ -143,15 +142,16 @@ int libmodi_sparse_image_header_read_data(
      libmodi_sparse_image_header_t *sparse_image_header,
      const uint8_t *data,
      size_t data_size,
-     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error )
 {
-	static char *function    = "libmodi_sparse_image_header_read_data";
-	size_t data_offset       = 0;
-	uint32_t number_of_bands = 0;
+	static char *function          = "libmodi_sparse_image_header_read_data";
+	size_t bands_table_data_size   = 0;
+	size_t data_offset             = 0;
+	uint32_t bands_table_index     = 0;
+	uint32_t bands_table_reference = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint32_t value_32bit     = 0;
+	uint32_t value_32bit           = 0;
 #endif
 
 	if( sparse_image_header == NULL )
@@ -161,6 +161,17 @@ int libmodi_sparse_image_header_read_data(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid sparse image header.",
+		 function );
+
+		return( -1 );
+	}
+	if( sparse_image_header->band_references != NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
+		 "%s: invalid sparse image header - band references value already set.",
 		 function );
 
 		return( -1 );
@@ -230,12 +241,12 @@ int libmodi_sparse_image_header_read_data(
 		 ( (modi_sparse_image_header_t *) data )->unknown1,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown1\t\t\t: %" PRIu32 "\n",
+		 "%s: unknown1\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 value_32bit );
 
 		libcnotify_printf(
-		 "%s: sectors per band\t\t: %" PRIu32 "\n",
+		 "%s: sectors per band\t\t\t: %" PRIu32 "\n",
 		 function,
 		 sparse_image_header->sectors_per_band );
 
@@ -243,7 +254,7 @@ int libmodi_sparse_image_header_read_data(
 		 ( (modi_sparse_image_header_t *) data )->unknown2,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown2\t\t\t: %" PRIu32 "\n",
+		 "%s: unknown2\t\t\t\t: %" PRIu32 "\n",
 		 function,
 		 value_32bit );
 
@@ -264,7 +275,7 @@ int libmodi_sparse_image_header_read_data(
 		 ( (modi_sparse_image_header_t *) data )->unknown4,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown4\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
 		 function,
 		 value_32bit );
 
@@ -289,31 +300,119 @@ int libmodi_sparse_image_header_read_data(
 		 "%s: invalid sectors per band value out of bounds.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	number_of_bands = sparse_image_header->number_of_sectors / sparse_image_header->sectors_per_band;
+	sparse_image_header->number_of_bands = sparse_image_header->number_of_sectors / sparse_image_header->sectors_per_band;
 
 	if( ( sparse_image_header->number_of_sectors % sparse_image_header->sectors_per_band ) != 0 )
 	{
-		number_of_bands++;
+		sparse_image_header->number_of_bands += 1;
 	}
-	if( libmodi_bands_table_read_data(
-	     bands_table,
-	     &( data[ data_offset ] ),
-	     data_size - data_offset,
-	     number_of_bands,
-	     error ) != 1 )
+	if( sparse_image_header->number_of_bands > 0 )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read bands table.",
-		 function );
+#if ( SIZEOF_SIZE_T <= 4 )
+		if( sparse_image_header->number_of_bands > (uint32_t) ( SSIZE_MAX / 4 ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
+			 "%s: invalid number of bands value exceeds maximum.",
+			 function );
 
-		return( -1 );
+			goto on_error;
+		}
+#endif
+		bands_table_data_size = sparse_image_header->number_of_bands * sizeof( uint32_t );
+
+		if( bands_table_data_size > ( data_size - data_offset ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid bands table data size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: bands table data:\n",
+			 function );
+			libcnotify_print_data(
+			 &( data[ data_offset ] ),
+			 bands_table_data_size,
+			 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
+		}
+#endif
+		sparse_image_header->band_references = (uint32_t *) memory_allocate(
+		                                                     bands_table_data_size );
+
+		if( sparse_image_header->band_references == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create band references.",
+			 function );
+
+			goto on_error;
+		}
+		if( memory_set(
+		     sparse_image_header->band_references,
+		     0xff,
+		     bands_table_data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear band references.",
+			 function );
+
+			goto on_error;
+		}
+		for( bands_table_index = 0;
+		     bands_table_index < sparse_image_header->number_of_bands;
+		     bands_table_index++ )
+		{
+			byte_stream_copy_to_uint32_big_endian(
+			 &( data[ data_offset ] ),
+			 bands_table_reference );
+
+			data_offset += 4;
+
+/* TODO check bounds of reference */
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: bands table reference: %03" PRIu32 "\t\t: 0x%08" PRIx32 " (%" PRIi32 ")\n",
+				 function,
+				 bands_table_index,
+				 bands_table_reference,
+				 (int32_t) bands_table_reference );
+			}
+#endif
+			if( bands_table_reference != 0 )
+			{
+				( sparse_image_header->band_references )[ bands_table_reference - 1 ] = bands_table_index;
+			}
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
 	}
-	data_offset += bands_table->data_size;
+	data_offset += bands_table_data_size;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( ( libcnotify_verbose != 0 )
@@ -329,6 +428,16 @@ int libmodi_sparse_image_header_read_data(
 	}
 #endif
 	return( 1 );
+
+on_error:
+	if( sparse_image_header->band_references != NULL )
+	{
+		memory_free(
+		 sparse_image_header->band_references );
+
+		sparse_image_header->band_references = 0;
+	}
+	return( -1 );
 }
 
 /* Reads a sparse image header
@@ -338,7 +447,6 @@ int libmodi_sparse_image_header_read_file_io_handle(
      libmodi_sparse_image_header_t *sparse_image_header,
      libbfio_handle_t *file_io_handle,
      off64_t offset,
-     libmodi_bands_table_t *bands_table,
      libcerror_error_t **error )
 {
 	uint8_t *sparse_image_header_data = NULL;
@@ -420,7 +528,6 @@ int libmodi_sparse_image_header_read_file_io_handle(
 	          sparse_image_header,
 	          sparse_image_header_data,
 	          read_size,
-	          bands_table,
 	          error );
 
 	if( result == -1 )

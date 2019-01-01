@@ -42,25 +42,12 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
-	modi_test_bands_table \
 	modi_test_data_block \
 	modi_test_error \
 	modi_test_handle \
 	modi_test_io_handle \
 	modi_test_notify \
 	modi_test_support
-
-modi_test_bands_table_SOURCES = \
-	modi_test_bands_table.c \
-	modi_test_libcerror.h \
-	modi_test_libmodi.h \
-	modi_test_macros.h \
-	modi_test_memory.c modi_test_memory.h \
-	modi_test_unused.h
-
-modi_test_bands_table_LDADD = \
-	../libmodi/libmodi.la \
-	@LIBCERROR_LIBADD@
 
 modi_test_data_block_SOURCES = \
 	modi_test_data_block.c \

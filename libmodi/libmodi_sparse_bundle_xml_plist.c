@@ -473,6 +473,8 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
      size64_t size,
      libcerror_error_t **error )
 {
+	uint8_t header_data[ 5 ] ;
+
 	uint8_t *xml_plist_data = NULL;
 	static char *function   = "libmodi_sparse_bundle_xml_plist_read_file_io_handle";
 	ssize_t read_count      = 0;
@@ -510,6 +512,48 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 		 offset );
 	}
 #endif
+	if( libbfio_handle_seek_offset(
+	     file_io_handle,
+	     offset,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek sparse bundle XML plist offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
+
+		goto on_error;
+	}
+	read_count = libbfio_handle_read_buffer(
+	              file_io_handle,
+	              header_data,
+	              5,
+	              error );
+
+	if( read_count != (ssize_t) 5 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read XML plist data.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( header_data[ 0 ] != '<' )
+	 || ( header_data[ 1 ] != '?' )
+	 || ( header_data[ 2 ] != 'x' )
+	 || ( header_data[ 3 ] != 'm' )
+	 || ( header_data[ 4 ] != 'l' ) )
+	{
+		return( 0 );
+	}
 	if( libbfio_handle_seek_offset(
 	     file_io_handle,
 	     offset,

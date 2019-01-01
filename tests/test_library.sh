@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="bands_table data_block error io_handle notify";
+LIBRARY_TESTS="data_block error io_handle notify";
 LIBRARY_TESTS_WITH_INPUT="handle support";
 OPTION_SETS="";
 

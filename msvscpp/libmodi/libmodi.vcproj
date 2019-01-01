@@ -174,10 +174,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\libmodi\libmodi_bands_table.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\libmodi\libmodi_data_block.c"
 				>
 			</File>
@@ -206,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_sparse_bundle_xml_plist.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_sparse_image_header.c"
 				>
 			</File>
@@ -231,10 +231,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\libmodi\libmodi_bands_table.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_codepage.h"
 				>
@@ -317,6 +313,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_notify.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_sparse_bundle_xml_plist.h"
 				>
 			</File>
 			<File

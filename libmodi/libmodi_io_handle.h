@@ -26,20 +26,20 @@
 #include <types.h>
 
 #include "libmodi_extern.h"
-#include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
-#include "libmodi_libfdata.h"
-#include "libmodi_types.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
 LIBMODI_EXTERN_VARIABLE \
-const uint8_t *modi_sparse_image_signature;
+const uint8_t modi_mbr_boot_signature[ 2 ];
 
 LIBMODI_EXTERN_VARIABLE \
-const uint8_t *modi_udif_resource_file_signature;
+const uint8_t modi_sparse_image_signature[ 4 ];
+
+LIBMODI_EXTERN_VARIABLE \
+const uint8_t modi_udif_resource_file_signature[ 4 ];
 
 typedef struct libmodi_io_handle libmodi_io_handle_t;
 
@@ -53,9 +53,9 @@ struct libmodi_io_handle
 	 */
 	int image_type;
 
-	/* The bands data offset
+	/* The data offset
 	 */
-	off64_t bands_data_offset;
+	off64_t data_offset;
 
 	/* The band data size
 	 */
@@ -76,19 +76,6 @@ int libmodi_io_handle_free(
 
 int libmodi_io_handle_clear(
      libmodi_io_handle_t *io_handle,
-     libcerror_error_t **error );
-
-int libmodi_io_handle_read_data_block(
-     libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libfdata_vector_t *vector,
-     libfdata_cache_t *cache,
-     int element_index,
-     int element_data_file_index,
-     off64_t element_data_offset,
-     size64_t element_data_size,
-     uint32_t element_data_flags,
-     uint8_t read_flags,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

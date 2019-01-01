@@ -341,8 +341,9 @@ int libmodi_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	uint8_t footer_signature[ 4 ];
-	uint8_t header_signature[ 4 ];
+	uint8_t mbr_boot_signature[ 2 ];
+	uint8_t resource_file_signature[ 4 ];
+	uint8_t sparse_image_header_signature[ 4 ];
 
 	static char *function      = "libmodi_check_file_signature_file_io_handle";
 	size64_t file_size         = 0;
@@ -427,7 +428,7 @@ int libmodi_check_file_signature_file_io_handle(
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
-	              header_signature,
+	              sparse_image_header_signature,
 	              4,
 	              error );
 
@@ -438,6 +439,38 @@ int libmodi_check_file_signature_file_io_handle(
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
 		 "%s: unable to read sparse disk image file header signature.",
+		 function );
+
+		goto on_error;
+	}
+	if( libbfio_handle_seek_offset(
+	     file_io_handle,
+	     510,
+	     SEEK_SET,
+	     error ) == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_SEEK_FAILED,
+		 "%s: unable to seek sparse disk image file header offset: 510.",
+		 function );
+
+		goto on_error;
+	}
+	read_count = libbfio_handle_read_buffer(
+	              file_io_handle,
+	              mbr_boot_signature,
+	              2,
+	              error );
+
+	if( read_count != 2 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read MBR boot signature.",
 		 function );
 
 		goto on_error;
@@ -459,7 +492,7 @@ int libmodi_check_file_signature_file_io_handle(
 	}
 	read_count = libbfio_handle_read_buffer(
 	              file_io_handle,
-	              footer_signature,
+	              resource_file_signature,
 	              4,
 	              error );
 
@@ -493,16 +526,23 @@ int libmodi_check_file_signature_file_io_handle(
 		}
 	}
 	if( memory_compare(
-	     header_signature,
+	     sparse_image_header_signature,
 	     modi_sparse_image_signature,
 	     4 ) == 0 )
 	{
 		return( 1 );
 	}
 	if( memory_compare(
-	     footer_signature,
+	     resource_file_signature,
 	     modi_udif_resource_file_signature,
 	     4 ) == 0 )
+	{
+		return( 1 );
+	}
+	if( memory_compare(
+	     mbr_boot_signature,
+	     modi_mbr_boot_signature,
+	     2 ) == 0 )
 	{
 		return( 1 );
 	}
