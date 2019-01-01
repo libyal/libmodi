@@ -1,5 +1,5 @@
 /*
- * Bands table functions
+ * Sparse bundle XML plist functions
  *
  * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_BANDS_TABLE_H )
-#define _LIBMODI_BANDS_TABLE_H
+#if !defined( _LIBMODI_SPARSE_BUNDLE_XML_PLIST_H )
+#define _LIBMODI_SPARSE_BUNDLE_XML_PLIST_H
 
 #include <common.h>
 #include <types.h>
@@ -32,52 +32,43 @@
 extern "C" {
 #endif
 
-typedef struct libmodi_bands_table libmodi_bands_table_t;
+typedef struct libmodi_sparse_bundle_xml_plist libmodi_sparse_bundle_xml_plist_t;
 
-struct libmodi_bands_table
+struct libmodi_sparse_bundle_xml_plist
 {
-	/* The number of references
- 	 */
-	int number_of_references;
-
-	/* The references
+	/* The band data size
 	 */
-	uint32_t *references;
+	uint64_t band_data_size;
 
-	/* The data size
+	/* The media size
 	 */
-	size_t data_size;
+	uint64_t media_size;
 };
 
-int libmodi_bands_table_initialize(
-     libmodi_bands_table_t **bands_table,
+int libmodi_sparse_bundle_xml_plist_initialize(
+     libmodi_sparse_bundle_xml_plist_t **sparse_bundle_xml_plist,
      libcerror_error_t **error );
 
-int libmodi_bands_table_free(
-     libmodi_bands_table_t **bands_table,
+int libmodi_sparse_bundle_xml_plist_free(
+     libmodi_sparse_bundle_xml_plist_t **sparse_bundle_xml_plist,
      libcerror_error_t **error );
 
-int libmodi_bands_table_get_number_of_references(
-     libmodi_bands_table_t *bands_table,
-     int *number_of_references,
-     libcerror_error_t **error );
-
-int libmodi_bands_table_get_reference_by_index(
-     libmodi_bands_table_t *bands_table,
-     int reference_index,
-     uint32_t *reference,
-     libcerror_error_t **error );
-
-int libmodi_bands_table_read_data(
-     libmodi_bands_table_t *bands_table,
+int libmodi_sparse_bundle_xml_plist_read_data(
+     libmodi_sparse_bundle_xml_plist_t *sparse_bundle_xml_plist,
      const uint8_t *data,
      size_t data_size,
-     uint32_t number_of_bands,
+     libcerror_error_t **error );
+
+int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
+     libmodi_sparse_bundle_xml_plist_t *sparse_bundle_xml_plist,
+     libbfio_handle_t *file_io_handle,
+     off64_t offset,
+     size64_t size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_BANDS_TABLE_H ) */
+#endif /* !defined( _LIBMODI_SPARSE_BUNDLE_XML_PLIST_H ) */
 

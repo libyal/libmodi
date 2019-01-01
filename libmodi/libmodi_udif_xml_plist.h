@@ -1,5 +1,5 @@
 /*
- * Internationalization (i18n) functions
+ * Universal Disk Image Format (UDIF) XML plist functions
  *
  * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,37 +19,52 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_I18N_H )
-#define _LIBMODI_I18N_H
+#if !defined( _LIBMODI_UDIF_XML_PLIST_H )
+#define _LIBMODI_UDIF_XML_PLIST_H
 
 #include <common.h>
 #include <types.h>
 
-#if defined( HAVE_LIBINTL_H )
-#include <libintl.h>
-#endif
-
+#include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
-
-/* TODO
-#include <gettext.h>
-
-#define	_( string ) \
-	dgettext( "libmodi", string )
-*/
-#define	_( string ) \
-	string
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-int libmodi_i18n_initialize(
+typedef struct libmodi_udif_xml_plist libmodi_udif_xml_plist_t;
+
+struct libmodi_udif_xml_plist
+{
+	/* Dummy
+	 */
+	int dummy;
+};
+
+int libmodi_udif_xml_plist_initialize(
+     libmodi_udif_xml_plist_t **udif_xml_plist,
+     libcerror_error_t **error );
+
+int libmodi_udif_xml_plist_free(
+     libmodi_udif_xml_plist_t **udif_xml_plist,
+     libcerror_error_t **error );
+
+int libmodi_udif_xml_plist_read_data(
+     libmodi_udif_xml_plist_t *udif_xml_plist,
+     const uint8_t *data,
+     size_t data_size,
+     libcerror_error_t **error );
+
+int libmodi_udif_xml_plist_read_file_io_handle(
+     libmodi_udif_xml_plist_t *udif_xml_plist,
+     libbfio_handle_t *file_io_handle,
+     off64_t offset,
+     size64_t size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_I18N_H ) */
+#endif /* !defined( _LIBMODI_UDIF_XML_PLIST_H ) */
 

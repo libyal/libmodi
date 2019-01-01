@@ -1,7 +1,7 @@
 /*
  * Universal Disk Image Format (UDIF) resource file functions
  *
- * Copyright (C) 2012-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,6 +36,30 @@ typedef struct libmodi_udif_resource_file libmodi_udif_resource_file_t;
 
 struct libmodi_udif_resource_file
 {
+	/* The data fork offset
+	 */
+	uint64_t data_fork_offset;
+
+	/* The data fork size
+	 */
+	uint64_t data_fork_size;
+
+	/* The resource fork offset
+	 */
+	uint64_t resource_fork_offset;
+
+	/* The resource fork size
+	 */
+	uint64_t resource_fork_size;
+
+	/* The XML plist offset
+	 */
+	uint64_t xml_plist_offset;
+
+	/* The XML plist size
+	 */
+	uint64_t xml_plist_size;
+
 	/* The number of sectors
 	 */
 	uint32_t number_of_sectors;

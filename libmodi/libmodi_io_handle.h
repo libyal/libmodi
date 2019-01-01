@@ -1,7 +1,7 @@
 /*
  * Input/Output (IO) handle functions
  *
- * Copyright (C) 2012-2018, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -28,7 +28,6 @@
 #include "libmodi_extern.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
-#include "libmodi_libfcache.h"
 #include "libmodi_libfdata.h"
 #include "libmodi_types.h"
 
@@ -79,16 +78,11 @@ int libmodi_io_handle_clear(
      libmodi_io_handle_t *io_handle,
      libcerror_error_t **error );
 
-int libmodi_io_handle_read_info_plist(
-     libmodi_io_handle_t *io_handle,
-     libbfio_handle_t *file_io_handle,
-     libcerror_error_t **error );
-
 int libmodi_io_handle_read_data_block(
      libmodi_io_handle_t *io_handle,
      libbfio_handle_t *file_io_handle,
      libfdata_vector_t *vector,
-     libfcache_cache_t *cache,
+     libfdata_cache_t *cache,
      int element_index,
      int element_data_file_index,
      off64_t element_data_offset,
