@@ -68,6 +68,39 @@ matrix:
     dist: xenial
     sudo: required
     group: edge
+  - name: "Linux with gcc without OpenSSL"
+    env:
+    - CONFIGURE_OPTIONS="--with-openssl=no"
+    - CFLAGS="--coverage"
+    - LDFLAGS="--coverage"
+    - TARGET="linux-gcc-no-openssl"
+    compiler: gcc
+    os: linux
+    dist: xenial
+    sudo: required
+    group: edge
+  - name: "Linux with gcc with OpenSSL EVP"
+    env:
+    - CONFIGURE_OPTIONS="--enable-openssl-evp-cipher=yes --enable-openssl-evp-md=yes"
+    - CFLAGS="--coverage"
+    - LDFLAGS="--coverage"
+    - TARGET="linux-gcc-openssl-evp"
+    compiler: gcc
+    os: linux
+    dist: xenial
+    sudo: required
+    group: edge
+  - name: "Linux with gcc with OpenSSL non-EVP"
+    env:
+    - CONFIGURE_OPTIONS="--enable-openssl-evp-cipher=no --enable-openssl-evp-md=no"
+    - CFLAGS="--coverage"
+    - LDFLAGS="--coverage"
+    - TARGET="linux-gcc-openssl"
+    compiler: gcc
+    os: linux
+    dist: xenial
+    sudo: required
+    group: edge
   - name: "Linux with gcc and Python module"
     env:
     - CONFIGURE_OPTIONS="--enable-python"
@@ -154,28 +187,28 @@ matrix:
     dist: xenial
     sudo: required
     group: edge
-  - name: "MacOS with clang"
+  - name: "Mac OS with clang"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="macos-clang"
     compiler: clang
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS with gcc"
+  - name: "Mac OS with gcc"
     env:
     - CONFIGURE_OPTIONS=""
     - TARGET="macos-gcc"
     compiler: gcc
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS with gcc and Python module"
+  - name: "Mac OS with gcc and Python module"
     env:
     - CONFIGURE_OPTIONS="--enable-python"
     - TARGET="macos-gcc-python"
     compiler: gcc
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS with gcc and Python 2 module"
+  - name: "Mac OS with gcc and Python 2 module"
     env:
     - CONFIGURE_OPTIONS="--enable-python2"
     - PYTHON_VERSION=2
@@ -183,13 +216,13 @@ matrix:
     compiler: gcc
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS with gcc and Python 2 module (setup.py)"
+  - name: "Mac OS with gcc and Python 2 module (setup.py)"
     env:
     - TARGET="macos-gcc-python-setup-py"
     compiler: gcc
     os: osx
     osx_image: xcode8.3
-  - name: "MacOS gcc and pkgbuild"
+  - name: "Mac OS gcc and pkgbuild"
     env:
     - CONFIGURE_OPTIONS="--disable-dependency-tracking --prefix=/usr/local --enable-python --with-pyprefix"
     - TARGET="macos-gcc-pkgbuild"
@@ -198,7 +231,7 @@ matrix:
     osx_image: xcode8.3
 before_install:
   - if test ${TRAVIS_OS_NAME} = "linux"; then
-      sudo apt-get update && sudo apt-get --fix-missing -o Dpkg::Options::="--force-confold" upgrade -y --allow-unauthenticated && sudo apt-get install -y autopoint libfuse-dev;
+      sudo apt-get update && sudo apt-get --fix-missing -o Dpkg::Options::="--force-confold" upgrade -y --allow-unauthenticated && sudo apt-get install -y autopoint zlib1g-dev libssl-dev libfuse-dev;
     elif test ${TRAVIS_OS_NAME} = "osx"; then
       brew update && brew install gettext gnu-sed && brew link --force gettext;
     fi

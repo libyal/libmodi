@@ -40,6 +40,10 @@ struct libmodi_sparse_bundle_xml_plist
 	 */
 	uint64_t band_data_size;
 
+	/* The number of bands
+	 */
+	uint64_t number_of_bands;
+
 	/* The media size
 	 */
 	uint64_t media_size;

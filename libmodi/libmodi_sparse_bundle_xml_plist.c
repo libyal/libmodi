@@ -439,6 +439,24 @@ int libmodi_sparse_bundle_xml_plist_read_data(
 
 		goto on_error;
 	}
+	sparse_bundle_xml_plist->number_of_bands = sparse_bundle_xml_plist->media_size / sparse_bundle_xml_plist->band_data_size;
+
+	if( ( sparse_bundle_xml_plist->media_size % sparse_bundle_xml_plist->band_data_size ) != 0 )
+	{
+		sparse_bundle_xml_plist->number_of_bands += 1;
+	}
+	if( ( sparse_bundle_xml_plist->number_of_bands == 0 )
+	 || ( sparse_bundle_xml_plist->number_of_bands > (uint64_t) INT_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid number of bands value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
 	return( result );
 
 on_error:

@@ -1,5 +1,5 @@
 /*
- * Library to access the Mac OS disk image formats
+ * Library to access Mac OS disk image formats
  *
  * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *

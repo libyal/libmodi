@@ -51,7 +51,7 @@ struct mount_file_entry
 
 	/* The handle
 	 */
-	libmodi_handle_t *handle;
+	libmodi_handle_t *modi_handle;
 };
 
 int mount_file_entry_initialize(
@@ -59,7 +59,7 @@ int mount_file_entry_initialize(
      mount_file_system_t *file_system,
      const system_character_t *name,
      size_t name_length,
-     libmodi_handle_t *handle,
+     libmodi_handle_t *modi_handle,
      libcerror_error_t **error );
 
 int mount_file_entry_free(

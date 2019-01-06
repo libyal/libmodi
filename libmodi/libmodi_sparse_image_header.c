@@ -127,6 +127,11 @@ int libmodi_sparse_image_header_free(
 	}
 	if( *sparse_image_header != NULL )
 	{
+		if( ( *sparse_image_header )->band_references != NULL )
+		{
+			memory_free(
+			 ( *sparse_image_header )->band_references );
+		}
 		memory_free(
 		 *sparse_image_header );
 

@@ -201,7 +201,7 @@ int libmodi_internal_handle_open_read(
 
 ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
          libmodi_internal_handle_t *internal_handle,
-         libbfio_handle_t *file_io_handle,
+         intptr_t *file_io_handle,
          void *buffer,
          size_t buffer_size,
          libcerror_error_t **error );

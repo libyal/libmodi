@@ -18,6 +18,10 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFPLIST_CPPFLAGS@ \
+	@LIBCRYPTO_CPPFLAGS@ \
+	@LIBHMAC_CPPFLAGS@ \
+	@LIBCAES_CPPFLAGS@ \
+	@ZLIB_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBMODI_DLL_EXPORT@
 
@@ -37,6 +41,7 @@ libmodi_la_SOURCES = \
 	libmodi_libbfio.h \
 	libmodi_libcdirectory.h \
 	libmodi_libcerror.h \
+	libmodi_libcfile.h \
 	libmodi_libclocale.h \
 	libmodi_libcnotify.h \
 	libmodi_libcpath.h \
@@ -74,6 +79,11 @@ libmodi_la_LIBADD = \
 	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@ \
 	@LIBFPLIST_LIBADD@ \
+	@LIBHMAC_LIBADD@ \
+	@LIBCAES_LIBADD@ \
+	@LIBCRYPTO_LIBADD@ \
+	@ZLIB_LIBADD@ \
+	@LIBDL_LIBADD@ \
 	@PTHREAD_LIBADD@
 
 libmodi_la_LDFLAGS = -no-undefined -version-info 1:0:0

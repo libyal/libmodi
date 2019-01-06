@@ -280,38 +280,6 @@ int modi_test_check_file_signature(
 	libcerror_error_free(
 	 &error );
 
-	if( source != NULL )
-	{
-#if defined( HAVE_MODI_TEST_MEMORY )
-
-		/* Test libmodi_check_file_signature with malloc failing in libbfio_file_initialize
-		 */
-		modi_test_malloc_attempts_before_fail = 0;
-
-		result = libmodi_check_file_signature(
-		          narrow_source,
-		          &error );
-
-		if( modi_test_malloc_attempts_before_fail != -1 )
-		{
-			modi_test_malloc_attempts_before_fail = -1;
-		}
-		else
-		{
-			MODI_TEST_ASSERT_EQUAL_INT(
-			 "result",
-			 result,
-			 -1 );
-
-			MODI_TEST_ASSERT_IS_NOT_NULL(
-			 "error",
-			 error );
-
-			libcerror_error_free(
-			 &error );
-		}
-#endif /* defined( HAVE_MODI_TEST_MEMORY ) */
-	}
 	return( 1 );
 
 on_error:
@@ -404,38 +372,6 @@ int modi_test_check_file_signature_wide(
 	libcerror_error_free(
 	 &error );
 
-	if( source != NULL )
-	{
-#if defined( HAVE_MODI_TEST_MEMORY )
-
-		/* Test libmodi_check_file_signature_wide with malloc failing in libbfio_file_initialize
-		 */
-		modi_test_malloc_attempts_before_fail = 0;
-
-		result = libmodi_check_file_signature_wide(
-		          wide_source,
-		          &error );
-
-		if( modi_test_malloc_attempts_before_fail != -1 )
-		{
-			modi_test_malloc_attempts_before_fail = -1;
-		}
-		else
-		{
-			MODI_TEST_ASSERT_EQUAL_INT(
-			 "result",
-			 result,
-			 -1 );
-
-			MODI_TEST_ASSERT_IS_NOT_NULL(
-			 "error",
-			 error );
-
-			libcerror_error_free(
-			 &error );
-		}
-#endif /* defined( HAVE_MODI_TEST_MEMORY ) */
-	}
 	return( 1 );
 
 on_error:

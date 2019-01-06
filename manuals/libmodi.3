@@ -1,9 +1,9 @@
-.Dd November  5, 2016
+.Dd January  6, 2019
 .Dt libmodi 3
 .Os libmodi
 .Sh NAME
 .Nm libmodi.h
-.Nd Library to access the Mac OS disk image formats
+.Nd Library to access Mac OS disk image formats
 .Sh LIBRARY
 .Lb libmodi
 .Sh SYNOPSIS
@@ -82,10 +82,14 @@ Handle functions
 .Fn libmodi_handle_get_offset "libmodi_handle_t *handle, off64_t *offset, libmodi_error_t **error"
 .Ft int
 .Fn libmodi_handle_set_maximum_number_of_open_handles "libmodi_handle_t *handle, int maximum_number_of_open_handles, libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_set_band_data_files_path "libmodi_handle_t *handle, const char *path, size_t path_length, libmodi_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
 .Fn libmodi_handle_open_wide "libmodi_handle_t *handle, const wchar_t *filename, int access_flags, libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_set_band_data_files_path_wide "libmodi_handle_t *handle, const wchar_t *path, size_t path_length, libmodi_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int

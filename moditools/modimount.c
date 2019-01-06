@@ -570,7 +570,8 @@ int main( int argc, char * const argv[] )
 	 "No sub system to mount MODI format.\n" );
 
 	return( EXIT_FAILURE );
-#endif
+
+#endif /* defined( HAVE_LIBFUSE ) || defined( HAVE_LIBOSXFUSE ) */
 
 on_error:
 	if( error != NULL )

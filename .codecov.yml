@@ -8,6 +8,7 @@ coverage:
     changes: false
   ignore:
     - "libbfio/*"
+    - "libcaes/*"
     - "libcdata/*"
     - "libcdirectory/*"
     - "libcerror/*"

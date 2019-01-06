@@ -281,10 +281,10 @@ int mount_file_system_signal_abort(
      mount_file_system_t *file_system,
      libcerror_error_t **error )
 {
-	libmodi_handle_t *handle = NULL;
-	static char *function    = "mount_file_system_signal_abort";
-	int handle_index         = 0;
-	int number_of_handles    = 0;
+	libmodi_handle_t *modi_handle = NULL;
+	static char *function         = "mount_file_system_signal_abort";
+	int handle_index              = 0;
+	int number_of_handles         = 0;
 
 	if( file_system == NULL )
 	{
@@ -318,7 +318,7 @@ int mount_file_system_signal_abort(
 		if( libcdata_array_get_entry_by_index(
 		     file_system->handles_array,
 		     handle_index,
-		     (intptr_t **) &handle,
+		     (intptr_t **) &modi_handle,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -332,7 +332,7 @@ int mount_file_system_signal_abort(
 			return( -1 );
 		}
 		if( libmodi_handle_signal_abort(
-		     handle,
+		     modi_handle,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -545,7 +545,7 @@ int mount_file_system_get_number_of_handles(
 int mount_file_system_get_handle_by_index(
      mount_file_system_t *file_system,
      int handle_index,
-     libmodi_handle_t **handle,
+     libmodi_handle_t **modi_handle,
      libcerror_error_t **error )
 {
 	static char *function = "mount_file_system_get_handle_by_index";
@@ -564,7 +564,7 @@ int mount_file_system_get_handle_by_index(
 	if( libcdata_array_get_entry_by_index(
 	     file_system->handles_array,
 	     handle_index,
-	     (intptr_t **) handle,
+	     (intptr_t **) modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -587,7 +587,7 @@ int mount_file_system_get_handle_by_path(
      mount_file_system_t *file_system,
      const system_character_t *path,
      size_t path_length,
-     libmodi_handle_t **handle,
+     libmodi_handle_t **modi_handle,
      libcerror_error_t **error )
 {
 	static char *function        = "mount_file_system_get_handle_by_path";
@@ -640,7 +640,7 @@ int mount_file_system_get_handle_by_path(
 
 		return( -1 );
 	}
-	if( handle == NULL )
+	if( modi_handle == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -657,7 +657,7 @@ int mount_file_system_get_handle_by_path(
 	if( ( path_length == 1 )
 	 && ( path[ 0 ] == file_system->path_prefix[ 0 ] ) )
 	{
-		*handle = NULL;
+		*modi_handle = NULL;
 
 		return( 1 );
 	}
@@ -702,7 +702,7 @@ int mount_file_system_get_handle_by_path(
 	if( libcdata_array_get_entry_by_index(
 	     file_system->handles_array,
 	     handle_index,
-	     (intptr_t **) handle,
+	     (intptr_t **) modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -723,7 +723,7 @@ int mount_file_system_get_handle_by_path(
  */
 int mount_file_system_append_handle(
      mount_file_system_t *file_system,
-     libmodi_handle_t *handle,
+     libmodi_handle_t *modi_handle,
      libcerror_error_t **error )
 {
 	static char *function = "mount_file_system_append_handle";
@@ -743,7 +743,7 @@ int mount_file_system_append_handle(
 	if( libcdata_array_append_entry(
 	     file_system->handles_array,
 	     &entry_index,
-	     (intptr_t *) handle,
+	     (intptr_t *) modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(

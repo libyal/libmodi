@@ -15,6 +15,7 @@ MSVSCPP_FILES = \
 	libfguid/libfguid.vcproj \
 	libfplist/libfplist.vcproj \
 	libfvalue/libfvalue.vcproj \
+	libhmac/libhmac.vcproj \
 	libmodi/libmodi.vcproj \
 	libuna/libuna.vcproj \
 	modi_test_data_block/modi_test_data_block.vcproj \
@@ -26,6 +27,7 @@ MSVSCPP_FILES = \
 	modiinfo/modiinfo.vcproj \
 	modimount/modimount.vcproj \
 	pymodi/pymodi.vcproj \
+	zlib/zlib.vcproj \
 	libmodi.sln
 
 EXTRA_DIST = \

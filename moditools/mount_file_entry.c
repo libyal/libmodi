@@ -52,7 +52,7 @@ int mount_file_entry_initialize(
      mount_file_system_t *file_system,
      const system_character_t *name,
      size_t name_length,
-     libmodi_handle_t *handle,
+     libmodi_handle_t *modi_handle,
      libcerror_error_t **error )
 {
 	static char *function = "mount_file_entry_initialize";
@@ -173,7 +173,7 @@ int mount_file_entry_initialize(
 
 		( *file_entry )->name_size = name_length + 1;
 	}
-	( *file_entry )->handle = handle;
+	( *file_entry )->modi_handle = modi_handle;
 
 	return( 1 );
 
@@ -271,7 +271,7 @@ int mount_file_entry_get_parent_file_entry(
 
 		return( -1 );
 	}
-	if( file_entry->handle != NULL )
+	if( file_entry->modi_handle != NULL )
 	{
 		if( mount_file_entry_initialize(
 		     parent_file_entry,
@@ -487,7 +487,7 @@ int mount_file_entry_get_file_mode(
 
 		return( -1 );
 	}
-	if( file_entry->handle == NULL )
+	if( file_entry->modi_handle == NULL )
 	{
 		*file_mode = S_IFDIR | 0555;
 	}
@@ -655,7 +655,7 @@ int mount_file_entry_get_number_of_sub_file_entries(
 
 		return( -1 );
 	}
-	if( file_entry->handle == NULL )
+	if( file_entry->modi_handle == NULL )
 	{
 		if( mount_file_system_get_number_of_handles(
 		     file_entry->file_system,
@@ -700,7 +700,7 @@ int mount_file_entry_get_sub_file_entry_by_index(
 {
 	system_character_t path[ 32 ];
 
-	libmodi_handle_t *handle       = NULL;
+	libmodi_handle_t *modi_handle  = NULL;
 	static char *function          = "mount_file_entry_get_sub_file_entry_by_index";
 	size_t path_length             = 0;
 	int number_of_sub_file_entries = 0;
@@ -784,7 +784,7 @@ int mount_file_entry_get_sub_file_entry_by_index(
 	if( mount_file_system_get_handle_by_index(
 	     file_entry->file_system,
 	     sub_file_entry_index,
-	     &handle,
+	     &modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -797,7 +797,7 @@ int mount_file_entry_get_sub_file_entry_by_index(
 
 		return( -1 );
 	}
-	if( handle == NULL )
+	if( modi_handle == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -817,7 +817,7 @@ int mount_file_entry_get_sub_file_entry_by_index(
 	     file_entry->file_system,
 	     &( path[ 1 ] ),
 	     path_length - 1,
-	     handle,
+	     modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -858,7 +858,7 @@ ssize_t mount_file_entry_read_buffer_at_offset(
 		return( -1 );
 	}
 	read_count = libmodi_handle_read_buffer_at_offset(
-	              file_entry->handle,
+	              file_entry->modi_handle,
 	              buffer,
 	              buffer_size,
 	              offset,
@@ -901,7 +901,7 @@ int mount_file_entry_get_size(
 
 		return( -1 );
 	}
-	if( file_entry->handle == NULL )
+	if( file_entry->modi_handle == NULL )
 	{
 		if( size == NULL )
 		{
@@ -919,7 +919,7 @@ int mount_file_entry_get_size(
 	else
 	{
 		if( libmodi_handle_get_media_size(
-		     file_entry->handle,
+		     file_entry->modi_handle,
 		     size,
 		     error ) != 1 )
 		{

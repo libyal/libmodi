@@ -135,14 +135,6 @@ int modi_test_handle_open_source(
 	string_length = system_string_length(
 	                 source );
 
-	while( string_length > 0 )
-	{
-		if( source[ string_length - 1 ] == '/' )
-		{
-			break;
-		}
-		string_length--;
-	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libmodi_handle_set_band_data_files_path(
 	          *handle,
@@ -2334,7 +2326,8 @@ int main(
 		 "error",
 		 error );
 	}
-	if( result != 0 )
+	if( ( source != NULL )
+	 && ( result != 0 ) )
 	{
 		MODI_TEST_RUN_WITH_ARGS(
 		 "libmodi_handle_open",

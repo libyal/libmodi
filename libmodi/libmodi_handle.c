@@ -35,6 +35,7 @@
 #include "libmodi_libbfio.h"
 #include "libmodi_libcdirectory.h"
 #include "libmodi_libcerror.h"
+#include "libmodi_libcfile.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_libcpath.h"
 #include "libmodi_libcthreads.h"
@@ -144,7 +145,7 @@ int libmodi_handle_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to intialize read/write lock.",
+		 "%s: unable to initialize read/write lock.",
 		 function );
 
 		goto on_error;
@@ -230,6 +231,11 @@ int libmodi_handle_free(
 			result = -1;
 		}
 #endif
+		if( internal_handle->bands_directory_path != NULL )
+		{
+			memory_free(
+			 internal_handle->bands_directory_path );
+		}
 		if( libmodi_io_handle_free(
 		     &( internal_handle->io_handle ),
 		     error ) != 1 )
@@ -1346,7 +1352,6 @@ int libmodi_handle_open_band_data_files(
         libbfio_pool_t *file_io_pool               = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libmodi_handle_open_band_data_files";
-	uint64_t number_of_bands                   = 0;
 	int band_index                             = 0;
 	int result                                 = 0;
 
@@ -1398,13 +1403,13 @@ int libmodi_handle_open_band_data_files(
 		return( -1 );
 	}
 	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
-	 && ( internal_handle->io_handle->band_data_size == 0 ) )
+	 && ( internal_handle->io_handle->number_of_bands <= 0 ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - invalid IO handle - missing band data size.",
+		 "%s: invalid handle - invalid IO handle - missing number of bands.",
 		 function );
 
 		return( -1 );
@@ -1437,27 +1442,9 @@ int libmodi_handle_open_band_data_files(
 #endif
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
 	{
-		number_of_bands = internal_handle->io_handle->media_size / internal_handle->io_handle->band_data_size;
-
-		if( ( internal_handle->io_handle->media_size % internal_handle->io_handle->band_data_size ) != 0 )
-		{
-			number_of_bands++;
-		}
-		if( ( number_of_bands == 0 )
-		 || ( number_of_bands > (uint64_t) INT_MAX ) )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-			 "%s: invalid number of bands value out of bounds.",
-			 function );
-
-			goto on_error;
-		}
 		if( libbfio_pool_initialize(
 		     &file_io_pool,
-		     number_of_bands,
+		     internal_handle->io_handle->number_of_bands,
 		     internal_handle->maximum_number_of_open_handles,
 		     error ) != 1 )
 		{
@@ -1471,7 +1458,7 @@ int libmodi_handle_open_band_data_files(
 			goto on_error;
 		}
 		for( band_index = 0;
-		     band_index < (int) number_of_bands;
+		     band_index < internal_handle->io_handle->number_of_bands;
 		     band_index++ )
 		{
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
@@ -1692,8 +1679,10 @@ int libmodi_internal_handle_open_band_data_files_file_io_pool(
 {
 	libbfio_handle_t *file_io_handle = NULL;
 	static char *function            = "libmodi_internal_handle_open_band_data_files_file_io_pool";
+	size64_t band_data_size          = 0;
 	size64_t file_size               = 0;
-	uint32_t band_data_range_flags   = 0;
+	size64_t media_size              = 0;
+	size64_t sparse_band_data_size   = 0;
 	int file_io_handle_index         = 0;
 	int number_of_file_io_handles    = 0;
 	int segment_index                = 0;
@@ -1756,6 +1745,19 @@ int libmodi_internal_handle_open_band_data_files_file_io_pool(
 
 		return( -1 );
 	}
+	if( number_of_file_io_handles != internal_handle->io_handle->number_of_bands )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid number of handles in file IO pool value does not match number of bands.",
+		 function );
+
+		return( -1 );
+	}
+	media_size = internal_handle->io_handle->media_size;
+
 	for( file_io_handle_index = 0;
 	     file_io_handle_index < number_of_file_io_handles;
 	     file_io_handle_index++ )
@@ -1778,7 +1780,8 @@ int libmodi_internal_handle_open_band_data_files_file_io_pool(
 		}
 		if( file_io_handle == NULL )
 		{
-			band_data_range_flags = LIBFDATA_RANGE_FLAG_IS_SPARSE;
+			band_data_size        = 0;
+			sparse_band_data_size = internal_handle->io_handle->band_data_size;
 		}
 		else
 		{
@@ -1796,39 +1799,74 @@ int libmodi_internal_handle_open_band_data_files_file_io_pool(
 
 				return( -1 );
 			}
-			if( file_size != internal_handle->io_handle->band_data_size )
+			if( internal_handle->io_handle->band_data_size < media_size )
+			{
+				sparse_band_data_size = internal_handle->io_handle->band_data_size;
+			}
+			else
+			{
+				sparse_band_data_size = media_size;
+			}
+			if( file_size > sparse_band_data_size )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
-				 "%s: invalid band data file: %d - file size does not match band data size.",
+				 "%s: invalid band data file: %d size value out of bounds.",
 				 function,
 				 file_io_handle_index );
 
 				return( -1 );
 			}
-			band_data_range_flags = 0;
+			band_data_size         = file_size;
+			sparse_band_data_size -= file_size;
 		}
-		if( libfdata_vector_append_segment(
-		     internal_handle->bands_vector,
-		     &segment_index,
-		     file_io_handle_index,
-		     0,
-		     internal_handle->io_handle->band_data_size,
-		     band_data_range_flags,
-		     error ) != 1 )
+		if( band_data_size > 0 )
 		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-			 "%s: unable to append band data file: %d as segment to bands vector.",
-			 function,
-			 file_io_handle_index );
+			if( libfdata_vector_append_segment(
+			     internal_handle->bands_vector,
+			     &segment_index,
+			     file_io_handle_index,
+			     0,
+			     band_data_size,
+			     0,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append band data file: %d as segment to bands vector.",
+				 function,
+				 file_io_handle_index );
 
-			return( -1 );
+				return( -1 );
+			}
 		}
+		if( sparse_band_data_size > 0 )
+		{
+			if( libfdata_vector_append_segment(
+			     internal_handle->bands_vector,
+			     &segment_index,
+			     file_io_handle_index,
+			     0,
+			     sparse_band_data_size,
+			     LIBFDATA_RANGE_FLAG_IS_SPARSE,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append band data file: %d as sparse segment to bands vector.",
+				 function,
+				 file_io_handle_index );
+
+				return( -1 );
+			}
+		}
+		media_size -= internal_handle->io_handle->band_data_size;
 	}
 	internal_handle->band_data_file_io_pool = file_io_pool;
 
@@ -1865,39 +1903,6 @@ int libmodi_internal_handle_open_band_data_file(
 
 		return( -1 );
 	}
-	if( ( internal_handle->access_flags & LIBMODI_ACCESS_FLAG_READ ) != 0 )
-	{
-		bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
-	}
-	if( libbfio_file_initialize(
-	     &file_io_handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file IO handle.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libbfio_handle_set_track_offsets_read(
-	     file_io_handle,
-	     1,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set track offsets read in file IO handle.",
-                 function );
-
-                goto on_error;
-	}
-#endif
 /* TODO replace by safer function */
 	narrow_string_snprintf(
 	 filename,
@@ -1921,33 +1926,14 @@ int libmodi_internal_handle_open_band_data_file(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bands file path.",
-		 function );
+		 "%s: unable to create bands file: %d path.",
+		 function,
+		 band_index );
 
 		goto on_error;
 	}
-	if( libbfio_file_set_name(
-	     file_io_handle,
-	     bands_file_path,
-	     bands_file_path_size,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file IO handle.",
-                 function );
-
-                goto on_error;
-	}
-	memory_free(
-	 bands_file_path );
-
-	bands_file_path = NULL;
-
-	result = libbfio_handle_exists(
-	          file_io_handle,
+	result = libcfile_file_exists(
+	          bands_file_path,
 	          error );
 
 	if( result == -1 )
@@ -1959,54 +1945,104 @@ int libmodi_internal_handle_open_band_data_file(
 		 "%s: unable to determine if band data file exists.",
 		 function );
 	}
-	else if( result == 0 )
+	else if( result != 0 )
 	{
-		return( 1 );
-	}
-	if( libbfio_handle_open(
-	     file_io_handle,
-	     bfio_access_flags,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file IO handle.",
-		 function );
+		if( ( internal_handle->access_flags & LIBMODI_ACCESS_FLAG_READ ) != 0 )
+		{
+			bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
+		}
+		if( libbfio_file_initialize(
+		     &file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create file IO handle.",
+			 function );
 
-		goto on_error;
-	}
-	if( libbfio_pool_set_handle(
-	     file_io_pool,
-	     band_index,
-	     file_io_handle,
-	     bfio_access_flags,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set file IO handle: %d in pool.",
-		 function,
-		 band_index );
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libbfio_handle_set_track_offsets_read(
+		     file_io_handle,
+		     1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set track offsets read in file IO handle.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+#endif
+		if( libbfio_file_set_name(
+		     file_io_handle,
+		     bands_file_path,
+		     bands_file_path_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set filename in file IO handle.",
+			 function );
+
+			goto on_error;
+		}
+		if( libbfio_handle_open(
+		     file_io_handle,
+		     bfio_access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open file IO handle.",
+			 function );
+
+			goto on_error;
+		}
+		if( libbfio_pool_set_handle(
+		     file_io_pool,
+		     band_index,
+		     file_io_handle,
+		     bfio_access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set file IO handle: %d in pool.",
+			 function,
+			 band_index );
+
+			goto on_error;
+		}
 	}
+	memory_free(
+	 bands_file_path );
+
 	return( 1 );
 
 on_error:
-	if( bands_file_path != NULL )
-	{
-		memory_free(
-		 bands_file_path );
-	}
 	if( file_io_handle != NULL )
 	{
 		libbfio_handle_free(
 		 &file_io_handle,
 		 NULL );
+	}
+	if( bands_file_path != NULL )
+	{
+		memory_free(
+		 bands_file_path );
 	}
 	return( -1 );
 }
@@ -2043,39 +2079,6 @@ int libmodi_internal_handle_open_band_data_file_wide(
 
 		return( -1 );
 	}
-	if( ( internal_handle->access_flags & LIBMODI_ACCESS_FLAG_READ ) != 0 )
-	{
-		bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
-	}
-	if( libbfio_file_initialize(
-	     &file_io_handle,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create file IO handle.",
-		 function );
-
-                goto on_error;
-	}
-#if defined( HAVE_DEBUG_OUTPUT )
-	if( libbfio_handle_set_track_offsets_read(
-	     file_io_handle,
-	     1,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set track offsets read in file IO handle.",
-                 function );
-
-                goto on_error;
-	}
-#endif
 /* TODO replace by safer function */
 	wide_string_snwprintf(
 	 filename,
@@ -2104,28 +2107,8 @@ int libmodi_internal_handle_open_band_data_file_wide(
 
 		goto on_error;
 	}
-	if( libbfio_file_set_name_wide(
-	     file_io_handle,
-	     bands_file_path,
-	     bands_file_path_size,
-	     error ) != 1 )
-	{
-                libcerror_error_set(
-                 error,
-                 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-                 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-                 "%s: unable to set filename in file IO handle.",
-                 function );
-
-                goto on_error;
-	}
-	memory_free(
-	 bands_file_path );
-
-	bands_file_path = NULL;
-
-	result = libbfio_handle_exists(
-	          file_io_handle,
+	result = libcfile_file_exists_wide(
+	          bands_file_path,
 	          error );
 
 	if( result == -1 )
@@ -2137,54 +2120,104 @@ int libmodi_internal_handle_open_band_data_file_wide(
 		 "%s: unable to determine if band data file exists.",
 		 function );
 	}
-	else if( result == 0 )
+	else if( result != 0 )
 	{
-		return( 1 );
-	}
-	if( libbfio_handle_open(
-	     file_io_handle,
-	     bfio_access_flags,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_OPEN_FAILED,
-		 "%s: unable to open file IO handle.",
-		 function );
+		if( ( internal_handle->access_flags & LIBMODI_ACCESS_FLAG_READ ) != 0 )
+		{
+			bfio_access_flags = LIBBFIO_ACCESS_FLAG_READ;
+		}
+		if( libbfio_file_initialize(
+		     &file_io_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create file IO handle.",
+			 function );
 
-		goto on_error;
-	}
-	if( libbfio_pool_set_handle(
-	     file_io_pool,
-	     band_index,
-	     file_io_handle,
-	     bfio_access_flags,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to set file IO handle: %d in pool.",
-		 function,
-		 band_index );
+			goto on_error;
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libbfio_handle_set_track_offsets_read(
+		     file_io_handle,
+		     1,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set track offsets read in file IO handle.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+#endif
+		if( libbfio_file_set_name_wide(
+		     file_io_handle,
+		     bands_file_path,
+		     bands_file_path_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set filename in file IO handle.",
+			 function );
+
+			goto on_error;
+		}
+		if( libbfio_handle_open(
+		     file_io_handle,
+		     bfio_access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open file IO handle.",
+			 function );
+
+			goto on_error;
+		}
+		if( libbfio_pool_set_handle(
+		     file_io_pool,
+		     band_index,
+		     file_io_handle,
+		     bfio_access_flags,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+			 "%s: unable to set file IO handle: %d in pool.",
+			 function,
+			 band_index );
+
+			goto on_error;
+		}
 	}
+	memory_free(
+	 bands_file_path );
+
 	return( 1 );
 
 on_error:
-	if( bands_file_path != NULL )
-	{
-		memory_free(
-		 bands_file_path );
-	}
 	if( file_io_handle != NULL )
 	{
 		libbfio_handle_free(
 		 &file_io_handle,
 		 NULL );
+	}
+	if( bands_file_path != NULL )
+	{
+		memory_free(
+		 bands_file_path );
 	}
 	return( -1 );
 }
@@ -2262,6 +2295,38 @@ int libmodi_handle_close(
 		}
 	}
 #endif
+	if( internal_handle->band_data_file_io_pool_created_in_library != 0 )
+	{
+		if( libbfio_pool_close_all(
+		     internal_handle->band_data_file_io_pool,
+		     error ) != 0 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_CLOSE_FAILED,
+			 "%s: unable to close all files in band data file IO pool.",
+			 function );
+
+			result = -1;
+		}
+		if( libbfio_pool_free(
+		     &( internal_handle->band_data_file_io_pool ),
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free band data file IO pool.",
+			 function );
+
+			result = -1;
+		}
+		internal_handle->band_data_file_io_pool_created_in_library = 0;
+	}
+	internal_handle->band_data_file_io_pool = NULL;
+
 	if( internal_handle->file_io_handle_opened_in_library != 0 )
 	{
 		if( libbfio_handle_close(
@@ -2774,11 +2839,10 @@ int libmodi_internal_handle_open_read(
 		}
 		else if( result != 0 )
 		{
-			internal_handle->io_handle->image_type     = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
-			internal_handle->io_handle->band_data_size = (size64_t) sparse_bundle_xml_plist->band_data_size;
-			internal_handle->io_handle->media_size     = (size64_t) sparse_bundle_xml_plist->media_size;
-
-/* TODO fill bands table */
+			internal_handle->io_handle->image_type      = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
+			internal_handle->io_handle->band_data_size  = (size64_t) sparse_bundle_xml_plist->band_data_size;
+			internal_handle->io_handle->number_of_bands = (int) sparse_bundle_xml_plist->number_of_bands;
+			internal_handle->io_handle->media_size      = (size64_t) sparse_bundle_xml_plist->media_size;
 		}
 		if( libmodi_sparse_bundle_xml_plist_free(
 		     &sparse_bundle_xml_plist,
@@ -2901,7 +2965,7 @@ on_error:
  */
 ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
          libmodi_internal_handle_t *internal_handle,
-         libbfio_handle_t *file_io_handle,
+         intptr_t *file_io_handle,
          void *buffer,
          size_t buffer_size,
          libcerror_error_t **error )
@@ -2976,7 +3040,7 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 	{
 		if( libfdata_vector_get_element_value_at_offset(
 		     internal_handle->bands_vector,
-		     (intptr_t *) file_io_handle,
+		     file_io_handle,
 		     (libfdata_cache_t *) internal_handle->bands_cache,
 		     internal_handle->current_offset,
 		     &element_data_offset,
@@ -3078,6 +3142,7 @@ ssize_t libmodi_handle_read_buffer(
          libcerror_error_t **error )
 {
 	libmodi_internal_handle_t *internal_handle = NULL;
+	intptr_t *file_io_handle                   = NULL;
 	static char *function                      = "libmodi_handle_read_buffer";
 	ssize_t read_count                         = 0;
 
@@ -3094,6 +3159,17 @@ ssize_t libmodi_handle_read_buffer(
 	}
 	internal_handle = (libmodi_internal_handle_t *) handle;
 
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_handle->file_io_handle == NULL )
 	{
 		libcerror_error_set(
@@ -3101,6 +3177,18 @@ ssize_t libmodi_handle_read_buffer(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	 && ( internal_handle->band_data_file_io_pool == NULL ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing band data file IO pool.",
 		 function );
 
 		return( -1 );
@@ -3120,9 +3208,17 @@ ssize_t libmodi_handle_read_buffer(
 		return( -1 );
 	}
 #endif
+	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		file_io_handle = (intptr_t *) internal_handle->band_data_file_io_pool;
+	}
+	else
+	{
+		file_io_handle = (intptr_t *) internal_handle->file_io_handle;
+	}
 	read_count = libmodi_internal_handle_read_buffer_from_file_io_handle(
 		      internal_handle,
-		      internal_handle->file_io_handle,
+		      file_io_handle,
 		      buffer,
 		      buffer_size,
 		      error );
@@ -3167,6 +3263,7 @@ ssize_t libmodi_handle_read_buffer_at_offset(
          libcerror_error_t **error )
 {
 	libmodi_internal_handle_t *internal_handle = NULL;
+	intptr_t *file_io_handle                   = NULL;
 	static char *function                      = "libmodi_handle_read_buffer_at_offset";
 	ssize_t read_count                         = 0;
 
@@ -3183,6 +3280,17 @@ ssize_t libmodi_handle_read_buffer_at_offset(
 	}
 	internal_handle = (libmodi_internal_handle_t *) handle;
 
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
 	if( internal_handle->file_io_handle == NULL )
 	{
 		libcerror_error_set(
@@ -3190,6 +3298,18 @@ ssize_t libmodi_handle_read_buffer_at_offset(
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
 		 "%s: invalid handle - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	 && ( internal_handle->band_data_file_io_pool == NULL ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing band data file IO pool.",
 		 function );
 
 		return( -1 );
@@ -3224,9 +3344,17 @@ ssize_t libmodi_handle_read_buffer_at_offset(
 
 		goto on_error;
 	}
+	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		file_io_handle = (intptr_t *) internal_handle->band_data_file_io_pool;
+	}
+	else
+	{
+		file_io_handle = (intptr_t *) internal_handle->file_io_handle;
+	}
 	read_count = libmodi_internal_handle_read_buffer_from_file_io_handle(
 		      internal_handle,
-		      internal_handle->file_io_handle,
+		      file_io_handle,
 		      buffer,
 		      buffer_size,
 		      error );

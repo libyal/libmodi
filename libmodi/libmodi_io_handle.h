@@ -67,6 +67,10 @@ struct libmodi_io_handle
 	 */
 	size64_t band_data_size;
 
+	/* The number of bands
+	 */
+	int number_of_bands;
+
 	/* Value to indicate if abort was signalled
 	 */
 	int abort;

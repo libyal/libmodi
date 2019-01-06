@@ -84,19 +84,19 @@ int mount_file_system_get_number_of_handles(
 int mount_file_system_get_handle_by_index(
      mount_file_system_t *file_system,
      int handle_index,
-     libmodi_handle_t **handle,
+     libmodi_handle_t **modi_handle,
      libcerror_error_t **error );
 
 int mount_file_system_get_handle_by_path(
      mount_file_system_t *file_system,
      const system_character_t *path,
      size_t path_length,
-     libmodi_handle_t **handle,
+     libmodi_handle_t **modi_handle,
      libcerror_error_t **error );
 
 int mount_file_system_append_handle(
      mount_file_system_t *file_system,
-     libmodi_handle_t *handle,
+     libmodi_handle_t *modi_handle,
      libcerror_error_t **error );
 
 int mount_file_system_get_path_from_handle_index(

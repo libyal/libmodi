@@ -1,5 +1,5 @@
 /*
- * The libcpath header wrapper
+ * The internal libcfile header
  *
  * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,30 +19,32 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if !defined( _MODI_TEST_LIBCPATH_H )
-#define _MODI_TEST_LIBCPATH_H
+#if !defined( _LIBMODI_LIBCFILE_H )
+#define _LIBMODI_LIBCFILE_H
 
 #include <common.h>
 
-/* Define HAVE_LOCAL_LIBCPATH for local use of libcpath
+/* Define HAVE_LOCAL_LIBCFILE for local use of libcfile
  */
-#if defined( HAVE_LOCAL_LIBCPATH )
+#if defined( HAVE_LOCAL_LIBCFILE )
 
-#include <libcpath_definitions.h>
-#include <libcpath_path.h>
+#include <libcfile_definitions.h>
+#include <libcfile_file.h>
+#include <libcfile_support.h>
+#include <libcfile_types.h>
 
 #else
 
-/* If libtool DLL support is enabled set LIBCPATH_DLL_IMPORT
- * before including libcpath.h
+/* If libtool DLL support is enabled set LIBCFILE_DLL_IMPORT
+ * before including libcfile.h
  */
 #if defined( _WIN32 ) && defined( DLL_IMPORT )
-#define LIBCPATH_DLL_IMPORT
+#define LIBCFILE_DLL_IMPORT
 #endif
 
-#include <libcpath.h>
+#include <libcfile.h>
 
-#endif /* !defined( _MODI_TEST_LIBCPATH_H ) */
+#endif /* defined( HAVE_LOCAL_LIBCFILE ) */
 
-#endif /* !defined( _MODI_TEST_LIBCPATH_H ) */
+#endif /* !defined( _LIBMODI_LIBCFILE_H ) */
 

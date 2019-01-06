@@ -247,9 +247,9 @@ int mount_handle_open(
      const system_character_t *filename,
      libcerror_error_t **error )
 {
-	libmodi_handle_t *handle = NULL;
-	static char *function    = "mount_handle_open";
-	int result               = 0;
+	libmodi_handle_t *modi_handle = NULL;
+	static char *function         = "mount_handle_open";
+	int result                    = 0;
 
 	if( mount_handle == NULL )
 	{
@@ -274,7 +274,7 @@ int mount_handle_open(
 		return( -1 );
 	}
 	if( libmodi_handle_initialize(
-	     &handle,
+	     &modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -288,13 +288,13 @@ int mount_handle_open(
 	}
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
 	result = libmodi_handle_open_wide(
-	          handle,
+	          modi_handle,
 	          filename,
 	          LIBMODI_OPEN_READ,
 	          error );
 #else
 	result = libmodi_handle_open(
-	          handle,
+	          modi_handle,
 	          filename,
 	          LIBMODI_OPEN_READ,
 	          error );
@@ -312,7 +312,7 @@ int mount_handle_open(
 	}
 	if( mount_file_system_append_handle(
 	     mount_handle->file_system,
-	     handle,
+	     modi_handle,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
@@ -327,10 +327,10 @@ int mount_handle_open(
 	return( 1 );
 
 on_error:
-	if( handle != NULL )
+	if( modi_handle != NULL )
 	{
 		libmodi_handle_free(
-		 &handle,
+		 &modi_handle,
 		 NULL );
 	}
 	return( -1 );
@@ -343,10 +343,10 @@ int mount_handle_close(
      mount_handle_t *mount_handle,
      libcerror_error_t **error )
 {
-	libmodi_handle_t *handle = NULL;
-	static char *function    = "mount_handle_close";
-	int handle_index         = 0;
-	int number_of_handles    = 0;
+	libmodi_handle_t *modi_handle = NULL;
+	static char *function         = "mount_handle_close";
+	int handle_index              = 0;
+	int number_of_handles         = 0;
 
 	if( mount_handle == NULL )
 	{
@@ -380,7 +380,7 @@ int mount_handle_close(
 		if( mount_file_system_get_handle_by_index(
 		     mount_handle->file_system,
 		     handle_index,
-		     &handle,
+		     &modi_handle,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -393,10 +393,10 @@ int mount_handle_close(
 
 			goto on_error;
 		}
-/* TODO remove handle from file system */
+/* TODO remove modi_handle from file system */
 
 		if( libmodi_handle_close(
-		     handle,
+		     modi_handle,
 		     error ) != 0 )
 		{
 			libcerror_error_set(
@@ -410,7 +410,7 @@ int mount_handle_close(
 			goto on_error;
 		}
 		if( libmodi_handle_free(
-		     &handle,
+		     &modi_handle,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -427,10 +427,10 @@ int mount_handle_close(
 	return( 0 );
 
 on_error:
-	if( handle != NULL )
+	if( modi_handle != NULL )
 	{
 		libmodi_handle_free(
-		 &handle,
+		 &modi_handle,
 		 NULL );
 	}
 	return( -1 );
@@ -445,7 +445,7 @@ int mount_handle_get_file_entry_by_path(
      mount_file_entry_t **file_entry,
      libcerror_error_t **error )
 {
-	libmodi_handle_t *handle           = NULL;
+	libmodi_handle_t *modi_handle      = NULL;
 	const system_character_t *filename = NULL;
 	static char *function              = "mount_handle_get_file_entry_by_path";
 	size_t filename_length             = 0;
@@ -520,7 +520,7 @@ int mount_handle_get_file_entry_by_path(
 	          mount_handle->file_system,
 	          path,
 	          path_length,
-	          &handle,
+	          &modi_handle,
 	          error );
 
 	if( result == -1 )
@@ -541,7 +541,7 @@ int mount_handle_get_file_entry_by_path(
 		     mount_handle->file_system,
 		     filename,
 		     filename_length,
-		     handle,
+		     modi_handle,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
