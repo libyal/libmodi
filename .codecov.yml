@@ -23,5 +23,6 @@ coverage:
     - "libfguid/*"
     - "libfplist/*"
     - "libfvalue/*"
+    - "libhmac/*"
     - "libuna/*"
     - "tests/*"
