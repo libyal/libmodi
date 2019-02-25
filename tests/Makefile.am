@@ -27,6 +27,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_manpage.sh \
 	test_modiinfo.sh \
 	$(TESTS_PYMODI)
 
@@ -34,6 +35,7 @@ check_SCRIPTS = \
 	pymodi_test_handle.py \
 	pymodi_test_support.py \
 	test_library.sh \
+	test_manpage.sh \
 	test_modiinfo.sh \
 	test_python_module.sh \
 	test_runner.sh

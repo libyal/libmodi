@@ -1,11 +1,9 @@
-.Dd January  6, 2019
+.Dd February 25, 2019
 .Dt libmodi 3
 .Os libmodi
 .Sh NAME
 .Nm libmodi.h
 .Nd Library to access Mac OS disk image formats
-.Sh LIBRARY
-.Lb libmodi
 .Sh SYNOPSIS
 .In libmodi.h
 .Pp
@@ -19,27 +17,27 @@ Support functions
 .Ft int
 .Fn libmodi_get_access_flags_write "void"
 .Ft int
-.Fn libmodi_get_codepage "int *codepage, libmodi_error_t **error"
+.Fn libmodi_get_codepage "int *codepage" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_set_codepage "int codepage, libmodi_error_t **error"
+.Fn libmodi_set_codepage "int codepage" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_check_file_signature "const char *filename, libmodi_error_t **error"
+.Fn libmodi_check_file_signature "const char *filename" "libmodi_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libmodi_check_file_signature_wide "const wchar_t *filename, libmodi_error_t **error"
+.Fn libmodi_check_file_signature_wide "const wchar_t *filename" "libmodi_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libmodi_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle, libmodi_error_t **error"
+.Fn libmodi_check_file_signature_file_io_handle "libbfio_handle_t *file_io_handle" "libmodi_error_t **error"
 .Pp
 Notify functions
 .Ft void
 .Fn libmodi_notify_set_verbose "int verbose"
 .Ft int
-.Fn libmodi_notify_set_stream "FILE *stream, libmodi_error_t **error"
+.Fn libmodi_notify_set_stream "FILE *stream" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_notify_stream_open "const char *filename, libmodi_error_t **error"
+.Fn libmodi_notify_stream_open "const char *filename" "libmodi_error_t **error"
 .Ft int
 .Fn libmodi_notify_stream_close "libmodi_error_t **error"
 .Pp
@@ -47,59 +45,59 @@ Error functions
 .Ft void
 .Fn libmodi_error_free "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_error_fprint "libmodi_error_t *error, FILE *stream"
+.Fn libmodi_error_fprint "libmodi_error_t *error" "FILE *stream"
 .Ft int
-.Fn libmodi_error_sprint "libmodi_error_t *error, char *string, size_t size"
+.Fn libmodi_error_sprint "libmodi_error_t *error" "char *string" "size_t size"
 .Ft int
-.Fn libmodi_error_backtrace_fprint "libmodi_error_t *error, FILE *stream"
+.Fn libmodi_error_backtrace_fprint "libmodi_error_t *error" "FILE *stream"
 .Ft int
-.Fn libmodi_error_backtrace_sprint "libmodi_error_t *error, char *string, size_t size"
+.Fn libmodi_error_backtrace_sprint "libmodi_error_t *error" "char *string" "size_t size"
 .Pp
 Handle functions
 .Ft int
-.Fn libmodi_handle_initialize "libmodi_handle_t **handle, libmodi_error_t **error"
+.Fn libmodi_handle_initialize "libmodi_handle_t **handle" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_free "libmodi_handle_t **handle, libmodi_error_t **error"
+.Fn libmodi_handle_free "libmodi_handle_t **handle" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_signal_abort "libmodi_handle_t *handle, libmodi_error_t **error"
+.Fn libmodi_handle_signal_abort "libmodi_handle_t *handle" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_open "libmodi_handle_t *handle, const char *filename, int access_flags, libmodi_error_t **error"
+.Fn libmodi_handle_open "libmodi_handle_t *handle" "const char *filename" "int access_flags" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_open_band_data_files "libmodi_handle_t *handle, libmodi_error_t **error"
+.Fn libmodi_handle_open_band_data_files "libmodi_handle_t *handle" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_close "libmodi_handle_t *handle, libmodi_error_t **error"
+.Fn libmodi_handle_close "libmodi_handle_t *handle" "libmodi_error_t **error"
 .Ft ssize_t
-.Fn libmodi_handle_read_buffer "libmodi_handle_t *handle, void *buffer, size_t buffer_size, libmodi_error_t **error"
+.Fn libmodi_handle_read_buffer "libmodi_handle_t *handle" "void *buffer" "size_t buffer_size" "libmodi_error_t **error"
 .Ft ssize_t
-.Fn libmodi_handle_read_buffer_at_offset "libmodi_handle_t *handle, void *buffer, size_t buffer_size, off64_t offset, libmodi_error_t **error"
+.Fn libmodi_handle_read_buffer_at_offset "libmodi_handle_t *handle" "void *buffer" "size_t buffer_size" "off64_t offset" "libmodi_error_t **error"
 .Ft ssize_t
-.Fn libmodi_handle_write_buffer "libmodi_handle_t *handle, const void *buffer, size_t buffer_size, libmodi_error_t **error"
+.Fn libmodi_handle_write_buffer "libmodi_handle_t *handle" "const void *buffer" "size_t buffer_size" "libmodi_error_t **error"
 .Ft ssize_t
-.Fn libmodi_handle_write_buffer_at_offset "libmodi_handle_t *handle, const void *buffer, size_t buffer_size, off64_t offset, libmodi_error_t **error"
+.Fn libmodi_handle_write_buffer_at_offset "libmodi_handle_t *handle" "const void *buffer" "size_t buffer_size" "off64_t offset" "libmodi_error_t **error"
 .Ft off64_t
-.Fn libmodi_handle_seek_offset "libmodi_handle_t *handle, off64_t offset, int whence, libmodi_error_t **error"
+.Fn libmodi_handle_seek_offset "libmodi_handle_t *handle" "off64_t offset" "int whence" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_get_offset "libmodi_handle_t *handle, off64_t *offset, libmodi_error_t **error"
+.Fn libmodi_handle_get_offset "libmodi_handle_t *handle" "off64_t *offset" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_set_maximum_number_of_open_handles "libmodi_handle_t *handle, int maximum_number_of_open_handles, libmodi_error_t **error"
+.Fn libmodi_handle_set_maximum_number_of_open_handles "libmodi_handle_t *handle" "int maximum_number_of_open_handles" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_set_band_data_files_path "libmodi_handle_t *handle, const char *path, size_t path_length, libmodi_error_t **error"
+.Fn libmodi_handle_set_band_data_files_path "libmodi_handle_t *handle" "const char *path" "size_t path_length" "libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_set_band_data_files_path_wide "libmodi_handle_t *handle" "const wchar_t *path" "size_t path_length" "libmodi_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
-.Fn libmodi_handle_open_wide "libmodi_handle_t *handle, const wchar_t *filename, int access_flags, libmodi_error_t **error"
-.Ft int
-.Fn libmodi_handle_set_band_data_files_path_wide "libmodi_handle_t *handle, const wchar_t *path, size_t path_length, libmodi_error_t **error"
+.Fn libmodi_handle_open_wide "libmodi_handle_t *handle" "const wchar_t *filename" "int access_flags" "libmodi_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
-.Fn libmodi_handle_open_file_io_handle "libmodi_handle_t *handle, libbfio_handle_t *file_io_handle, int access_flags, libmodi_error_t **error"
+.Fn libmodi_handle_open_file_io_handle "libmodi_handle_t *handle" "libbfio_handle_t *file_io_handle" "int access_flags" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_open_band_data_files_file_io_pool "libmodi_handle_t *handle, libbfio_pool_t *file_io_pool, libmodi_error_t **error"
+.Fn libmodi_handle_open_band_data_files_file_io_pool "libmodi_handle_t *handle" "libbfio_pool_t *file_io_pool" "libmodi_error_t **error"
 .Pp
 Meta data functions
 .Ft int
-.Fn libmodi_handle_get_media_size "libmodi_handle_t *handle, size64_t *media_size, libmodi_error_t **error"
+.Fn libmodi_handle_get_media_size "libmodi_handle_t *handle" "size64_t *media_size" "libmodi_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libmodi_get_version
@@ -112,8 +110,8 @@ None
 .Sh FILES
 None
 .Sh NOTES
-libmodi allows to be compiled with wide character support (wchar_t).
-
+libmodi can be compiled with wide character support (wchar_t).
+.sp
 To compile libmodi with wide character support use:
 .Ar ./configure --enable-wide-character-type=yes
  or define:
@@ -121,7 +119,7 @@ To compile libmodi with wide character support use:
  or
 .Ar UNICODE
  during compilation.
-
+.sp
 .Ar LIBMODI_WIDE_CHARACTER_TYPE
  in libmodi/features.h can be used to determine if libmodi was compiled with wide character support.
 .Sh BUGS
@@ -130,7 +128,7 @@ Please report bugs of any kind on the project issue tracker: https://github.com/
 These man pages are generated from "libmodi.h".
 .Sh COPYRIGHT
 Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>.
-
+.sp
 This is free software; see the source for copying conditions.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .Sh SEE ALSO
