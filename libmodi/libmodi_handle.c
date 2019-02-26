@@ -41,6 +41,7 @@
 #include "libmodi_libcthreads.h"
 #include "libmodi_libfcache.h"
 #include "libmodi_libfdata.h"
+#include "libmodi_libfvalue.h"
 #include "libmodi_sparse_bundle_xml_plist.h"
 #include "libmodi_sparse_image_header.h"
 #include "libmodi_system_string.h"
@@ -1903,13 +1904,23 @@ int libmodi_internal_handle_open_band_data_file(
 
 		return( -1 );
 	}
-/* TODO replace by safer function */
-	narrow_string_snprintf(
-	 filename,
-	 16,
-	 "%x",
-	 band_index );
+	if( libfvalue_utf8_string_copy_from_integer(
+	     (uint8_t *) filename,
+	     16,
+	     band_index,
+	     SIZEOF_INT * 8,
+	     LIBFVALUE_INTEGER_FORMAT_FLAG_NO_BASE_INDICATOR | LIBFVALUE_INTEGER_FORMAT_TYPE_HEXADECIMAL,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy band index to string.",
+		 function );
 
+		goto on_error;
+	}
 	filename_length = narrow_string_length(
 	                   filename );
 
@@ -2079,13 +2090,34 @@ int libmodi_internal_handle_open_band_data_file_wide(
 
 		return( -1 );
 	}
-/* TODO replace by safer function */
-	wide_string_snwprintf(
-	 filename,
-	 16,
-	 L"%x",
-	 band_index );
+#if ( SIZEOF_WCHAR_T == 4 )
+	result = libfvalue_utf32_string_copy_from_integer(
+	          (uint32_t *) filename,
+	          16,
+	          band_index,
+	          SIZEOF_INT * 8,
+	          LIBFVALUE_INTEGER_FORMAT_FLAG_NO_BASE_INDICATOR | LIBFVALUE_INTEGER_FORMAT_TYPE_HEXADECIMAL,
+	          error );
+#else
+	result = libfvalue_utf16_string_copy_from_integer(
+	          (uint16_t *) filename,
+	          16,
+	          band_index,
+	          SIZEOF_INT * 8,
+	          LIBFVALUE_INTEGER_FORMAT_FLAG_NO_BASE_INDICATOR | LIBFVALUE_INTEGER_FORMAT_TYPE_HEXADECIMAL,
+	          error );
+#endif
+	if( result != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to copy band index to string.",
+		 function );
 
+		goto on_error;
+	}
 	filename_length = wide_string_length(
 	                   filename );
 

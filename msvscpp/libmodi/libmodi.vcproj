@@ -312,6 +312,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_libfvalue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_libuna.h"
 				>
 			</File>
