@@ -1,4 +1,6 @@
 environment:
+  pypi_token:
+    secure: VHuZiUWgTqTciKE2nsv/LlFZF3nc9VCULObwr9YN+Gl8lWGQGDWX3riwTYDlcXmJ9MGhzKxlPpEJkGZ0gk+LZhmnoKjxKvefJS5yg8kK/E1lSKl7x5rYZKSJYLccwy4cSkQHa2hL9+62wD3v8XthnFu/yicGINRRS3rxN35hooleiJVvBKVjKXY6W89T/yxZMzCb6zq72e/yHP4MCXbTU6+tupYZQtyK1nG5IDOet5p+8EQQgaA5HljaLi/JbL49EaAyH7R+0i3LxXvjKbGW3g==
   matrix:
   - TARGET: vs2008
     BUILD_ENVIRONMENT: msbuild
@@ -267,4 +269,11 @@ after_test:
 - cmd: if [%TARGET%]==[mingw-gcc-no-optimization] (
     copy C:\projects\codecov-bash\codecov C:\MinGW\msys\1.0\home\appveyor\libmodi\codecov.sh &&
     C:\MinGW\msys\1.0\bin\bash -e -l -c "cd libmodi && chmod a+x ./codecov.sh && sed -i 's/-execdir /-exec /' ./codecov.sh && ./codecov.sh -n ${TARGET} -y .codecov.yml" )
+
+artifacts:
+- path: dist\*.whl
+
+deploy_script:
+- ps: If ($env:APPVEYOR_REPO_TAG -eq "true") {
+    Invoke-Expression "${env:PYTHON}\\python.exe -m twine upload dist/*.whl --username __token__ --password ${env:PYPI_TOKEN} --skip-existing" }
 
