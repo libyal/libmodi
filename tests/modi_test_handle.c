@@ -30,6 +30,15 @@
 #include <stdlib.h>
 #endif
 
+#if defined( TIME_WITH_SYS_TIME )
+#include <sys/time.h>
+#include <time.h>
+#elif defined( HAVE_SYS_TIME_H )
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
+
 #include "modi_test_functions.h"
 #include "modi_test_getopt.h"
 #include "modi_test_libbfio.h"
@@ -42,6 +51,16 @@
 #include "modi_test_unused.h"
 
 #include "../libmodi/libmodi_handle.h"
+
+#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
+#error Unsupported size of wchar_t
+#endif
+
+/* Define to make modi_test_handle generate verbose output
+#define MODI_TEST_HANDLE_VERBOSE
+ */
+
+#define MODI_TEST_HANDLE_READ_BUFFER_SIZE	4096
 
 #if !defined( LIBMODI_HAVE_BFIO )
 
@@ -58,14 +77,6 @@ int libmodi_handle_open_file_io_handle(
      libmodi_error_t **error );
 
 #endif /* !defined( LIBMODI_HAVE_BFIO ) */
-
-#if defined( HAVE_WIDE_SYSTEM_CHARACTER ) && SIZEOF_WCHAR_T != 2 && SIZEOF_WCHAR_T != 4
-#error Unsupported size of wchar_t
-#endif
-
-/* Define to make modi_test_handle generate verbose output
-#define MODI_TEST_HANDLE_VERBOSE
- */
 
 /* Creates and opens a source handle
  * Returns 1 if successful or -1 on error
@@ -136,7 +147,7 @@ int modi_test_handle_open_source(
 	                 source );
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
-	result = libmodi_handle_set_band_data_files_path(
+	result = libmodi_handle_set_band_data_files_path_wide(
 	          *handle,
 	          source,
 	          string_length,
@@ -1404,13 +1415,20 @@ on_error:
 int modi_test_handle_read_buffer(
      libmodi_handle_t *handle )
 {
-	uint8_t buffer[ 16 ];
+	uint8_t buffer[ MODI_TEST_HANDLE_READ_BUFFER_SIZE ];
 
-	libcerror_error_t *error = NULL;
-	size64_t media_size      = 0;
-	ssize_t read_count       = 0;
-	off64_t offset           = 0;
-	int result               = 0;
+	libcerror_error_t *error      = NULL;
+	time_t timestamp              = 0;
+	size64_t media_size           = 0;
+	size64_t remaining_media_size = 0;
+	size_t read_size              = 0;
+	ssize_t read_count            = 0;
+	off64_t media_offset          = 0;
+	off64_t offset                = 0;
+	int number_of_tests           = 1024;
+	int random_number             = 0;
+	int result                    = 0;
+	int test_number               = 0;
 
 	/* Determine size
 	 */
@@ -1447,23 +1465,29 @@ int modi_test_handle_read_buffer(
 
 	/* Test regular cases
 	 */
-	if( media_size > 16 )
+	read_size = MODI_TEST_HANDLE_READ_BUFFER_SIZE;
+
+	if( media_size < MODI_TEST_HANDLE_READ_BUFFER_SIZE )
 	{
-		read_count = libmodi_handle_read_buffer(
-		              handle,
-		              buffer,
-		              16,
-		              &error );
+		read_size = (size_t) media_size;
+	}
+	read_count = libmodi_handle_read_buffer(
+	              handle,
+	              buffer,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
+	              &error );
 
-		MODI_TEST_ASSERT_EQUAL_SSIZE(
-		 "read_count",
-		 read_count,
-		 (ssize_t) 16 );
+	MODI_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) read_size );
 
-		MODI_TEST_ASSERT_IS_NULL(
-		 "error",
-		 error );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
+	if( media_size > 8 )
+	{
 		/* Set offset to media_size - 8
 		 */
 		offset = libmodi_handle_seek_offset(
@@ -1486,7 +1510,7 @@ int modi_test_handle_read_buffer(
 		read_count = libmodi_handle_read_buffer(
 		              handle,
 		              buffer,
-		              16,
+		              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 		              &error );
 
 		MODI_TEST_ASSERT_EQUAL_SSIZE(
@@ -1503,7 +1527,7 @@ int modi_test_handle_read_buffer(
 		read_count = libmodi_handle_read_buffer(
 		              handle,
 		              buffer,
-		              16,
+		              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 		              &error );
 
 		MODI_TEST_ASSERT_EQUAL_SSIZE(
@@ -1514,30 +1538,123 @@ int modi_test_handle_read_buffer(
 		MODI_TEST_ASSERT_IS_NULL(
 		 "error",
 		 error );
+	}
+	/* Stress test read buffer
+	 */
+	timestamp = time(
+	             NULL );
 
-		/* Reset offset to 0
-		 */
-		offset = libmodi_handle_seek_offset(
-		          handle,
-		          0,
-		          SEEK_SET,
-		          &error );
+	srand(
+	 (unsigned int) timestamp );
 
-		MODI_TEST_ASSERT_EQUAL_INT64(
-		 "offset",
-		 offset,
-		 (int64_t) 0 );
+	offset = libmodi_handle_seek_offset(
+	          handle,
+	          0,
+	          SEEK_SET,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT64(
+	 "offset",
+	 offset,
+	 (int64_t) 0 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	remaining_media_size = media_size;
+
+	for( test_number = 0;
+	     test_number < number_of_tests;
+	     test_number++ )
+	{
+		random_number = rand();
+
+		MODI_TEST_ASSERT_GREATER_THAN_INT(
+		 "random_number",
+		 random_number,
+		 -1 );
+
+		read_size = (size_t) random_number % MODI_TEST_HANDLE_READ_BUFFER_SIZE;
+
+#if defined( MODI_TEST_HANDLE_VERBOSE )
+		fprintf(
+		 stdout,
+		 "libmodi_handle_read_buffer: at offset: %" PRIi64 " (0x%08" PRIx64 ") of size: %" PRIzd "\n",
+		 media_offset,
+		 media_offset,
+		 read_size );
+#endif
+		read_count = libmodi_handle_read_buffer(
+		              handle,
+		              buffer,
+		              read_size,
+		              &error );
+
+		if( read_size > remaining_media_size )
+		{
+			read_size = (size_t) remaining_media_size;
+		}
+		MODI_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) read_size );
 
 		MODI_TEST_ASSERT_IS_NULL(
 		 "error",
 		 error );
+
+		media_offset += read_count;
+
+		result = libmodi_handle_get_offset(
+		          handle,
+		          &offset,
+		          &error );
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		MODI_TEST_ASSERT_EQUAL_INT64(
+		 "offset",
+		 offset,
+		 media_offset );
+
+		MODI_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		remaining_media_size -= read_count;
+
+		if( remaining_media_size == 0 )
+		{
+			offset = libmodi_handle_seek_offset(
+			          handle,
+			          0,
+			          SEEK_SET,
+			          &error );
+
+			MODI_TEST_ASSERT_EQUAL_INT64(
+			 "offset",
+			 offset,
+			 (int64_t) 0 );
+
+			MODI_TEST_ASSERT_IS_NULL(
+			 "error",
+			 error );
+
+			media_offset = 0;
+
+			remaining_media_size = media_size;
+		}
 	}
 	/* Test error cases
 	 */
 	read_count = libmodi_handle_read_buffer(
 	              NULL,
 	              buffer,
-	              16,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 	              &error );
 
 	MODI_TEST_ASSERT_EQUAL_SSIZE(
@@ -1555,7 +1672,7 @@ int modi_test_handle_read_buffer(
 	read_count = libmodi_handle_read_buffer(
 	              handle,
 	              NULL,
-	              16,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 	              &error );
 
 	MODI_TEST_ASSERT_EQUAL_SSIZE(
@@ -1605,12 +1722,20 @@ on_error:
 int modi_test_handle_read_buffer_at_offset(
      libmodi_handle_t *handle )
 {
-	uint8_t buffer[ 16 ];
+	uint8_t buffer[ MODI_TEST_HANDLE_READ_BUFFER_SIZE ];
 
-	libcerror_error_t *error = NULL;
-	size64_t media_size      = 0;
-	ssize_t read_count       = 0;
-	int result               = 0;
+	libcerror_error_t *error      = NULL;
+	time_t timestamp              = 0;
+	size64_t media_size           = 0;
+	size64_t remaining_media_size = 0;
+	size_t read_size              = 0;
+	ssize_t read_count            = 0;
+	off64_t media_offset          = 0;
+	off64_t offset                = 0;
+	int number_of_tests           = 1024;
+	int random_number             = 0;
+	int result                    = 0;
+	int test_number               = 0;
 
 	/* Determine size
 	 */
@@ -1630,30 +1755,36 @@ int modi_test_handle_read_buffer_at_offset(
 
 	/* Test regular cases
 	 */
-	if( media_size > 16 )
+	read_size = MODI_TEST_HANDLE_READ_BUFFER_SIZE;
+
+	if( media_size < MODI_TEST_HANDLE_READ_BUFFER_SIZE )
 	{
-		read_count = libmodi_handle_read_buffer_at_offset(
-		              handle,
-		              buffer,
-		              16,
-		              0,
-		              &error );
+		read_size = (size_t) media_size;
+	}
+	read_count = libmodi_handle_read_buffer_at_offset(
+	              handle,
+	              buffer,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
+	              0,
+	              &error );
 
-		MODI_TEST_ASSERT_EQUAL_SSIZE(
-		 "read_count",
-		 read_count,
-		 (ssize_t) 16 );
+	MODI_TEST_ASSERT_EQUAL_SSIZE(
+	 "read_count",
+	 read_count,
+	 (ssize_t) read_size );
 
-		MODI_TEST_ASSERT_IS_NULL(
-		 "error",
-		 error );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
+	if( media_size > 8 )
+	{
 		/* Read buffer on media_size boundary
 		 */
 		read_count = libmodi_handle_read_buffer_at_offset(
 		              handle,
 		              buffer,
-		              16,
+		              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 		              media_size - 8,
 		              &error );
 
@@ -1671,7 +1802,7 @@ int modi_test_handle_read_buffer_at_offset(
 		read_count = libmodi_handle_read_buffer_at_offset(
 		              handle,
 		              buffer,
-		              16,
+		              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 		              media_size + 8,
 		              &error );
 
@@ -1684,12 +1815,88 @@ int modi_test_handle_read_buffer_at_offset(
 		 "error",
 		 error );
 	}
+	/* Stress test read buffer
+	 */
+	timestamp = time(
+	             NULL );
+
+	srand(
+	 (unsigned int) timestamp );
+
+	for( test_number = 0;
+	     test_number < number_of_tests;
+	     test_number++ )
+	{
+		random_number = rand();
+
+		MODI_TEST_ASSERT_GREATER_THAN_INT(
+		 "random_number",
+		 random_number,
+		 -1 );
+
+		if( media_size > 0 )
+		{
+			media_offset = (off64_t) random_number % media_size;
+		}
+		read_size = (size_t) random_number % MODI_TEST_HANDLE_READ_BUFFER_SIZE;
+
+#if defined( MODI_TEST_HANDLE_VERBOSE )
+		fprintf(
+		 stdout,
+		 "libmodi_handle_read_buffer_at_offset: at offset: %" PRIi64 " (0x%08" PRIx64 ") of size: %" PRIzd "\n",
+		 media_offset,
+		 media_offset,
+		 read_size );
+#endif
+		read_count = libmodi_handle_read_buffer_at_offset(
+		              handle,
+		              buffer,
+		              read_size,
+		              media_offset,
+		              &error );
+
+		remaining_media_size = media_size - media_offset;
+
+		if( read_size > remaining_media_size )
+		{
+			read_size = (size_t) remaining_media_size;
+		}
+		MODI_TEST_ASSERT_EQUAL_SSIZE(
+		 "read_count",
+		 read_count,
+		 (ssize_t) read_size );
+
+		MODI_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+
+		media_offset += read_count;
+
+		result = libmodi_handle_get_offset(
+		          handle,
+		          &offset,
+		          &error );
+
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 1 );
+
+		MODI_TEST_ASSERT_EQUAL_INT64(
+		 "offset",
+		 offset,
+		 media_offset );
+
+		MODI_TEST_ASSERT_IS_NULL(
+		 "error",
+		 error );
+	}
 	/* Test error cases
 	 */
 	read_count = libmodi_handle_read_buffer_at_offset(
 	              NULL,
 	              buffer,
-	              16,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 	              0,
 	              &error );
 
@@ -1708,7 +1915,7 @@ int modi_test_handle_read_buffer_at_offset(
 	read_count = libmodi_handle_read_buffer_at_offset(
 	              handle,
 	              NULL,
-	              16,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 	              0,
 	              &error );
 
@@ -1746,7 +1953,7 @@ int modi_test_handle_read_buffer_at_offset(
 	read_count = libmodi_handle_read_buffer_at_offset(
 	              handle,
 	              buffer,
-	              16,
+	              MODI_TEST_HANDLE_READ_BUFFER_SIZE,
 	              -1,
 	              &error );
 

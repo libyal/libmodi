@@ -48,6 +48,10 @@
 #include "libmodi_udif_resource_file.h"
 #include "libmodi_udif_xml_plist.h"
 
+#if !defined( SIZEOF_INT )
+#define SIZEOF_INT sizeof( int )
+#endif
+
 /* Creates a handle
  * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
@@ -3068,6 +3072,10 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 	{
 		return( 0 );
 	}
+	if( buffer_size > ( internal_handle->io_handle->media_size - internal_handle->current_offset ) )
+	{
+		buffer_size = (size_t) ( internal_handle->io_handle->media_size - internal_handle->current_offset );
+	}
 	while( buffer_offset < buffer_size )
 	{
 		if( libfdata_vector_get_element_value_at_offset(
@@ -3126,17 +3134,11 @@ ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
 		}
 		available_block_size = data_block->data_size - (size_t) element_data_offset;
 
-		if( buffer_size < available_block_size )
-		{
-			read_size = buffer_size;
-		}
-		else
+		read_size = buffer_size - buffer_offset;
+
+		if( read_size > available_block_size )
 		{
 			read_size = available_block_size;
-		}
-		if( read_size > ( internal_handle->io_handle->media_size - internal_handle->current_offset ) )
-		{
-			read_size = (size_t) ( internal_handle->io_handle->media_size - internal_handle->current_offset );
 		}
 		if( memory_copy(
 		     &( ( (uint8_t *) buffer )[ buffer_offset ] ),
