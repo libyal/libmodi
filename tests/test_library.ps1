@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "data_block error io_handle notify"
+$LibraryTests = "data_block error io_handle notify udif_block_table udif_resource_file udif_xml_plist"
 $LibraryTestsWithInput = "handle support"
 
 $InputGlob = "*"

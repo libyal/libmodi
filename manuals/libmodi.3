@@ -1,4 +1,4 @@
-.Dd February 25, 2019
+.Dd December 16, 2019
 .Dt libmodi 3
 .Os libmodi
 .Sh NAME
@@ -70,10 +70,6 @@ Handle functions
 .Fn libmodi_handle_read_buffer "libmodi_handle_t *handle" "void *buffer" "size_t buffer_size" "libmodi_error_t **error"
 .Ft ssize_t
 .Fn libmodi_handle_read_buffer_at_offset "libmodi_handle_t *handle" "void *buffer" "size_t buffer_size" "off64_t offset" "libmodi_error_t **error"
-.Ft ssize_t
-.Fn libmodi_handle_write_buffer "libmodi_handle_t *handle" "const void *buffer" "size_t buffer_size" "libmodi_error_t **error"
-.Ft ssize_t
-.Fn libmodi_handle_write_buffer_at_offset "libmodi_handle_t *handle" "const void *buffer" "size_t buffer_size" "off64_t offset" "libmodi_error_t **error"
 .Ft off64_t
 .Fn libmodi_handle_seek_offset "libmodi_handle_t *handle" "off64_t offset" "int whence" "libmodi_error_t **error"
 .Ft int
@@ -83,21 +79,21 @@ Handle functions
 .Ft int
 .Fn libmodi_handle_set_band_data_files_path "libmodi_handle_t *handle" "const char *path" "size_t path_length" "libmodi_error_t **error"
 .Ft int
-.Fn libmodi_handle_set_band_data_files_path_wide "libmodi_handle_t *handle" "const wchar_t *path" "size_t path_length" "libmodi_error_t **error"
+.Fn libmodi_handle_get_media_size "libmodi_handle_t *handle" "size64_t *media_size" "libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_get_image_type "libmodi_handle_t *handle" "int *image_type" "libmodi_error_t **error"
 .Pp
 Available when compiled with wide character string support:
 .Ft int
 .Fn libmodi_handle_open_wide "libmodi_handle_t *handle" "const wchar_t *filename" "int access_flags" "libmodi_error_t **error"
+.Ft int
+.Fn libmodi_handle_set_band_data_files_path_wide "libmodi_handle_t *handle" "const wchar_t *path" "size_t path_length" "libmodi_error_t **error"
 .Pp
 Available when compiled with libbfio support:
 .Ft int
 .Fn libmodi_handle_open_file_io_handle "libmodi_handle_t *handle" "libbfio_handle_t *file_io_handle" "int access_flags" "libmodi_error_t **error"
 .Ft int
 .Fn libmodi_handle_open_band_data_files_file_io_pool "libmodi_handle_t *handle" "libbfio_pool_t *file_io_pool" "libmodi_error_t **error"
-.Pp
-Meta data functions
-.Ft int
-.Fn libmodi_handle_get_media_size "libmodi_handle_t *handle" "size64_t *media_size" "libmodi_error_t **error"
 .Sh DESCRIPTION
 The
 .Fn libmodi_get_version

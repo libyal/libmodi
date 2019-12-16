@@ -1,5 +1,5 @@
 /*
- * Universal Disk Image Format (UDIF) XML plist functions
+ * Universal Disk Image Format (UDIF) block table functions
  *
  * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,63 +19,45 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_UDIF_XML_PLIST_H )
-#define _LIBMODI_UDIF_XML_PLIST_H
+#if !defined( _LIBMODI_UDIF_BLOCK_TABLE_H )
+#define _LIBMODI_UDIF_BLOCK_TABLE_H
 
 #include <common.h>
 #include <types.h>
 
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
-#include "libmodi_libfplist.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-typedef struct libmodi_udif_xml_plist libmodi_udif_xml_plist_t;
+typedef struct libmodi_udif_block_table libmodi_udif_block_table_t;
 
-struct libmodi_udif_xml_plist
+struct libmodi_udif_block_table
 {
 	/* Dummy
 	 */
 	int dummy;
 };
 
-int libmodi_udif_xml_plist_initialize(
-     libmodi_udif_xml_plist_t **udif_xml_plist,
+int libmodi_udif_block_table_initialize(
+     libmodi_udif_block_table_t **udif_block_table,
      libcerror_error_t **error );
 
-int libmodi_udif_xml_plist_free(
-     libmodi_udif_xml_plist_t **udif_xml_plist,
+int libmodi_udif_block_table_free(
+     libmodi_udif_block_table_t **udif_block_table,
      libcerror_error_t **error );
 
-int libmodi_udif_xml_plist_read_blkx_array_property(
-     libmodi_udif_xml_plist_t *udif_xml_plist,
-     libfplist_property_t *array_property,
-     libcerror_error_t **error );
-
-int libmodi_udif_xml_plist_read_blkx_array_entry_property(
-     libmodi_udif_xml_plist_t *udif_xml_plist,
-     libfplist_property_t *array_entry_property,
-     libcerror_error_t **error );
-
-int libmodi_udif_xml_plist_read_data(
-     libmodi_udif_xml_plist_t *udif_xml_plist,
+int libmodi_udif_block_table_read_data(
+     libmodi_udif_block_table_t *udif_block_table,
      const uint8_t *data,
      size_t data_size,
-     libcerror_error_t **error );
-
-int libmodi_udif_xml_plist_read_file_io_handle(
-     libmodi_udif_xml_plist_t *udif_xml_plist,
-     libbfio_handle_t *file_io_handle,
-     off64_t offset,
-     size64_t size,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_UDIF_XML_PLIST_H ) */
+#endif /* !defined( _LIBMODI_UDIF_BLOCK_TABLE_H ) */
 

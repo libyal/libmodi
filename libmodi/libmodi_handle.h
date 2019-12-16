@@ -221,32 +221,6 @@ ssize_t libmodi_handle_read_buffer_at_offset(
          off64_t offset,
          libcerror_error_t **error );
 
-#ifdef TODO_WRITE_SUPPORT
-
-ssize_t libmodi_internal_handle_write_buffer_to_file_io_handle(
-         libmodi_internal_handle_t *internal_handle,
-         libbfio_handle_t *file_io_handle,
-         void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error );
-
-LIBMODI_EXTERN \
-ssize_t libmodi_handle_write_buffer(
-         libmodi_handle_t *handle,
-         const void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error );
-
-LIBMODI_EXTERN \
-ssize_t libmodi_handle_write_buffer_at_offset(
-         libmodi_handle_t *handle,
-         void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libcerror_error_t **error );
-
-#endif /* TODO_WRITE_SUPPORT */
-
 off64_t libmodi_internal_handle_seek_offset(
          libmodi_internal_handle_t *internal_handle,
          off64_t offset,
@@ -294,6 +268,12 @@ LIBMODI_EXTERN \
 int libmodi_handle_get_media_size(
      libmodi_handle_t *handle,
      size64_t *media_size,
+     libcerror_error_t **error );
+
+LIBMODI_EXTERN \
+int libmodi_handle_get_image_type(
+     libmodi_handle_t *handle,
+     int *image_type,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

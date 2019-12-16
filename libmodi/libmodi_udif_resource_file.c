@@ -32,7 +32,7 @@
 
 #include "modi_udif_resource_file.h"
 
-/* Creates a UDIF resource file
+/* Creates an UDIF resource file
  * Make sure the value udif_resource_file is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
@@ -105,7 +105,7 @@ on_error:
 	return( -1 );
 }
 
-/* Frees a UDIF resource file
+/* Frees an UDIF resource file
  * Returns 1 if successful or -1 on error
  */
 int libmodi_udif_resource_file_free(

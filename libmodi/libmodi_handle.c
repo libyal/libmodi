@@ -3430,231 +3430,6 @@ on_error:
 	return( -1 );
 }
 
-#ifdef TODO_WRITE_SUPPORT
-
-/* Writes (media) data at the current offset from a buffer using a Basic File IO (bfio) handle
- * the necessary settings of the write values must have been made
- * Will initialize write if necessary
- * This function is not multi-thread safe acquire write lock before call
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-ssize_t libmodi_internal_handle_write_buffer_to_file_io_handle(
-         libmodi_internal_handle_t *internal_handle,
-         libbfio_handle_t *file_io_handle,
-         void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error )
-{
-/* TODO implement */
-	return( -1 );
-}
-
-/* Writes (media) data at the current offset
- * the necessary settings of the write values must have been made
- * Will initialize write if necessary
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-ssize_t libmodi_handle_write_buffer(
-         libmodi_handle_t *handle,
-         const void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error )
-{
-	libmodi_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libmodi_handle_write_buffer";
-	ssize_t write_count                        = 0;
-
-	if( handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle = (libmodi_internal_handle_t *) handle;
-
-	if( internal_handle->file_io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing file IO handle.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-	write_count = libmodi_internal_handle_write_buffer_to_file_io_handle(
-	               internal_handle,
-	               internal_handle->file_io_handle,
-	               buffer,
-	               buffer_size,
-	               error );
-
-	if( write_count == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to write buffer.",
-		 function );
-
-		write_count = -1;
-	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-	return( write_count );
-}
-
-/* Writes (media) data at a specific offset,
- * the necessary settings of the write values must have been made
- * Will initialize write if necessary
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-ssize_t libmodi_handle_write_buffer_at_offset(
-         libmodi_handle_t *handle,
-         const void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libcerror_error_t **error )
-{
-	libmodi_internal_handle_t *internal_handle = NULL;
-	static char *function                      = "libmodi_handle_write_buffer_at_offset";
-	ssize_t write_count                        = 0;
-
-	if( handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid handle.",
-		 function );
-
-		return( -1 );
-	}
-	internal_handle = (libmodi_internal_handle_t *) handle;
-
-	if( internal_handle->file_io_handle == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
-		 "%s: invalid handle - missing file IO handle.",
-		 function );
-
-		return( -1 );
-	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-	if( libmodi_internal_handle_seek_offset(
-	     internal_handle,
-	     offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek offset.",
-		 function );
-
-		goto on_error;
-	}
-	write_count = libmodi_internal_handle_write_buffer_to_file_io_handle(
-	               internal_handle,
-	               internal_handle->file_io_handle,
-	               buffer,
-	               buffer_size,
-	               error );
-
-	if( write_count == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to write buffer.",
-		 function );
-
-		goto on_error;
-	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
-	return( write_count );
-
-on_error:
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_handle->read_write_lock,
-	 NULL );
-#endif
-	return( -1 );
-}
-
-#endif /* TODO_WRITE_SUPPORT */
-
 /* Seeks a certain offset of the (media) data
  * This function is not multi-thread safe acquire write lock before call
  * Returns the offset if seek is successful or -1 on error
@@ -4280,6 +4055,98 @@ int libmodi_handle_get_media_size(
 	}
 #endif
 	*media_size = internal_handle->io_handle->media_size;
+
+#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_release_for_read(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to release read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	return( 1 );
+}
+
+/* Retrieves the image type
+ * Returns the 1 if succesful or -1 on error
+ */
+int libmodi_handle_get_image_type(
+     libmodi_handle_t *handle,
+     int *image_type,
+     libcerror_error_t **error )
+{
+	libmodi_internal_handle_t *internal_handle = NULL;
+	static char *function                      = "libmodi_handle_get_image_type";
+
+	if( handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+	internal_handle = (libmodi_internal_handle_t *) handle;
+
+	if( internal_handle->io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( internal_handle->file_io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid handle - missing file IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( image_type == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid image type.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
+	if( libcthreads_read_write_lock_grab_for_read(
+	     internal_handle->read_write_lock,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to grab read/write lock for reading.",
+		 function );
+
+		return( -1 );
+	}
+#endif
+	*image_type = internal_handle->io_handle->image_type;
 
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
 	if( libcthreads_read_write_lock_release_for_read(

@@ -63,18 +63,18 @@ enum LIBMODI_ACCESS_FLAGS
 /* Reserved: not supported yet */
 #define LIBMODI_OPEN_READ_WRITE					( LIBMODI_ACCESS_FLAG_READ | LIBMODI_ACCESS_FLAG_WRITE )
 
-#endif /* !defined( HAVE_LOCAL_LIBMODI ) */
-
 /* The image type definitions
  */
 enum LIBMODI_IMAGE_TYPES
 {
-	LIBMODI_IMAGE_TYPE_UNKNOWN,
+	LIBMODI_IMAGE_TYPE_UNKNOWN				= 0,
 	LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE,
 	LIBMODI_IMAGE_TYPE_SPARSE_IMAGE,
 	LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED,
 	LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED
 };
+
+#endif /* !defined( HAVE_LOCAL_LIBMODI ) */
 
 /* The maximum number of cache entries defintions
  */

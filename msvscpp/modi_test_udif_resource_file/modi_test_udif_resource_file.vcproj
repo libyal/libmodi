@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_data_block"
-	ProjectGUID="{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}"
-	RootNamespace="modi_test_data_block"
+	Name="modi_test_udif_resource_file"
+	ProjectGUID="{B574F664-C995-4CD3-81AD-48157E8822EF}"
+	RootNamespace="modi_test_udif_resource_file"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,15 +176,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_data_block.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\modi_test_functions.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_udif_resource_file.c"
 				>
 			</File>
 		</Filter>

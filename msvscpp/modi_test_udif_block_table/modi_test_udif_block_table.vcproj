@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_data_block"
-	ProjectGUID="{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}"
-	RootNamespace="modi_test_data_block"
+	Name="modi_test_udif_block_table"
+	ProjectGUID="{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}"
+	RootNamespace="modi_test_udif_block_table"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,15 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_data_block.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_functions.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\modi_test_memory.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_udif_block_table.c"
 				>
 			</File>
 		</Filter>
@@ -193,14 +189,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\tests\modi_test_functions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_libbfio.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_libcerror.h"
 				>

@@ -4,6 +4,8 @@ TODO:
   - add support for resource fork
 * add support for encrypted disk images
 * improve check signature to detect sparse bundle
+* move libmodi_io_handle_read_data_block
+* replace vector by data stream?
 
 20161030
 * see `git log' for more recent change log

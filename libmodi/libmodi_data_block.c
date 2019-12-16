@@ -163,20 +163,6 @@ int libmodi_data_block_free(
 	}
 	if( *data_block != NULL )
 	{
-		if( memory_set(
-		     ( *data_block )->data,
-		     0,
-		     ( *data_block )->data_size ) == NULL )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_MEMORY,
-			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-			 "%s: unable to clear data.",
-			 function );
-
-			result = -1;
-		}
 		memory_free(
 		 ( *data_block )->data );
 
@@ -186,6 +172,54 @@ int libmodi_data_block_free(
 		*data_block = NULL;
 	}
 	return( result );
+}
+
+/* Clears a data block
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_data_block_clear(
+     libmodi_data_block_t *data_block,
+     libcerror_error_t **error )
+{
+	static char *function = "libmodi_data_block_clear";
+
+	if( data_block == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid data block.",
+		 function );
+
+		return( -1 );
+	}
+	if( data_block->data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_MISSING,
+		 "%s: invalid data block - missing data.",
+		 function );
+
+		return( -1 );
+	}
+	if( memory_set(
+	     data_block->data,
+	     0,
+	     data_block->data_size ) == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+		 "%s: unable to clear data block data.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 
 /* Reads data block

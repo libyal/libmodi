@@ -56,6 +56,10 @@ int libmodi_data_block_free(
      libmodi_data_block_t **data_block,
      libcerror_error_t **error );
 
+int libmodi_data_block_clear(
+     libmodi_data_block_t *data_block,
+     libcerror_error_t **error );
+
 int libmodi_data_block_read_file_io_handle(
      libmodi_data_block_t *data_block,
      libbfio_handle_t *file_io_handle,

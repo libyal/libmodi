@@ -303,6 +303,7 @@ int info_handle_input_fprint(
 
 	static char *function = "info_handle_input_fprint";
 	size64_t media_size   = 0;
+	int image_type        = 0;
 	int result            = 0;
 
 	if( info_handle == NULL )
@@ -320,6 +321,60 @@ int info_handle_input_fprint(
 	 info_handle->notify_stream,
 	 "Mac OS disk image information:\n" );
 
+	fprintf(
+	 info_handle->notify_stream,
+	 "\n" );
+
+	if( libmodi_handle_get_image_type(
+	     info_handle->input,
+	     &image_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve image type.",
+		 function );
+
+		return( -1 );
+	}
+	fprintf(
+	 info_handle->notify_stream,
+	 "\tImage type:\t\t" );
+
+	switch( image_type )
+	{
+		case LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE:
+			fprintf(
+			 info_handle->notify_stream,
+			 "Sparse bundle" );
+			break;
+
+		case LIBMODI_IMAGE_TYPE_SPARSE_IMAGE:
+			fprintf(
+			 info_handle->notify_stream,
+			 "Sparse image" );
+			break;
+
+		case LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED:
+			fprintf(
+			 info_handle->notify_stream,
+			 "UDIF compressed" );
+			break;
+
+		case LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED:
+			fprintf(
+			 info_handle->notify_stream,
+			 "UDIF uncompressed" );
+			break;
+
+		default:
+			fprintf(
+			 info_handle->notify_stream,
+			 "Unknown" );
+			break;
+	}
 	fprintf(
 	 info_handle->notify_stream,
 	 "\n" );

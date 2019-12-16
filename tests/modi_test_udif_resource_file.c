@@ -1,5 +1,5 @@
 /*
- * Library data_block type test program
+ * Library udif_resource_file type test program
  *
  * Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#include <byte_stream.h>
 #include <file_stream.h>
 #include <types.h>
 
@@ -35,11 +36,12 @@
 #include "modi_test_memory.h"
 #include "modi_test_unused.h"
 
-#include "../libmodi/libmodi_data_block.h"
+#include "../libmodi/libmodi_udif_resource_file.h"
 
-uint8_t modi_test_data_block_data1[ 1024 ] = {
-	0x52, 0x21, 0x00, 0x00, 0x53, 0x21, 0x00, 0x00, 0x54, 0x21, 0x00, 0x00, 0x55, 0x21, 0x00, 0x00,
-	0x56, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+uint8_t modi_test_udif_resource_file_data1[ 512 ] = {
+	0x6b, 0x6f, 0x6c, 0x79, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x01,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -50,6 +52,8 @@ uint8_t modi_test_data_block_data1[ 1024 ] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x2c,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x62, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -57,6 +61,7 @@ uint8_t modi_test_data_block_data1[ 1024 ] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x20, 0x33, 0x50, 0xab, 0xf9, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -64,68 +69,31 @@ uint8_t modi_test_data_block_data1[ 1024 ] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
-/* Tests the libmodi_data_block_initialize function
+/* Tests the libmodi_udif_resource_file_initialize function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_data_block_initialize(
+int modi_test_udif_resource_file_initialize(
      void )
 {
-	libcerror_error_t *error         = NULL;
-	libmodi_data_block_t *data_block = NULL;
-	int result                       = 0;
+	libcerror_error_t *error                         = NULL;
+	libmodi_udif_resource_file_t *udif_resource_file = NULL;
+	int result                                       = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_malloc_fail_tests  = 2;
-	int number_of_memset_fail_tests  = 1;
-	int test_number                  = 0;
+	int number_of_malloc_fail_tests                  = 1;
+	int number_of_memset_fail_tests                  = 1;
+	int test_number                                  = 0;
 #endif
 
 	/* Test regular cases
 	 */
-	result = libmodi_data_block_initialize(
-	          &data_block,
-	          1024,
+	result = libmodi_udif_resource_file_initialize(
+	          &udif_resource_file,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -134,15 +102,15 @@ int modi_test_data_block_initialize(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "data_block",
-	 data_block );
+	 "udif_resource_file",
+	 udif_resource_file );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	result = libmodi_data_block_free(
-	          &data_block,
+	result = libmodi_udif_resource_file_free(
+	          &udif_resource_file,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -151,8 +119,8 @@ int modi_test_data_block_initialize(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NULL(
-	 "data_block",
-	 data_block );
+	 "udif_resource_file",
+	 udif_resource_file );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -160,9 +128,8 @@ int modi_test_data_block_initialize(
 
 	/* Test error cases
 	 */
-	result = libmodi_data_block_initialize(
+	result = libmodi_udif_resource_file_initialize(
 	          NULL,
-	          1024,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -177,31 +144,13 @@ int modi_test_data_block_initialize(
 	libcerror_error_free(
 	 &error );
 
-	data_block = (libmodi_data_block_t *) 0x12345678UL;
+	udif_resource_file = (libmodi_udif_resource_file_t *) 0x12345678UL;
 
-	result = libmodi_data_block_initialize(
-	          &data_block,
-	          1024,
+	result = libmodi_udif_resource_file_initialize(
+	          &udif_resource_file,
 	          &error );
 
-	data_block = NULL;
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_data_block_initialize(
-	          &data_block,
-	          (size_t) SSIZE_MAX + 1,
-	          &error );
+	udif_resource_file = NULL;
 
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -221,23 +170,22 @@ int modi_test_data_block_initialize(
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libmodi_data_block_initialize with malloc failing
+		/* Test libmodi_udif_resource_file_initialize with malloc failing
 		 */
 		modi_test_malloc_attempts_before_fail = test_number;
 
-		result = libmodi_data_block_initialize(
-		          &data_block,
-		          1024,
+		result = libmodi_udif_resource_file_initialize(
+		          &udif_resource_file,
 		          &error );
 
 		if( modi_test_malloc_attempts_before_fail != -1 )
 		{
 			modi_test_malloc_attempts_before_fail = -1;
 
-			if( data_block != NULL )
+			if( udif_resource_file != NULL )
 			{
-				libmodi_data_block_free(
-				 &data_block,
+				libmodi_udif_resource_file_free(
+				 &udif_resource_file,
 				 NULL );
 			}
 		}
@@ -249,8 +197,8 @@ int modi_test_data_block_initialize(
 			 -1 );
 
 			MODI_TEST_ASSERT_IS_NULL(
-			 "data_block",
-			 data_block );
+			 "udif_resource_file",
+			 udif_resource_file );
 
 			MODI_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -264,23 +212,22 @@ int modi_test_data_block_initialize(
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
 	{
-		/* Test libmodi_data_block_initialize with memset failing
+		/* Test libmodi_udif_resource_file_initialize with memset failing
 		 */
 		modi_test_memset_attempts_before_fail = test_number;
 
-		result = libmodi_data_block_initialize(
-		          &data_block,
-		          1024,
+		result = libmodi_udif_resource_file_initialize(
+		          &udif_resource_file,
 		          &error );
 
 		if( modi_test_memset_attempts_before_fail != -1 )
 		{
 			modi_test_memset_attempts_before_fail = -1;
 
-			if( data_block != NULL )
+			if( udif_resource_file != NULL )
 			{
-				libmodi_data_block_free(
-				 &data_block,
+				libmodi_udif_resource_file_free(
+				 &udif_resource_file,
 				 NULL );
 			}
 		}
@@ -292,8 +239,8 @@ int modi_test_data_block_initialize(
 			 -1 );
 
 			MODI_TEST_ASSERT_IS_NULL(
-			 "data_block",
-			 data_block );
+			 "udif_resource_file",
+			 udif_resource_file );
 
 			MODI_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -313,19 +260,19 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( data_block != NULL )
+	if( udif_resource_file != NULL )
 	{
-		libmodi_data_block_free(
-		 &data_block,
+		libmodi_udif_resource_file_free(
+		 &udif_resource_file,
 		 NULL );
 	}
 	return( 0 );
 }
 
-/* Tests the libmodi_data_block_free function
+/* Tests the libmodi_udif_resource_file_free function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_data_block_free(
+int modi_test_udif_resource_file_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -333,7 +280,7 @@ int modi_test_data_block_free(
 
 	/* Test error cases
 	 */
-	result = libmodi_data_block_free(
+	result = libmodi_udif_resource_file_free(
 	          NULL,
 	          &error );
 
@@ -360,21 +307,20 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmodi_data_block_clear function
+/* Tests the libmodi_udif_resource_file_read_data function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_data_block_clear(
+int modi_test_udif_resource_file_read_data(
      void )
 {
-	libcerror_error_t *error         = NULL;
-	libmodi_data_block_t *data_block = NULL;
-	int result                       = 0;
+	libcerror_error_t *error                         = NULL;
+	libmodi_udif_resource_file_t *udif_resource_file = NULL;
+	int result                                       = 0;
 
 	/* Initialize test
 	 */
-	result = libmodi_data_block_initialize(
-	          &data_block,
-	          1024,
+	result = libmodi_udif_resource_file_initialize(
+	          &udif_resource_file,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -383,8 +329,8 @@ int modi_test_data_block_clear(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "data_block",
-	 data_block );
+	 "udif_resource_file",
+	 udif_resource_file );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -392,8 +338,10 @@ int modi_test_data_block_clear(
 
 	/* Test regular cases
 	 */
-	result = libmodi_data_block_clear(
-	          data_block,
+	result = libmodi_udif_resource_file_read_data(
+	          udif_resource_file,
+	          modi_test_udif_resource_file_data1,
+	          512,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -405,10 +353,37 @@ int modi_test_data_block_clear(
 	 "error",
 	 error );
 
+	/* Test regular case where signature is invalid
+	 */
+	byte_stream_copy_from_uint32_big_endian(
+	 modi_test_udif_resource_file_data1,
+	 0xffffffffUL );
+
+	result = libmodi_udif_resource_file_read_data(
+	          udif_resource_file,
+	          modi_test_udif_resource_file_data1,
+	          512,
+	          &error );
+
+	byte_stream_copy_from_uint32_big_endian(
+	 modi_test_udif_resource_file_data1,
+	 0x6b6f6c79UL );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 0 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
-	result = libmodi_data_block_clear(
+	result = libmodi_udif_resource_file_read_data(
 	          NULL,
+	          modi_test_udif_resource_file_data1,
+	          512,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -423,40 +398,64 @@ int modi_test_data_block_clear(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_MODI_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED )
-
-	/* Test libmodi_data_block_clear with memset failing
-	 */
-	modi_test_memset_attempts_before_fail = 0;
-
-	result = libmodi_data_block_clear(
-	          data_block,
+	result = libmodi_udif_resource_file_read_data(
+	          udif_resource_file,
+	          NULL,
+	          512,
 	          &error );
 
-	if( modi_test_memset_attempts_before_fail != -1 )
-	{
-		modi_test_memset_attempts_before_fail = -1;
-	}
-	else
-	{
-		MODI_TEST_ASSERT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
 
-		MODI_TEST_ASSERT_IS_NOT_NULL(
-		 "error",
-		 error );
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
 
-		libcerror_error_free(
-		 &error );
-	}
-#endif /* defined( HAVE_MODI_TEST_MEMORY ) && defined( OPTIMIZATION_DISABLED ) */
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_resource_file_read_data(
+	          udif_resource_file,
+	          modi_test_udif_resource_file_data1,
+	          (size_t) SSIZE_MAX + 1,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_resource_file_read_data(
+	          udif_resource_file,
+	          modi_test_udif_resource_file_data1,
+	          0,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
 
 	/* Clean up
 	 */
-	result = libmodi_data_block_free(
-	          &data_block,
+	result = libmodi_udif_resource_file_free(
+	          &udif_resource_file,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -465,8 +464,8 @@ int modi_test_data_block_clear(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NULL(
-	 "data_block",
-	 data_block );
+	 "udif_resource_file",
+	 udif_resource_file );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -480,31 +479,30 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( data_block != NULL )
+	if( udif_resource_file != NULL )
 	{
-		libmodi_data_block_free(
-		 &data_block,
+		libmodi_udif_resource_file_free(
+		 &udif_resource_file,
 		 NULL );
 	}
 	return( 0 );
 }
 
-/* Tests the libmodi_data_block_read_file_io_handle function
+/* Tests the libmodi_udif_resource_file_read_file_io_handle function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_data_block_read_file_io_handle(
+int modi_test_udif_resource_file_read_file_io_handle(
      void )
 {
-	libbfio_handle_t *file_io_handle = NULL;
-	libcerror_error_t *error         = NULL;
-	libmodi_data_block_t *data_block = NULL;
-	int result                       = 0;
+	libbfio_handle_t *file_io_handle                 = NULL;
+	libcerror_error_t *error                         = NULL;
+	libmodi_udif_resource_file_t *udif_resource_file = NULL;
+	int result                                       = 0;
 
 	/* Initialize test
 	 */
-	result = libmodi_data_block_initialize(
-	          &data_block,
-	          1024,
+	result = libmodi_udif_resource_file_initialize(
+	          &udif_resource_file,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -513,8 +511,8 @@ int modi_test_data_block_read_file_io_handle(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "data_block",
-	 data_block );
+	 "udif_resource_file",
+	 udif_resource_file );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -524,8 +522,8 @@ int modi_test_data_block_read_file_io_handle(
 	 */
 	result = modi_test_open_file_io_handle(
 	          &file_io_handle,
-	          modi_test_data_block_data1,
-	          1024,
+	          modi_test_udif_resource_file_data1,
+	          512,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -543,8 +541,8 @@ int modi_test_data_block_read_file_io_handle(
 
 	/* Test regular cases
 	 */
-	result = libmodi_data_block_read_file_io_handle(
-	          data_block,
+	result = libmodi_udif_resource_file_read_file_io_handle(
+	          udif_resource_file,
 	          file_io_handle,
 	          0,
 	          &error );
@@ -560,7 +558,7 @@ int modi_test_data_block_read_file_io_handle(
 
 	/* Test error cases
 	 */
-	result = libmodi_data_block_read_file_io_handle(
+	result = libmodi_udif_resource_file_read_file_io_handle(
 	          NULL,
 	          file_io_handle,
 	          0,
@@ -578,8 +576,8 @@ int modi_test_data_block_read_file_io_handle(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_data_block_read_file_io_handle(
-	          data_block,
+	result = libmodi_udif_resource_file_read_file_io_handle(
+	          udif_resource_file,
 	          NULL,
 	          0,
 	          &error );
@@ -596,8 +594,8 @@ int modi_test_data_block_read_file_io_handle(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_data_block_read_file_io_handle(
-	          data_block,
+	result = libmodi_udif_resource_file_read_file_io_handle(
+	          udif_resource_file,
 	          file_io_handle,
 	          -1,
 	          &error );
@@ -633,7 +631,7 @@ int modi_test_data_block_read_file_io_handle(
 	 */
 	result = modi_test_open_file_io_handle(
 	          &file_io_handle,
-	          modi_test_data_block_data1,
+	          modi_test_udif_resource_file_data1,
 	          8,
 	          &error );
 
@@ -650,8 +648,8 @@ int modi_test_data_block_read_file_io_handle(
 	 "error",
 	 error );
 
-	result = libmodi_data_block_read_file_io_handle(
-	          data_block,
+	result = libmodi_udif_resource_file_read_file_io_handle(
+	          udif_resource_file,
 	          file_io_handle,
 	          0,
 	          &error );
@@ -683,8 +681,8 @@ int modi_test_data_block_read_file_io_handle(
 
 	/* Clean up
 	 */
-	result = libmodi_data_block_free(
-	          &data_block,
+	result = libmodi_udif_resource_file_free(
+	          &udif_resource_file,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -693,8 +691,8 @@ int modi_test_data_block_read_file_io_handle(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NULL(
-	 "data_block",
-	 data_block );
+	 "udif_resource_file",
+	 udif_resource_file );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -714,10 +712,10 @@ on_error:
 		 &file_io_handle,
 		 NULL );
 	}
-	if( data_block != NULL )
+	if( udif_resource_file != NULL )
 	{
-		libmodi_data_block_free(
-		 &data_block,
+		libmodi_udif_resource_file_free(
+		 &udif_resource_file,
 		 NULL );
 	}
 	return( 0 );
@@ -743,26 +741,30 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 	MODI_TEST_RUN(
-	 "libmodi_data_block_initialize",
-	 modi_test_data_block_initialize );
+	 "libmodi_udif_resource_file_initialize",
+	 modi_test_udif_resource_file_initialize );
 
 	MODI_TEST_RUN(
-	 "libmodi_data_block_free",
-	 modi_test_data_block_free );
+	 "libmodi_udif_resource_file_free",
+	 modi_test_udif_resource_file_free );
 
 	MODI_TEST_RUN(
-	 "libmodi_data_block_clear",
-	 modi_test_data_block_clear );
+	 "libmodi_udif_resource_file_read_data",
+	 modi_test_udif_resource_file_read_data );
 
 	MODI_TEST_RUN(
-	 "libmodi_data_block_read_file_io_handle",
-	 modi_test_data_block_read_file_io_handle );
+	 "libmodi_udif_resource_file_read_file_io_handle",
+	 modi_test_udif_resource_file_read_file_io_handle );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 }
 

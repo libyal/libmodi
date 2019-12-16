@@ -53,6 +53,7 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.5 | J.B. Metz | January 2017 | Additional information about UDIF data format.
 | 0.0.8 | J.B. Metz | December 2018 | Changes to formatting and addtional informatio about formats.
 | 0.0.9 | J.B. Metz | January 2019 | Additional information about formats.
+| 0.0.10 | J.B. Metz | December 2019 | Additional information about UDIF format.
 |===
 
 :numbered:
@@ -67,10 +68,12 @@ Currently Mac OS is known to support:
 |===
 | Identifier | Extension | Description
 | DC42 | | [yellow-background]*Unknown (Disk Copy 4.2)*
-| SPARSEBUNDLE | .sparseimage | Sparse bundle disk image
-| SPARSE | .sparseimage | Sparse disk image
+| SPARSEBUNDLE +
+UDSB | .sparseimage | Sparse bundle disk image
+| SPARSE +
+UDSP | .sparseimage | Sparse disk image
 | UDBZ | .dmg | bzip2 compressed Universal Disk Image Format (UDIF) image
-| UDCO | .dmg | ADC compressed Universal Disk Image Format (UDIF) image
+| UDCO | .dmg | Apple Data Compression (ADC) compressed Universal Disk Image Format (UDIF) image
 | UDIF | .dmg | Read-only uncompressed Universal Disk Image Format (UDIF) image
 | UDRO | .dmg | Read-write uncompressed Universal Disk Image Format (UDIF) image
 | UDZO | .dmg | zlib/DEFLATE compressed Universal Disk Image Format (UDIF) image
@@ -79,10 +82,8 @@ Currently Mac OS is known to support:
 
 ....
 #   UFBI - entire device
-#   IPOD - iPod image
+#   IPOD - iPod image, similar to UDZO
 #   UDxx - UDIF stub
-#   UDSB - sparsebundle
-#   UDSP - sparse
 #   UDRW - read/write
 #   UDTO - DVD/CD master
 #   RdWr - NDIF read/write
@@ -180,7 +181,6 @@ The UDIF XML plist contains the following key/value pairs:
 
 The resource-fork dictionary contains the following key/value pairs:
 
-
 [cols="1,5",options="header"]
 |===
 | Identifier | Description
@@ -270,6 +270,85 @@ The resource-fork dictionary contains the following key/value pairs:
 	</dict>
 </dict>
 </plist>
+....
+
+A block (blkx array entry) the following key/value pairs:
+
+[cols="1,5",options="header"]
+|===
+| Identifier | Description
+| Attributes | string that contains a hexadecimal formatted integer value
+| CFName | string
+| Data | string that contains base-64 encoded data of the blkx table
+| ID | string that contains a decimal formatted integer value
+| Name | string
+|===
+
+The block table (BLKXTable) is variable of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | "mish" | Signature
+| 4 | 4 | 1 | Format version
+| 8 | 8 | | Start sector +
+Contains the sector number relative to the start of the media data
+| 16 | 8 | | Number of sectors
+| 24 | 8 | | [yellow-background]*Unknown (DataOffset)* +
+Seems to be always 0
+| 32 | 4 | | [yellow-background]*Unknown (BuffersNeeded)*
+| 36 | 4 | | [yellow-background]*Unknown (BlockDescriptors)* +
+Does this value always correspond to the number of block table entries?
+| 40 | 4 | 0 | [yellow-background]*Unknown (reserved1)*
+| 44 | 4 | 0 | [yellow-background]*Unknown (reserved2)*
+| 48 | 4 | 0 | [yellow-background]*Unknown (reserved3)*
+| 52 | 4 | 0 | [yellow-background]*Unknown (reserved4)*
+| 56 | 4 | 0 | [yellow-background]*Unknown (reserved5)*
+| 60 | 4 | 0 | [yellow-background]*Unknown (reserved6)*
+| 64 | 136 | | Checksum +
+Contains an UDIF checksum
+| 104 | 4 | | Number of entries
+| 108 | ... x 40 | | Array of block table entries
+|===
+
+The block table entry (BLKXChunkEntry) is 40 bytes of size and consists of:
+
+[cols="1,1,1,5",options="header"]
+|===
+| Offset | Size | Value | Description
+| 0 | 4 | | Entry type
+| 4 | 4 | | [yellow-background]*Unknown (comment)*
+| 8 | 8 | | Start sector +
+Contains the sector number relative to the start of the start sector of the block table
+| 16 | 8 | | Number of sectors
+| 24 | 8 | | Data offset +
+Contains the byte offset relative to the start of the UDIF image file
+| 32 | 8 | | Data size
+|===
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00000000 | | [yellow-background]*Unknown (sparse block?)*
+| 0x00000001 | | [yellow-background]*Unknown (uncompressed data)*
+| 0x00000002 | | [yellow-background]*Unknown (unknown?)*
+3+|
+| 0x7ffffffe | | [yellow-background]*Unknown (comment)*
+3+|
+| 0x80000004 | | [yellow-background]*Unknown (ADC compressed data)*
+| 0x80000005 | | [yellow-background]*Unknown (zlib compressed data)*
+| 0x80000006 | | [yellow-background]*Unknown (bzip2 compressed data)*
+| 0x80000007 | | [yellow-background]*Unknown (LZFSE compressed data)*
+3+|
+| 0xffffffff | | Block table entries terminator
+|===
+
+....
+struct UDIFChecksum {
+  uint32_t type;
+  uint32_t size;
+  uint8_t data[128];
+};
 ....
 
 === UDIF data fork

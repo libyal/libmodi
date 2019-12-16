@@ -133,6 +133,9 @@ stamp-h[1-9]
 /tests/modi_test_io_handle
 /tests/modi_test_notify
 /tests/modi_test_support
+/tests/modi_test_udif_block_table
+/tests/modi_test_udif_resource_file
+/tests/modi_test_udif_xml_plist
 /tests/tmp*
 
 # Local library dependencies specific files

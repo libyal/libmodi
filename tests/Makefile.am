@@ -48,10 +48,15 @@ check_PROGRAMS = \
 	modi_test_handle \
 	modi_test_io_handle \
 	modi_test_notify \
-	modi_test_support
+	modi_test_support \
+	modi_test_udif_block_table \
+	modi_test_udif_resource_file \
+	modi_test_udif_xml_plist
 
 modi_test_data_block_SOURCES = \
 	modi_test_data_block.c \
+	modi_test_functions.c modi_test_functions.h \
+	modi_test_libbfio.h \
 	modi_test_libcerror.h \
 	modi_test_libmodi.h \
 	modi_test_macros.h \
@@ -59,6 +64,14 @@ modi_test_data_block_SOURCES = \
 	modi_test_unused.h
 
 modi_test_data_block_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 
@@ -146,6 +159,62 @@ modi_test_support_LDADD = \
 	@LIBCPATH_LIBADD@ \
 	@LIBCFILE_LIBADD@ \
 	@LIBCDIRECTORY_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_udif_block_table_SOURCES = \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h \
+	modi_test_udif_block_table.c
+
+modi_test_udif_block_table_LDADD = \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_udif_resource_file_SOURCES = \
+	modi_test_functions.c modi_test_functions.h \
+	modi_test_libbfio.h \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h \
+	modi_test_udif_resource_file.c
+
+modi_test_udif_resource_file_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_udif_xml_plist_SOURCES = \
+	modi_test_functions.c modi_test_functions.h \
+	modi_test_libbfio.h \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h \
+	modi_test_udif_xml_plist.c
+
+modi_test_udif_xml_plist_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
 	@LIBUNA_LIBADD@ \
 	@LIBCSPLIT_LIBADD@ \
 	@LIBCNOTIFY_LIBADD@ \

@@ -318,35 +318,6 @@ ssize_t libmodi_handle_read_buffer_at_offset(
          off64_t offset,
          libmodi_error_t **error );
 
-#ifdef TODO_WRITE_SUPPORT
-
-/* Writes (media) data at the current offset
- * the necessary settings of the write values must have been made
- * Will initialize write if necessary
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-LIBMODI_EXTERN \
-ssize_t libmodi_handle_write_buffer(
-         libmodi_handle_t *handle,
-         const void *buffer,
-         size_t buffer_size,
-         libmodi_error_t **error );
-
-/* Writes (media) data at a specific offset
- * the necessary settings of the write values must have been made
- * Will initialize write if necessary
- * Returns the number of input bytes written, 0 when no longer bytes can be written or -1 on error
- */
-LIBMODI_EXTERN \
-ssize_t libmodi_handle_write_buffer_at_offset(
-         libmodi_handle_t *handle,
-         const void *buffer,
-         size_t buffer_size,
-         off64_t offset,
-         libmodi_error_t **error );
-
-#endif /* TODO_WRITE_SUPPORT */
-
 /* Seeks a certain offset of the (media) data
  * Returns the offset if seek is successful or -1 on error
  */
@@ -399,10 +370,6 @@ int libmodi_handle_set_band_data_files_path_wide(
 
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
-/* -------------------------------------------------------------------------
- * Meta data functions
- * ------------------------------------------------------------------------- */
-
 /* Retrieves the media size
  * Returns the 1 if succesful or -1 on error
  */
@@ -410,6 +377,15 @@ LIBMODI_EXTERN \
 int libmodi_handle_get_media_size(
      libmodi_handle_t *handle,
      size64_t *media_size,
+     libmodi_error_t **error );
+
+/* Retrieves the image type
+ * Returns the 1 if succesful or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_handle_get_image_type(
+     libmodi_handle_t *handle,
+     int *image_type,
      libmodi_error_t **error );
 
 #if defined( __cplusplus )

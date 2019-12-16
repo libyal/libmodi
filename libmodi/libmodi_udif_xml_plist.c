@@ -27,6 +27,7 @@
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_libfplist.h"
+#include "libmodi_udif_block_table.h"
 #include "libmodi_udif_xml_plist.h"
 
 /* Creates a UDIF XML plist
@@ -132,8 +133,283 @@ int libmodi_udif_xml_plist_free(
 	return( 1 );
 }
 
+/* Reads an UDIF XML plist blkx array property
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_udif_xml_plist_read_blkx_array_property(
+     libmodi_udif_xml_plist_t *udif_xml_plist,
+     libfplist_property_t *array_property,
+     libcerror_error_t **error )
+{
+	libfplist_property_t *array_entry_property = NULL;
+	static char *function                      = "libmodi_udif_xml_plist_read_blkx_array_property";
+	int entry_index                            = 0;
+	int number_of_entries                      = 0;
+
+	if( udif_xml_plist == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UDIF XML plist.",
+		 function );
+
+		return( -1 );
+	}
+	if( libfplist_property_get_array_number_of_entries(
+	     array_property,
+	     &number_of_entries,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of entries in array property.",
+		 function );
+
+		goto on_error;
+	}
+	for( entry_index = 0;
+	     entry_index < number_of_entries;
+	     entry_index++ )
+	{
+		if( libfplist_property_get_array_entry_by_index(
+		     array_property,
+		     entry_index,
+		     &array_entry_property,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve entry: %d from array property.",
+			 function,
+			 entry_index );
+
+			goto on_error;
+		}
+		if( libmodi_udif_xml_plist_read_blkx_array_entry_property(
+		     udif_xml_plist,
+		     array_entry_property,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read array entry: %d property.",
+			 function,
+			 entry_index );
+
+			goto on_error;
+		}
+		if( libfplist_property_free(
+		     &array_entry_property,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free array entry: %d property.",
+			 function,
+			 entry_index );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( array_entry_property != NULL )
+	{
+		libfplist_property_free(
+		 &array_entry_property,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Reads an UDIF XML plist blkx array entry property
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_udif_xml_plist_read_blkx_array_entry_property(
+     libmodi_udif_xml_plist_t *udif_xml_plist,
+     libfplist_property_t *array_entry_property,
+     libcerror_error_t **error )
+{
+	libfplist_property_t *data_property     = NULL;
+	libmodi_udif_block_table_t *block_table = NULL;
+	uint8_t *data                           = NULL;
+	static char *function                   = "libmodi_udif_xml_plist_read_blkx_array_entry_property";
+	size_t data_size                        = 0;
+	int result                              = 0;
+
+	if( udif_xml_plist == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UDIF XML plist.",
+		 function );
+
+		return( -1 );
+	}
+	result = libfplist_property_get_sub_property_by_utf8_name(
+	          array_entry_property,
+	          (uint8_t *) "Data",
+	          4,
+	          &data_property,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve data property.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		if( libfplist_property_get_value_data_size(
+		     data_property,
+		     &data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve size of data from data property.",
+			 function );
+
+			goto on_error;
+		}
+/* TODO check if data_size is in bounds */
+		data = (uint8_t *) memory_allocate(
+		                    (size_t) data_size );
+
+		if( data == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create data.",
+			 function );
+
+			goto on_error;
+		}
+		if( libfplist_property_get_value_data(
+		     data_property,
+		     data,
+		     data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve data from data property.",
+			 function );
+
+			goto on_error;
+		}
+		if( libmodi_udif_block_table_initialize(
+		     &block_table,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create block table.",
+			 function );
+
+			goto on_error;
+		}
+		if( libmodi_udif_block_table_read_data(
+		     block_table,
+		     data,
+		     data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read block table.",
+			 function );
+
+			goto on_error;
+		}
+/* TODO use the block table */
+
+		if( libmodi_udif_block_table_free(
+		     &block_table,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free block table.",
+			 function );
+
+			goto on_error;
+		}
+		memory_free(
+		 data );
+
+		data = NULL;
+
+		if( libfplist_property_free(
+		     &data_property,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free data property.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	return( 1 );
+
+on_error:
+	if( block_table != NULL )
+	{
+		libmodi_udif_block_table_free(
+		 &block_table,
+		 NULL );
+	}
+	if( data != NULL )
+	{
+		memory_free(
+		 data );
+	}
+	if( data_property != NULL )
+	{
+		libfplist_property_free(
+		 &data_property,
+		 NULL );
+	}
+	return( -1 );
+}
+
 /* Reads an UDIF XML plist
- * Returns 1 if successful, 0 if the signature does not match or -1 on error
+ * Returns 1 if successful or -1 on error
  */
 int libmodi_udif_xml_plist_read_data(
      libmodi_udif_xml_plist_t *udif_xml_plist,
@@ -141,11 +417,12 @@ int libmodi_udif_xml_plist_read_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	libfplist_property_t *root_property  = NULL;
-	libfplist_property_t *sub_property   = NULL;
-	libfplist_property_list_t *xml_plist = NULL;
-	static char *function                = "libmodi_udif_xml_plist_read_data";
-	int result                           = 0;
+	libfplist_property_t *blkx_array_property    = NULL;
+	libfplist_property_t *resource_fork_property = NULL;
+	libfplist_property_t *root_property          = NULL;
+	libfplist_property_list_t *xml_plist         = NULL;
+	static char *function                        = "libmodi_udif_xml_plist_read_data";
+	int result                                   = 0;
 
 	if( udif_xml_plist == NULL )
 	{
@@ -203,8 +480,8 @@ int libmodi_udif_xml_plist_read_data(
 	{
 		libcerror_error_set(
 		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_COPY_FAILED,
 		 "%s: unable to copy property list from byte stream.",
 		 function );
 
@@ -226,8 +503,88 @@ int libmodi_udif_xml_plist_read_data(
 
 			goto on_error;
 		}
-/* TODO implement */
+		result = libfplist_property_get_sub_property_by_utf8_name(
+		          root_property,
+		          (uint8_t *) "resource-fork",
+		          13,
+		          &resource_fork_property,
+		          error );
 
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve resource-fork property.",
+			 function );
+
+			goto on_error;
+		}
+		else if( result != 0 )
+		{
+			result = libfplist_property_get_sub_property_by_utf8_name(
+			          resource_fork_property,
+			          (uint8_t *) "blkx",
+			          4,
+			          &blkx_array_property,
+			          error );
+
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve blkx array property.",
+				 function );
+
+				goto on_error;
+			}
+			else if( result != 0 )
+			{
+				if( libmodi_udif_xml_plist_read_blkx_array_property(
+				     udif_xml_plist,
+				     blkx_array_property,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_IO,
+					 LIBCERROR_IO_ERROR_READ_FAILED,
+					 "%s: unable to read blkx array property.",
+					 function );
+
+					goto on_error;
+				}
+				if( libfplist_property_free(
+				     &blkx_array_property,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+					 "%s: unable to free blkx property.",
+					 function );
+
+					goto on_error;
+				}
+			}
+			if( libfplist_property_free(
+			     &resource_fork_property,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free resource-fork property.",
+				 function );
+
+				goto on_error;
+			}
+		}
 		if( libfplist_property_free(
 		     &root_property,
 		     error ) != 1 )
@@ -258,10 +615,16 @@ int libmodi_udif_xml_plist_read_data(
 	return( result );
 
 on_error:
-	if( sub_property != NULL )
+	if( blkx_array_property != NULL )
 	{
 		libfplist_property_free(
-		 &sub_property,
+		 &blkx_array_property,
+		 NULL );
+	}
+	if( resource_fork_property != NULL )
+	{
+		libfplist_property_free(
+		 &resource_fork_property,
 		 NULL );
 	}
 	if( root_property != NULL )
