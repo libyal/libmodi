@@ -136,6 +136,7 @@ stamp-h[1-9]
 /tests/modi_test_sparse_image_header
 /tests/modi_test_support
 /tests/modi_test_udif_block_table
+/tests/modi_test_udif_block_table_entry
 /tests/modi_test_udif_resource_file
 /tests/modi_test_udif_xml_plist
 /tests/tmp*

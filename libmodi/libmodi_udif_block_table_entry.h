@@ -1,5 +1,5 @@
 /*
- * Universal Disk Image Format (UDIF) block table functions
+ * Universal Disk Image Format (UDIF) block table entry functions
  *
  * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,8 +19,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_UDIF_BLOCK_TABLE_H )
-#define _LIBMODI_UDIF_BLOCK_TABLE_H
+#if !defined( _LIBMODI_UDIF_BLOCK_TABLE_ENTRY_H )
+#define _LIBMODI_UDIF_BLOCK_TABLE_ENTRY_H
 
 #include <common.h>
 #include <types.h>
@@ -32,25 +32,41 @@
 extern "C" {
 #endif
 
-typedef struct libmodi_udif_block_table libmodi_udif_block_table_t;
+typedef struct libmodi_udif_block_table_entry libmodi_udif_block_table_entry_t;
 
-struct libmodi_udif_block_table
+struct libmodi_udif_block_table_entry
 {
-	/* Dummy
+	/* The entry type
 	 */
-	int dummy;
+	uint32_t type;
+
+	/* The start sector
+	 */
+	uint64_t start_sector;
+
+	/* The number of sectors
+	 */
+	uint64_t number_of_sectors;
+
+	/* The data offset
+	 */
+	uint64_t data_offset;
+
+	/* The data size
+	 */
+	uint64_t data_size;
 };
 
-int libmodi_udif_block_table_initialize(
-     libmodi_udif_block_table_t **block_table,
+int libmodi_udif_block_table_entry_initialize(
+     libmodi_udif_block_table_entry_t **block_table_entry,
      libcerror_error_t **error );
 
-int libmodi_udif_block_table_free(
-     libmodi_udif_block_table_t **block_table,
+int libmodi_udif_block_table_entry_free(
+     libmodi_udif_block_table_entry_t **block_table_entry,
      libcerror_error_t **error );
 
-int libmodi_udif_block_table_read_data(
-     libmodi_udif_block_table_t *block_table,
+int libmodi_udif_block_table_entry_read_data(
+     libmodi_udif_block_table_entry_t *block_table_entry,
      const uint8_t *data,
      size_t data_size,
      libcerror_error_t **error );
@@ -59,5 +75,5 @@ int libmodi_udif_block_table_read_data(
 }
 #endif
 
-#endif /* !defined( _LIBMODI_UDIF_BLOCK_TABLE_H ) */
+#endif /* !defined( _LIBMODI_UDIF_BLOCK_TABLE_ENTRY_H ) */
 

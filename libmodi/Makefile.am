@@ -58,6 +58,7 @@ libmodi_la_SOURCES = \
 	libmodi_system_string.c libmodi_system_string.h \
 	libmodi_types.h \
 	libmodi_udif_block_table.c libmodi_udif_block_table.h \
+	libmodi_udif_block_table_entry.c libmodi_udif_block_table_entry.h \
 	libmodi_udif_resource_file.c libmodi_udif_resource_file.h \
 	libmodi_udif_xml_plist.c libmodi_udif_xml_plist.h \
 	libmodi_unused.h \

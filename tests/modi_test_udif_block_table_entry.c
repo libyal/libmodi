@@ -1,5 +1,5 @@
 /*
- * Library udif_block_table type test program
+ * Library udif_block_table_entry type test program
  *
  * Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -34,50 +34,35 @@
 #include "modi_test_memory.h"
 #include "modi_test_unused.h"
 
-#include "../libmodi/libmodi_udif_block_table.h"
+#include "../libmodi/libmodi_udif_block_table_entry.h"
 
-uint8_t modi_test_udif_block_table_data1[ 284 ] = {
-	0x6d, 0x69, 0x73, 0x68, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x08, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x20, 0x41, 0xf2, 0xfa, 0x33, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x80, 0x00, 0x00, 0x05,
-	0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x0d, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x1f, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t modi_test_udif_block_table_entry_data1[ 40 ] = {
+	0x80, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x0d,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f };
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
-/* Tests the libmodi_udif_block_table_initialize function
+/* Tests the libmodi_udif_block_table_entry_initialize function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_udif_block_table_initialize(
+int modi_test_udif_block_table_entry_initialize(
      void )
 {
-	libcerror_error_t *error                = NULL;
-	libmodi_udif_block_table_t *block_table = NULL;
-	int result                              = 0;
+	libcerror_error_t *error                            = NULL;
+	libmodi_udif_block_table_entry_t *block_table_entry = NULL;
+	int result                                          = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_malloc_fail_tests         = 1;
-	int number_of_memset_fail_tests         = 1;
-	int test_number                         = 0;
+	int number_of_malloc_fail_tests                     = 1;
+	int number_of_memset_fail_tests                     = 1;
+	int test_number                                     = 0;
 #endif
 
 	/* Test regular cases
 	 */
-	result = libmodi_udif_block_table_initialize(
-	          &block_table,
+	result = libmodi_udif_block_table_entry_initialize(
+	          &block_table_entry,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -86,15 +71,15 @@ int modi_test_udif_block_table_initialize(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "block_table",
-	 block_table );
+	 "block_table_entry",
+	 block_table_entry );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
 	 error );
 
-	result = libmodi_udif_block_table_free(
-	          &block_table,
+	result = libmodi_udif_block_table_entry_free(
+	          &block_table_entry,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -103,8 +88,8 @@ int modi_test_udif_block_table_initialize(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NULL(
-	 "block_table",
-	 block_table );
+	 "block_table_entry",
+	 block_table_entry );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -112,7 +97,7 @@ int modi_test_udif_block_table_initialize(
 
 	/* Test error cases
 	 */
-	result = libmodi_udif_block_table_initialize(
+	result = libmodi_udif_block_table_entry_initialize(
 	          NULL,
 	          &error );
 
@@ -128,13 +113,13 @@ int modi_test_udif_block_table_initialize(
 	libcerror_error_free(
 	 &error );
 
-	block_table = (libmodi_udif_block_table_t *) 0x12345678UL;
+	block_table_entry = (libmodi_udif_block_table_entry_t *) 0x12345678UL;
 
-	result = libmodi_udif_block_table_initialize(
-	          &block_table,
+	result = libmodi_udif_block_table_entry_initialize(
+	          &block_table_entry,
 	          &error );
 
-	block_table = NULL;
+	block_table_entry = NULL;
 
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -154,22 +139,22 @@ int modi_test_udif_block_table_initialize(
 	     test_number < number_of_malloc_fail_tests;
 	     test_number++ )
 	{
-		/* Test libmodi_udif_block_table_initialize with malloc failing
+		/* Test libmodi_udif_block_table_entry_initialize with malloc failing
 		 */
 		modi_test_malloc_attempts_before_fail = test_number;
 
-		result = libmodi_udif_block_table_initialize(
-		          &block_table,
+		result = libmodi_udif_block_table_entry_initialize(
+		          &block_table_entry,
 		          &error );
 
 		if( modi_test_malloc_attempts_before_fail != -1 )
 		{
 			modi_test_malloc_attempts_before_fail = -1;
 
-			if( block_table != NULL )
+			if( block_table_entry != NULL )
 			{
-				libmodi_udif_block_table_free(
-				 &block_table,
+				libmodi_udif_block_table_entry_free(
+				 &block_table_entry,
 				 NULL );
 			}
 		}
@@ -181,8 +166,8 @@ int modi_test_udif_block_table_initialize(
 			 -1 );
 
 			MODI_TEST_ASSERT_IS_NULL(
-			 "block_table",
-			 block_table );
+			 "block_table_entry",
+			 block_table_entry );
 
 			MODI_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -196,22 +181,22 @@ int modi_test_udif_block_table_initialize(
 	     test_number < number_of_memset_fail_tests;
 	     test_number++ )
 	{
-		/* Test libmodi_udif_block_table_initialize with memset failing
+		/* Test libmodi_udif_block_table_entry_initialize with memset failing
 		 */
 		modi_test_memset_attempts_before_fail = test_number;
 
-		result = libmodi_udif_block_table_initialize(
-		          &block_table,
+		result = libmodi_udif_block_table_entry_initialize(
+		          &block_table_entry,
 		          &error );
 
 		if( modi_test_memset_attempts_before_fail != -1 )
 		{
 			modi_test_memset_attempts_before_fail = -1;
 
-			if( block_table != NULL )
+			if( block_table_entry != NULL )
 			{
-				libmodi_udif_block_table_free(
-				 &block_table,
+				libmodi_udif_block_table_entry_free(
+				 &block_table_entry,
 				 NULL );
 			}
 		}
@@ -223,8 +208,8 @@ int modi_test_udif_block_table_initialize(
 			 -1 );
 
 			MODI_TEST_ASSERT_IS_NULL(
-			 "block_table",
-			 block_table );
+			 "block_table_entry",
+			 block_table_entry );
 
 			MODI_TEST_ASSERT_IS_NOT_NULL(
 			 "error",
@@ -244,19 +229,19 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( block_table != NULL )
+	if( block_table_entry != NULL )
 	{
-		libmodi_udif_block_table_free(
-		 &block_table,
+		libmodi_udif_block_table_entry_free(
+		 &block_table_entry,
 		 NULL );
 	}
 	return( 0 );
 }
 
-/* Tests the libmodi_udif_block_table_free function
+/* Tests the libmodi_udif_block_table_entry_free function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_udif_block_table_free(
+int modi_test_udif_block_table_entry_free(
      void )
 {
 	libcerror_error_t *error = NULL;
@@ -264,7 +249,7 @@ int modi_test_udif_block_table_free(
 
 	/* Test error cases
 	 */
-	result = libmodi_udif_block_table_free(
+	result = libmodi_udif_block_table_entry_free(
 	          NULL,
 	          &error );
 
@@ -291,20 +276,20 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmodi_udif_block_table_read_data function
+/* Tests the libmodi_udif_block_table_entry_read_data function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_udif_block_table_read_data(
+int modi_test_udif_block_table_entry_read_data(
      void )
 {
-	libcerror_error_t *error                = NULL;
-	libmodi_udif_block_table_t *block_table = NULL;
-	int result                              = 0;
+	libcerror_error_t *error                            = NULL;
+	libmodi_udif_block_table_entry_t *block_table_entry = NULL;
+	int result                                          = 0;
 
 	/* Initialize test
 	 */
-	result = libmodi_udif_block_table_initialize(
-	          &block_table,
+	result = libmodi_udif_block_table_entry_initialize(
+	          &block_table_entry,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -313,8 +298,8 @@ int modi_test_udif_block_table_read_data(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "block_table",
-	 block_table );
+	 "block_table_entry",
+	 block_table_entry );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -322,10 +307,10 @@ int modi_test_udif_block_table_read_data(
 
 	/* Test regular cases
 	 */
-	result = libmodi_udif_block_table_read_data(
-	          block_table,
-	          modi_test_udif_block_table_data1,
-	          284,
+	result = libmodi_udif_block_table_entry_read_data(
+	          block_table_entry,
+	          modi_test_udif_block_table_entry_data1,
+	          40,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -339,10 +324,10 @@ int modi_test_udif_block_table_read_data(
 
 	/* Test error cases
 	 */
-	result = libmodi_udif_block_table_read_data(
+	result = libmodi_udif_block_table_entry_read_data(
 	          NULL,
-	          modi_test_udif_block_table_data1,
-	          284,
+	          modi_test_udif_block_table_entry_data1,
+	          40,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -357,10 +342,10 @@ int modi_test_udif_block_table_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_udif_block_table_read_data(
-	          block_table,
+	result = libmodi_udif_block_table_entry_read_data(
+	          block_table_entry,
 	          NULL,
-	          284,
+	          40,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -375,9 +360,9 @@ int modi_test_udif_block_table_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_udif_block_table_read_data(
-	          block_table,
-	          modi_test_udif_block_table_data1,
+	result = libmodi_udif_block_table_entry_read_data(
+	          block_table_entry,
+	          modi_test_udif_block_table_entry_data1,
 	          (size_t) SSIZE_MAX + 1,
 	          &error );
 
@@ -393,9 +378,9 @@ int modi_test_udif_block_table_read_data(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_udif_block_table_read_data(
-	          block_table,
-	          modi_test_udif_block_table_data1,
+	result = libmodi_udif_block_table_entry_read_data(
+	          block_table_entry,
+	          modi_test_udif_block_table_entry_data1,
 	          0,
 	          &error );
 
@@ -411,38 +396,10 @@ int modi_test_udif_block_table_read_data(
 	libcerror_error_free(
 	 &error );
 
-	/* Test error case where signature is invalid
-	 */
-	byte_stream_copy_from_uint32_big_endian(
-	 modi_test_udif_block_table_data1,
-	 0xffffffffUL );
-
-	result = libmodi_udif_block_table_read_data(
-	          block_table,
-	          modi_test_udif_block_table_data1,
-	          284,
-	          &error );
-
-	byte_stream_copy_from_uint32_big_endian(
-	 modi_test_udif_block_table_data1,
-	 0x6d697368UL );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
 	/* Clean up
 	 */
-	result = libmodi_udif_block_table_free(
-	          &block_table,
+	result = libmodi_udif_block_table_entry_free(
+	          &block_table_entry,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -451,8 +408,8 @@ int modi_test_udif_block_table_read_data(
 	 1 );
 
 	MODI_TEST_ASSERT_IS_NULL(
-	 "block_table",
-	 block_table );
+	 "block_table_entry",
+	 block_table_entry );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -466,10 +423,10 @@ on_error:
 		libcerror_error_free(
 		 &error );
 	}
-	if( block_table != NULL )
+	if( block_table_entry != NULL )
 	{
-		libmodi_udif_block_table_free(
-		 &block_table,
+		libmodi_udif_block_table_entry_free(
+		 &block_table_entry,
 		 NULL );
 	}
 	return( 0 );
@@ -495,16 +452,16 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 	MODI_TEST_RUN(
-	 "libmodi_udif_block_table_initialize",
-	 modi_test_udif_block_table_initialize );
+	 "libmodi_udif_block_table_entry_initialize",
+	 modi_test_udif_block_table_entry_initialize );
 
 	MODI_TEST_RUN(
-	 "libmodi_udif_block_table_free",
-	 modi_test_udif_block_table_free );
+	 "libmodi_udif_block_table_entry_free",
+	 modi_test_udif_block_table_entry_free );
 
 	MODI_TEST_RUN(
-	 "libmodi_udif_block_table_read_data",
-	 modi_test_udif_block_table_read_data );
+	 "libmodi_udif_block_table_entry_read_data",
+	 modi_test_udif_block_table_entry_read_data );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 

@@ -109,6 +109,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_udif_block_table"
 		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_udif_block_table_entry", "modi_test_udif_block_table_entry\modi_test_udif_block_table_entry.vcproj", "{B4EC27BB-BE01-463B-A238-C8364A321DC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1660EB10-5241-431C-B3A2-607341435A83} = {1660EB10-5241-431C-B3A2-607341435A83}
+		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_udif_resource_file", "modi_test_udif_resource_file\modi_test_udif_resource_file.vcproj", "{B574F664-C995-4CD3-81AD-48157E8822EF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4B3B6824-5C4C-45A1-AAA2-FDD030F42397} = {4B3B6824-5C4C-45A1-AAA2-FDD030F42397}
@@ -352,6 +358,10 @@ Global
 		{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}.Release|Win32.Build.0 = Release|Win32
 		{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{B4EC27BB-BE01-463B-A238-C8364A321DC5}.Release|Win32.ActiveCfg = Release|Win32
+		{B4EC27BB-BE01-463B-A238-C8364A321DC5}.Release|Win32.Build.0 = Release|Win32
+		{B4EC27BB-BE01-463B-A238-C8364A321DC5}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{B4EC27BB-BE01-463B-A238-C8364A321DC5}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{B574F664-C995-4CD3-81AD-48157E8822EF}.Release|Win32.ActiveCfg = Release|Win32
 		{B574F664-C995-4CD3-81AD-48157E8822EF}.Release|Win32.Build.0 = Release|Win32
 		{B574F664-C995-4CD3-81AD-48157E8822EF}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

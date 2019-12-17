@@ -329,16 +329,19 @@ Contains the byte offset relative to the start of the UDIF image file
 [cols="1,1,5",options="header"]
 |===
 | Value | Identifier | Description
-| 0x00000000 | | [yellow-background]*Unknown (sparse block?)*
-| 0x00000001 | | [yellow-background]*Unknown (uncompressed data)*
-| 0x00000002 | | [yellow-background]*Unknown (unknown?)*
+| 0x00000000 | | [yellow-background]*Unknown (sparse block?)* +
+Seen in UDRO image
+| 0x00000001 | | [yellow-background]*Unknown (uncompressed data)* +
+Seen in UDRO image
+| 0x00000002 | | [yellow-background]*Unknown (unknown?)* +
+Seen in UDZO image
 3+|
 | 0x7ffffffe | | [yellow-background]*Unknown (comment)*
 3+|
-| 0x80000004 | | [yellow-background]*Unknown (ADC compressed data)*
-| 0x80000005 | | [yellow-background]*Unknown (zlib compressed data)*
-| 0x80000006 | | [yellow-background]*Unknown (bzip2 compressed data)*
-| 0x80000007 | | [yellow-background]*Unknown (LZFSE compressed data)*
+| 0x80000004 | | ADC compressed data
+| 0x80000005 | | zlib compressed data
+| 0x80000006 | | bzip2 compressed data
+| 0x80000007 | | LZFSE compressed data
 3+|
 | 0xffffffff | | Block table entries terminator
 |===

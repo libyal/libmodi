@@ -27,60 +27,61 @@
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_udif_block_table.h"
+#include "libmodi_udif_block_table_entry.h"
 
 #include "modi_udif_block_table.h"
 
 const uint8_t modi_udif_block_table_signature[ 4 ] = {
 	'm', 'i', 's', 'h' };
 
-/* Creates an UDIF block table
+/* Creates a block table
  * Make sure the value udif_block_table is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
 int libmodi_udif_block_table_initialize(
-     libmodi_udif_block_table_t **udif_block_table,
+     libmodi_udif_block_table_t **block_table,
      libcerror_error_t **error )
 {
 	static char *function = "libmodi_udif_block_table_initialize";
 
-	if( udif_block_table == NULL )
+	if( block_table == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UDIF block table.",
+		 "%s: invalid block table.",
 		 function );
 
 		return( -1 );
 	}
-	if( *udif_block_table != NULL )
+	if( *block_table != NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_VALUE_ALREADY_SET,
-		 "%s: invalid UDIF block table value already set.",
+		 "%s: invalid block table value already set.",
 		 function );
 
 		return( -1 );
 	}
-	*udif_block_table = memory_allocate_structure(
-	                     libmodi_udif_block_table_t );
+	*block_table = memory_allocate_structure(
+	                libmodi_udif_block_table_t );
 
-	if( *udif_block_table == NULL )
+	if( *block_table == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
-		 "%s: unable to create UDIF block table.",
+		 "%s: unable to create block table.",
 		 function );
 
 		goto on_error;
 	}
 	if( memory_set(
-	     *udif_block_table,
+	     *block_table,
 	     0,
 	     sizeof( libmodi_udif_block_table_t ) ) == NULL )
 	{
@@ -88,7 +89,7 @@ int libmodi_udif_block_table_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_MEMORY,
 		 LIBCERROR_MEMORY_ERROR_SET_FAILED,
-		 "%s: unable to clear UDIF block table.",
+		 "%s: unable to clear block table.",
 		 function );
 
 		goto on_error;
@@ -96,72 +97,78 @@ int libmodi_udif_block_table_initialize(
 	return( 1 );
 
 on_error:
-	if( *udif_block_table != NULL )
+	if( *block_table != NULL )
 	{
 		memory_free(
-		 *udif_block_table );
+		 *block_table );
 
-		*udif_block_table = NULL;
+		*block_table = NULL;
 	}
 	return( -1 );
 }
 
-/* Frees an UDIF block table
+/* Frees a block table
  * Returns 1 if successful or -1 on error
  */
 int libmodi_udif_block_table_free(
-     libmodi_udif_block_table_t **udif_block_table,
+     libmodi_udif_block_table_t **block_table,
      libcerror_error_t **error )
 {
 	static char *function = "libmodi_udif_block_table_free";
 
-	if( udif_block_table == NULL )
+	if( block_table == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UDIF block table.",
+		 "%s: invalid block table.",
 		 function );
 
 		return( -1 );
 	}
-	if( *udif_block_table != NULL )
+	if( *block_table != NULL )
 	{
 		memory_free(
-		 *udif_block_table );
+		 *block_table );
 
-		*udif_block_table = NULL;
+		*block_table = NULL;
 	}
 	return( 1 );
 }
 
-/* Reads an UDIF block table
+/* Reads a block table
  * Returns 1 if successful or -1 on error
  */
 int libmodi_udif_block_table_read_data(
-     libmodi_udif_block_table_t *udif_block_table,
+     libmodi_udif_block_table_t *block_table,
      const uint8_t *data,
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function      = "libmodi_udif_block_table_read_data";
-	size_t data_offset         = 0;
-	uint32_t entry_index       = 0;
-	uint32_t nubmer_of_entries = 0;
+	libmodi_udif_block_table_entry_t *block_table_entry = NULL;
+	static char *function                               = "libmodi_udif_block_table_read_data";
+	size_t data_offset                                  = 0;
+	uint64_t calculated_number_of_sectors               = 0;
+	uint64_t number_of_sectors                          = 0;
+	uint64_t start_sector                               = 0;
+	uint32_t compressed_entry_type                      = 0;
+	uint32_t entry_index                                = 0;
+	uint32_t format_version                             = 0;
+	uint32_t number_of_entries                          = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit       = 0;
-	uint32_t value_32bit       = 0;
+	uint64_t value_64bit                                = 0;
+	uint32_t value_32bit                                = 0;
 #endif
 
-	if( udif_block_table == NULL )
+	if( block_table == NULL )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid UDIF block table.",
+		 "%s: invalid block table.",
 		 function );
 
 		return( -1 );
@@ -193,7 +200,7 @@ int libmodi_udif_block_table_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: UDIF block table data:\n",
+		 "%s: block table data:\n",
 		 function );
 		libcnotify_print_data(
 		 data,
@@ -213,11 +220,23 @@ int libmodi_udif_block_table_read_data(
 		 "%s: unsupported signature.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
 	byte_stream_copy_to_uint32_big_endian(
+	 ( (modi_udif_block_table_header_t *) data )->format_version,
+	 format_version );
+
+	byte_stream_copy_to_uint64_big_endian(
+	 ( (modi_udif_block_table_header_t *) data )->start_sector,
+	 start_sector );
+
+	byte_stream_copy_to_uint64_big_endian(
+	 ( (modi_udif_block_table_header_t *) data )->number_of_sectors,
+	 number_of_sectors );
+
+	byte_stream_copy_to_uint32_big_endian(
 	 ( (modi_udif_block_table_header_t *) data )->number_of_entries,
-	 nubmer_of_entries );
+	 number_of_entries );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -230,29 +249,20 @@ int libmodi_udif_block_table_read_data(
 		 ( (modi_udif_block_table_header_t *) data )->signature[ 2 ],
 		 ( (modi_udif_block_table_header_t *) data )->signature[ 3 ] );
 
-		byte_stream_copy_to_uint32_big_endian(
-		 ( (modi_udif_block_table_header_t *) data )->format_version,
-		 value_32bit );
 		libcnotify_printf(
 		 "%s: format version\t\t\t: %" PRIu32 "\n",
 		 function,
-		 value_32bit );
+		 format_version );
 
-		byte_stream_copy_to_uint64_big_endian(
-		 ( (modi_udif_block_table_header_t *) data )->start_sector,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: start sector\t\t\t: %" PRIu64 "\n",
 		 function,
-		 value_64bit );
+		 start_sector );
 
-		byte_stream_copy_to_uint64_big_endian(
-		 ( (modi_udif_block_table_header_t *) data )->number_of_sectors,
-		 value_64bit );
 		libcnotify_printf(
 		 "%s: number of sectors\t\t\t: %" PRIu64 "\n",
 		 function,
-		 value_64bit );
+		 number_of_sectors );
 
 		byte_stream_copy_to_uint64_big_endian(
 		 ( (modi_udif_block_table_header_t *) data )->data_offset,
@@ -337,17 +347,28 @@ int libmodi_udif_block_table_read_data(
 		libcnotify_printf(
 		 "%s: number of entries\t\t\t: %" PRIu32 "\n",
 		 function,
-		 nubmer_of_entries );
+		 number_of_entries );
 
 		libcnotify_printf(
 		 "\n" );
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
+	if( format_version != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported format version.",
+		 function );
+
+		goto on_error;
+	}
 	data_offset = sizeof( modi_udif_block_table_header_t );
 
 	for( entry_index = 0;
-	     entry_index < nubmer_of_entries;
+	     entry_index < number_of_entries;
 	     entry_index++ )
 	{
 		if( data_offset > ( data_size - sizeof( modi_udif_block_table_entry_t ) ) )
@@ -359,79 +380,128 @@ int libmodi_udif_block_table_read_data(
 			 "%s: invalid data size value out of bounds.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+		if( libmodi_udif_block_table_entry_initialize(
+		     &block_table_entry,
+		     error ) != 1 )
 		{
-			libcnotify_printf(
-			 "%s: table entry: %" PRIu32 "\n",
-			 function,
-			 entry_index );
-			libcnotify_print_data(
-			 &( data[ data_offset ] ),
-			 sizeof( modi_udif_block_table_entry_t ),
-			 0 );
-		}
-#endif
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create block table entry.",
+			 function );
 
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
+			goto on_error;
+		}
+		if( libmodi_udif_block_table_entry_read_data(
+		     block_table_entry,
+		     &( data[ data_offset ] ),
+		     sizeof( modi_udif_block_table_entry_t ),
+		     error ) != 1 )
 		{
-			byte_stream_copy_to_uint32_big_endian(
-			 ( (modi_udif_block_table_entry_t *) &( data[ data_offset ] ) )->type,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: type\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read block table entry.",
+			 function );
 
-			byte_stream_copy_to_uint32_big_endian(
-			 ( (modi_udif_block_table_entry_t *) &( data[ data_offset ] ) )->unknown1,
-			 value_32bit );
-			libcnotify_printf(
-			 "%s: unknown1\t\t\t\t: 0x%08" PRIx32 "\n",
-			 function,
-			 value_32bit );
-
-			byte_stream_copy_to_uint64_big_endian(
-			 ( (modi_udif_block_table_entry_t *) &( data[ data_offset ] ) )->start_sector,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: start sector\t\t\t: %" PRIu64 "\n",
-			 function,
-			 value_64bit );
-
-			byte_stream_copy_to_uint64_big_endian(
-			 ( (modi_udif_block_table_entry_t *) &( data[ data_offset ] ) )->number_of_sectors,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: number of sectors\t\t\t: %" PRIu64 "\n",
-			 function,
-			 value_64bit );
-
-			byte_stream_copy_to_uint64_big_endian(
-			 ( (modi_udif_block_table_entry_t *) &( data[ data_offset ] ) )->data_offset,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: data offset\t\t\t\t: %" PRIu64 "\n",
-			 function,
-			 value_64bit );
-
-			byte_stream_copy_to_uint64_big_endian(
-			 ( (modi_udif_block_table_entry_t *) &( data[ data_offset ] ) )->data_size,
-			 value_64bit );
-			libcnotify_printf(
-			 "%s: data size\t\t\t\t: %" PRIu64 "\n",
-			 function,
-			 value_64bit );
-
-			libcnotify_printf(
-			 "\n" );
+			goto on_error;
 		}
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
+		if( ( entry_index + 1 ) == number_of_entries )
+		{
+			if( block_table_entry->type != 0xffffffffUL )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+				 "%s: unsupported last block table entry type.",
+				 function );
 
+				goto on_error;
+			}
+		}
+		else
+		{
+			if( ( block_table_entry->type == 0x80000004UL )
+			 || ( block_table_entry->type == 0x80000005UL )
+			 || ( block_table_entry->type == 0x80000006UL )
+			 || ( block_table_entry->type == 0x80000007UL ) )
+			{
+				if( compressed_entry_type == 0 )
+				{
+					compressed_entry_type = block_table_entry->type;
+				}
+				else if( compressed_entry_type != block_table_entry->type )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+					 "%s: mismatch between previous and current compressed entry type.",
+					 function );
+
+					goto on_error;
+				}
+			}
+			else if( ( block_table_entry->type != 0x00000000UL )
+			      && ( block_table_entry->type != 0x00000001UL )
+			      && ( block_table_entry->type != 0x00000002UL ) )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+				 "%s: unsupported block table entry type.",
+				 function );
+
+				goto on_error;
+			}
+		}
+		if( block_table_entry->start_sector != calculated_number_of_sectors )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+			 "%s: mismatch between start sector and number of sectors.",
+			 function );
+
+			goto on_error;
+		}
+		if( block_table_entry->type != 0xffffffffUL )
+		{
+			calculated_number_of_sectors += block_table_entry->number_of_sectors;
+		}
+/* TODO use the block table entry */
+		if( libmodi_udif_block_table_entry_free(
+		     &block_table_entry,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free block table entry.",
+			 function );
+
+			goto on_error;
+		}
 		data_offset += sizeof( modi_udif_block_table_entry_t );
+	}
+	if( number_of_sectors != calculated_number_of_sectors )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: mismatch between number of sectors in header and in table.",
+		 function );
+
+		goto on_error;
 	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
@@ -449,5 +519,14 @@ int libmodi_udif_block_table_read_data(
 	}
 #endif
 	return( 1 );
+
+on_error:
+	if( block_table_entry != NULL )
+	{
+		libmodi_udif_block_table_entry_free(
+		 &block_table_entry,
+		 NULL );
+	}
+	return( -1 );
 }
 

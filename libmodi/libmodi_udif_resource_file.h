@@ -66,21 +66,21 @@ struct libmodi_udif_resource_file
 };
 
 int libmodi_udif_resource_file_initialize(
-     libmodi_udif_resource_file_t **udif_resource_file,
+     libmodi_udif_resource_file_t **resource_file,
      libcerror_error_t **error );
 
 int libmodi_udif_resource_file_free(
-     libmodi_udif_resource_file_t **udif_resource_file,
+     libmodi_udif_resource_file_t **resource_file,
      libcerror_error_t **error );
 
 int libmodi_udif_resource_file_read_data(
-     libmodi_udif_resource_file_t *udif_resource_file,
+     libmodi_udif_resource_file_t *resource_file,
      const uint8_t *data,
      size_t data_size,
      libcerror_error_t **error );
 
 int libmodi_udif_resource_file_read_file_io_handle(
-     libmodi_udif_resource_file_t *udif_resource_file,
+     libmodi_udif_resource_file_t *resource_file,
      libbfio_handle_t *file_io_handle,
      off64_t offset,
      libcerror_error_t **error );
