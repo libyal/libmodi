@@ -48,6 +48,8 @@ check_PROGRAMS = \
 	modi_test_handle \
 	modi_test_io_handle \
 	modi_test_notify \
+	modi_test_sparse_bundle_xml_plist \
+	modi_test_sparse_image_header \
 	modi_test_support \
 	modi_test_udif_block_table \
 	modi_test_udif_resource_file \
@@ -135,6 +137,50 @@ modi_test_notify_SOURCES = \
 	modi_test_unused.h
 
 modi_test_notify_LDADD = \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_sparse_bundle_xml_plist_SOURCES = \
+	modi_test_functions.c modi_test_functions.h \
+	modi_test_libbfio.h \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_sparse_bundle_xml_plist.c \
+	modi_test_unused.h
+
+modi_test_sparse_bundle_xml_plist_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_sparse_image_header_SOURCES = \
+	modi_test_functions.c modi_test_functions.h \
+	modi_test_libbfio.h \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_sparse_image_header.c \
+	modi_test_unused.h
+
+modi_test_sparse_image_header_LDADD = \
+	@LIBBFIO_LIBADD@ \
+	@LIBCPATH_LIBADD@ \
+	@LIBCFILE_LIBADD@ \
+	@LIBUNA_LIBADD@ \
+	@LIBCSPLIT_LIBADD@ \
+	@LIBCNOTIFY_LIBADD@ \
+	@LIBCLOCALE_LIBADD@ \
+	@LIBCDATA_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 

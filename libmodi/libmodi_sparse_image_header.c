@@ -397,7 +397,7 @@ int libmodi_sparse_image_header_read_data(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: bands table reference: %03" PRIu32 "\t\t: 0x%08" PRIx32 " (%" PRIi32 ")\n",
+				 "%s: bands table reference: %03" PRIu32 "\t: 0x%08" PRIx32 " (%" PRIi32 ")\n",
 				 function,
 				 bands_table_index,
 				 bands_table_reference,

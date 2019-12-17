@@ -23,6 +23,8 @@ MSVSCPP_FILES = \
 	modi_test_handle/modi_test_handle.vcproj \
 	modi_test_io_handle/modi_test_io_handle.vcproj \
 	modi_test_notify/modi_test_notify.vcproj \
+	modi_test_sparse_bundle_xml_plist/modi_test_sparse_bundle_xml_plist.vcproj \
+	modi_test_sparse_image_header/modi_test_sparse_image_header.vcproj \
 	modi_test_support/modi_test_support.vcproj \
 	modi_test_udif_block_table/modi_test_udif_block_table.vcproj \
 	modi_test_udif_resource_file/modi_test_udif_resource_file.vcproj \
