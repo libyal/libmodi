@@ -249,6 +249,7 @@ int mount_handle_open(
 {
 	libmodi_handle_t *modi_handle = NULL;
 	static char *function         = "mount_handle_open";
+	int image_type                = 0;
 	int result                    = 0;
 
 	if( mount_handle == NULL )
@@ -309,6 +310,36 @@ int mount_handle_open(
 		 function );
 
 		goto on_error;
+	}
+	if( libmodi_handle_get_image_type(
+	     modi_handle,
+	     &image_type,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve image type.",
+		 function );
+
+		goto on_error;
+	}
+	if( image_type == LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE )
+	{
+		if( libmodi_handle_open_band_data_files(
+		     modi_handle,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_OPEN_FAILED,
+			 "%s: unable to open band data files.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	if( mount_file_system_append_handle(
 	     mount_handle->file_system,

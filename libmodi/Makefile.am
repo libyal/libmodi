@@ -29,6 +29,7 @@ lib_LTLIBRARIES = libmodi.la
 
 libmodi_la_SOURCES = \
 	libmodi.c \
+	libmodi_bands_data_handle.c libmodi_bands_data_handle.h \
 	libmodi_codepage.h \
 	libmodi_data_block.c libmodi_data_block.h \
 	libmodi_debug.c libmodi_debug.h \

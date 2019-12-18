@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libmodi_bands_data_handle.h"
 #include "libmodi_extern.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
@@ -42,10 +43,6 @@ typedef struct libmodi_internal_handle libmodi_internal_handle_t;
 
 struct libmodi_internal_handle
 {
-	/* The current (storage media) offset
-	 */
-	off64_t current_offset;
-
 	/* The IO handle
 	 */
 	libmodi_io_handle_t *io_handle;
@@ -82,13 +79,13 @@ struct libmodi_internal_handle
 	 */
 	int access_flags;
 
-	/* The bands vector
+	/* The bands data handle
 	 */
-	libfdata_vector_t *bands_vector;
+	libmodi_bands_data_handle_t *bands_data_handle;
 
-	/* The bands cache
+	/* The data stream
 	 */
-	libfcache_cache_t *bands_cache;
+	libfdata_stream_t *data_stream;
 
 	/* The maximum number of open handles in the pool
 	 */
@@ -216,13 +213,6 @@ int libmodi_internal_handle_open_read_udif_image(
      size64_t file_size,
      libcerror_error_t **error );
 
-ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
-         libmodi_internal_handle_t *internal_handle,
-         intptr_t *file_io_handle,
-         void *buffer,
-         size_t buffer_size,
-         libcerror_error_t **error );
-
 LIBMODI_EXTERN \
 ssize_t libmodi_handle_read_buffer(
          libmodi_handle_t *handle,
@@ -236,12 +226,6 @@ ssize_t libmodi_handle_read_buffer_at_offset(
          void *buffer,
          size_t buffer_size,
          off64_t offset,
-         libcerror_error_t **error );
-
-off64_t libmodi_internal_handle_seek_offset(
-         libmodi_internal_handle_t *internal_handle,
-         off64_t offset,
-         int whence,
          libcerror_error_t **error );
 
 LIBMODI_EXTERN \

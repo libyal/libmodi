@@ -6,6 +6,7 @@ TODO:
 * improve check signature to detect sparse bundle
 * move libmodi_io_handle_read_data_block
 * replace vector by data stream?
+* move libmodi_io_handle_read_data_block
 
 20161030
 * see `git log' for more recent change log
