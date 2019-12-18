@@ -88,6 +88,25 @@ int libmodi_udif_xml_plist_initialize(
 		 "%s: unable to clear UDIF XML plist.",
 		 function );
 
+		memory_free(
+		 *udif_xml_plist );
+
+		*udif_xml_plist = NULL;
+
+		return( -1 );
+	}
+	if( libcdata_array_initialize(
+	     &( ( *udif_xml_plist )->block_tables_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create block tables array.",
+		 function );
+
 		goto on_error;
 	}
 	return( 1 );
@@ -111,6 +130,7 @@ int libmodi_udif_xml_plist_free(
      libcerror_error_t **error )
 {
 	static char *function = "libmodi_udif_xml_plist_free";
+	int result            = 1;
 
 	if( udif_xml_plist == NULL )
 	{
@@ -125,12 +145,26 @@ int libmodi_udif_xml_plist_free(
 	}
 	if( *udif_xml_plist != NULL )
 	{
+		if( libcdata_array_free(
+		     &( ( *udif_xml_plist )->block_tables_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_udif_block_table_free,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free block tables array.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 *udif_xml_plist );
 
 		*udif_xml_plist = NULL;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Reads an UDIF XML plist blkx array property
@@ -246,6 +280,7 @@ int libmodi_udif_xml_plist_read_blkx_array_entry_property(
 	uint8_t *data                           = NULL;
 	static char *function                   = "libmodi_udif_xml_plist_read_blkx_array_entry_property";
 	size_t data_size                        = 0;
+	int entry_index                         = 0;
 	int result                              = 0;
 
 	if( udif_xml_plist == NULL )
@@ -351,21 +386,25 @@ int libmodi_udif_xml_plist_read_blkx_array_entry_property(
 
 			goto on_error;
 		}
-/* TODO use the block table */
-
-		if( libmodi_udif_block_table_free(
-		     &block_table,
+		/* block_table->entries_array takes over management of block_table_entry
+		 */
+		if( libcdata_array_append_entry(
+		     udif_xml_plist->block_tables_array,
+		     &entry_index,
+		     (intptr_t *) block_table,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free block table.",
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append block table to array.",
 			 function );
 
 			goto on_error;
 		}
+		block_table = NULL;
+
 		memory_free(
 		 data );
 
@@ -812,5 +851,84 @@ on_error:
 		 xml_plist_data );
 	}
 	return( -1 );
+}
+
+/* Retrieves the number of block tables
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_udif_xml_plist_get_number_of_block_tables(
+     libmodi_udif_xml_plist_t *xml_plist,
+     int *number_of_block_tables,
+     libcerror_error_t **error )
+{
+	static char *function = "libmodi_udif_xml_plist_get_number_of_block_tables";
+
+	if( xml_plist == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UDIF XML plist.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_number_of_entries(
+	     xml_plist->block_tables_array,
+	     number_of_block_tables,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of entries from block tables array.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific block table
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_udif_xml_plist_get_block_table_by_index(
+     libmodi_udif_xml_plist_t *xml_plist,
+     int block_table_index,
+     libmodi_udif_block_table_t **block_table,
+     libcerror_error_t **error )
+{
+	static char *function = "libmodi_udif_xml_plist_get_block_table_by_index";
+
+	if( xml_plist == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid UDIF XML plist.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     xml_plist->block_tables_array,
+	     block_table_index,
+	     (intptr_t **) block_table,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve entry: %d from block tables array.",
+		 function,
+		 block_table_index );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 

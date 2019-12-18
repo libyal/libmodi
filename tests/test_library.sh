@@ -7,7 +7,7 @@ EXIT_SUCCESS=0;
 EXIT_FAILURE=1;
 EXIT_IGNORE=77;
 
-LIBRARY_TESTS="data_block error io_handle notify sparse_bundle_xml_plist sparse_image_header udif_block_table udif_block_table_entry udif_resource_file udif_xml_plist";
+LIBRARY_TESTS="data_block error io_handle notify sparse_bundle_xml_plist sparse_image_header system_string udif_block_table udif_block_table_entry udif_resource_file udif_xml_plist";
 LIBRARY_TESTS_WITH_INPUT="handle support";
 OPTION_SETS="";
 

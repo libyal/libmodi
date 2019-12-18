@@ -199,6 +199,23 @@ int libmodi_internal_handle_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error );
 
+int libmodi_internal_handle_open_read_sparse_bundle(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_handle_t *file_io_handle,
+     size64_t file_size,
+     libcerror_error_t **error );
+
+int libmodi_internal_handle_open_read_sparse_image(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error );
+
+int libmodi_internal_handle_open_read_udif_image(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_handle_t *file_io_handle,
+     size64_t file_size,
+     libcerror_error_t **error );
+
 ssize_t libmodi_internal_handle_read_buffer_from_file_io_handle(
          libmodi_internal_handle_t *internal_handle,
          intptr_t *file_io_handle,

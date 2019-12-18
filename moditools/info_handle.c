@@ -345,6 +345,12 @@ int info_handle_input_fprint(
 
 	switch( image_type )
 	{
+		case LIBMODI_IMAGE_TYPE_RAW:
+			fprintf(
+			 info_handle->notify_stream,
+			 "Raw" );
+			break;
+
 		case LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE:
 			fprintf(
 			 info_handle->notify_stream,

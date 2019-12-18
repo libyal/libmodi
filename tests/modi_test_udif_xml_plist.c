@@ -1,7 +1,7 @@
 /*
  * Library udif_xml_plist type test program
  *
- * Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -36,6 +36,7 @@
 #include "modi_test_memory.h"
 #include "modi_test_unused.h"
 
+#include "../libmodi/libmodi_udif_block_table.h"
 #include "../libmodi/libmodi_udif_xml_plist.h"
 
 uint8_t modi_test_udif_xml_plist_data1[ 8034 ] = {
@@ -551,14 +552,14 @@ uint8_t modi_test_udif_xml_plist_data1[ 8034 ] = {
 int modi_test_udif_xml_plist_initialize(
      void )
 {
-	libcerror_error_t *error                         = NULL;
+	libcerror_error_t *error                 = NULL;
 	libmodi_udif_xml_plist_t *udif_xml_plist = NULL;
-	int result                                       = 0;
+	int result                               = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_malloc_fail_tests                  = 1;
-	int number_of_memset_fail_tests                  = 1;
-	int test_number                                  = 0;
+	int number_of_malloc_fail_tests          = 1;
+	int number_of_memset_fail_tests          = 1;
+	int test_number                          = 0;
 #endif
 
 	/* Test regular cases
@@ -784,9 +785,9 @@ on_error:
 int modi_test_udif_xml_plist_read_data(
      void )
 {
-	libcerror_error_t *error                         = NULL;
+	libcerror_error_t *error                 = NULL;
 	libmodi_udif_xml_plist_t *udif_xml_plist = NULL;
-	int result                                       = 0;
+	int result                               = 0;
 
 	/* Initialize test
 	 */
@@ -940,10 +941,10 @@ on_error:
 int modi_test_udif_xml_plist_read_file_io_handle(
      void )
 {
-	libbfio_handle_t *file_io_handle                 = NULL;
-	libcerror_error_t *error                         = NULL;
+	libbfio_handle_t *file_io_handle         = NULL;
+	libcerror_error_t *error                 = NULL;
 	libmodi_udif_xml_plist_t *udif_xml_plist = NULL;
-	int result                                       = 0;
+	int result                               = 0;
 
 	/* Initialize test
 	 */
@@ -1191,6 +1192,172 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmodi_udif_xml_plist_get_number_of_block_tables function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_xml_plist_get_number_of_block_tables(
+     libmodi_udif_xml_plist_t *xml_plist )
+{
+	libcerror_error_t *error   = NULL;
+	int number_of_block_tables = 0;
+	int result                 = 0;
+
+	/* Test regular cases
+	 */
+	result = libmodi_udif_xml_plist_get_number_of_block_tables(
+	          xml_plist,
+	          &number_of_block_tables,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "number_of_block_tables",
+	 number_of_block_tables,
+	 8 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmodi_udif_xml_plist_get_number_of_block_tables(
+	          NULL,
+	          &number_of_block_tables,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_xml_plist_get_number_of_block_tables(
+	          xml_plist,
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	return( 0 );
+}
+
+/* Tests the libmodi_udif_xml_plist_get_block_table_by_index function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_xml_plist_get_block_table_by_index(
+     libmodi_udif_xml_plist_t *xml_plist )
+{
+	libcerror_error_t *error                = NULL;
+	libmodi_udif_block_table_t *block_table = NULL;
+	int result                              = 0;
+
+	/* Test regular cases
+	 */
+	result = libmodi_udif_xml_plist_get_block_table_by_index(
+	          xml_plist,
+	          0,
+	          &block_table,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "block_table",
+	 block_table );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmodi_udif_xml_plist_get_block_table_by_index(
+	          NULL,
+	          0,
+	          &block_table,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_xml_plist_get_block_table_by_index(
+	          xml_plist,
+	          -1,
+	          &block_table,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_xml_plist_get_block_table_by_index(
+	          xml_plist,
+	          0,
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 /* The main program
@@ -1205,6 +1372,14 @@ int main(
      char * const argv[] MODI_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
+
+	libcerror_error_t *error            = NULL;
+	libmodi_udif_xml_plist_t *xml_plist = NULL;
+	int result                          = 0;
+
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
+
 	MODI_TEST_UNREFERENCED_PARAMETER( argc )
 	MODI_TEST_UNREFERENCED_PARAMETER( argv )
 
@@ -1226,13 +1401,92 @@ int main(
 	 "libmodi_udif_xml_plist_read_file_io_handle",
 	 modi_test_udif_xml_plist_read_file_io_handle );
 
+#if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
+
+	/* Initialize test
+	 */
+	result = libmodi_udif_xml_plist_initialize(
+	          &xml_plist,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "xml_plist",
+	 xml_plist );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_udif_xml_plist_read_data(
+	          xml_plist,
+	          modi_test_udif_xml_plist_data1,
+	          8034,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Run tests
+	 */
+	MODI_TEST_RUN_WITH_ARGS(
+	 "libmodi_udif_xml_plist_get_number_of_block_tables",
+	 modi_test_xml_plist_get_number_of_block_tables,
+	 xml_plist );
+
+	MODI_TEST_RUN_WITH_ARGS(
+	 "libmodi_udif_xml_plist_get_block_table_by_index",
+	 modi_test_xml_plist_get_block_table_by_index,
+	 xml_plist );
+
+	/* Clean up
+	 */
+	result = libmodi_udif_xml_plist_free(
+	          &xml_plist,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "xml_plist",
+	 xml_plist );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+#endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
-
 on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( xml_plist != NULL )
+	{
+		libmodi_udif_xml_plist_free(
+		 &xml_plist,
+		 NULL );
+	}
 	return( EXIT_FAILURE );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */

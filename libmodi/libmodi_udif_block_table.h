@@ -26,7 +26,9 @@
 #include <types.h>
 
 #include "libmodi_libbfio.h"
+#include "libmodi_libcdata.h"
 #include "libmodi_libcerror.h"
+#include "libmodi_udif_block_table_entry.h"
 
 #if defined( __cplusplus )
 extern "C" {
@@ -36,9 +38,13 @@ typedef struct libmodi_udif_block_table libmodi_udif_block_table_t;
 
 struct libmodi_udif_block_table
 {
-	/* Dummy
+	/* The start sector
 	 */
-	int dummy;
+	uint64_t start_sector;
+
+	/* The entries array
+	 */
+	libcdata_array_t *entries_array;
 };
 
 int libmodi_udif_block_table_initialize(
@@ -53,6 +59,17 @@ int libmodi_udif_block_table_read_data(
      libmodi_udif_block_table_t *block_table,
      const uint8_t *data,
      size_t data_size,
+     libcerror_error_t **error );
+
+int libmodi_udif_block_table_get_number_of_entries(
+     libmodi_udif_block_table_t *block_table,
+     int *number_of_entries,
+     libcerror_error_t **error );
+
+int libmodi_udif_block_table_get_entry_by_index(
+     libmodi_udif_block_table_t *block_table,
+     int entry_index,
+     libmodi_udif_block_table_entry_t **block_table_entry,
      libcerror_error_t **error );
 
 #if defined( __cplusplus )

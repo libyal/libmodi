@@ -103,6 +103,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_support", "modi_t
 		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_system_string", "modi_test_system_string\modi_test_system_string.vcproj", "{71202A66-0D6F-44A1-A746-5C68CCE5BC8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1660EB10-5241-431C-B3A2-607341435A83} = {1660EB10-5241-431C-B3A2-607341435A83}
+		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_udif_block_table", "modi_test_udif_block_table\modi_test_udif_block_table.vcproj", "{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1660EB10-5241-431C-B3A2-607341435A83} = {1660EB10-5241-431C-B3A2-607341435A83}
@@ -354,6 +360,10 @@ Global
 		{63E124BD-5CED-45F0-9671-12323DAF23FF}.Release|Win32.Build.0 = Release|Win32
 		{63E124BD-5CED-45F0-9671-12323DAF23FF}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{63E124BD-5CED-45F0-9671-12323DAF23FF}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{71202A66-0D6F-44A1-A746-5C68CCE5BC8C}.Release|Win32.ActiveCfg = Release|Win32
+		{71202A66-0D6F-44A1-A746-5C68CCE5BC8C}.Release|Win32.Build.0 = Release|Win32
+		{71202A66-0D6F-44A1-A746-5C68CCE5BC8C}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{71202A66-0D6F-44A1-A746-5C68CCE5BC8C}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}.Release|Win32.ActiveCfg = Release|Win32
 		{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}.Release|Win32.Build.0 = Release|Win32
 		{5393DE5C-B468-4C1B-82EE-DE9E8B8FB940}.VSDebug|Win32.ActiveCfg = VSDebug|Win32

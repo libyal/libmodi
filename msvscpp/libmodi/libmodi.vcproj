@@ -280,6 +280,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_libcdata.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_libcdirectory.h"
 				>
 			</File>

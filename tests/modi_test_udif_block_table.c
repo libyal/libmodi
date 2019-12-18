@@ -1,7 +1,7 @@
 /*
  * Library udif_block_table type test program
  *
- * Copyright (C) 2010-2019, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -35,6 +35,7 @@
 #include "modi_test_unused.h"
 
 #include "../libmodi/libmodi_udif_block_table.h"
+#include "../libmodi/libmodi_udif_block_table_entry.h"
 
 uint8_t modi_test_udif_block_table_data1[ 284 ] = {
 	0x6d, 0x69, 0x73, 0x68, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -475,6 +476,172 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmodi_udif_block_table_get_number_of_entries function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_block_table_get_number_of_entries(
+     libmodi_udif_block_table_t *block_table )
+{
+	libcerror_error_t *error = NULL;
+	int number_of_entries    = 0;
+	int result               = 0;
+
+	/* Test regular cases
+	 */
+	result = libmodi_udif_block_table_get_number_of_entries(
+	          block_table,
+	          &number_of_entries,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "number_of_entries",
+	 number_of_entries,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmodi_udif_block_table_get_number_of_entries(
+	          NULL,
+	          &number_of_entries,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_block_table_get_number_of_entries(
+	          block_table,
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	return( 0 );
+}
+
+/* Tests the libmodi_udif_block_table_get_entry_by_index function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_block_table_get_entry_by_index(
+     libmodi_udif_block_table_t *block_table )
+{
+	libcerror_error_t *error                            = NULL;
+	libmodi_udif_block_table_entry_t *block_table_entry = NULL;
+	int result                                          = 0;
+
+	/* Test regular cases
+	 */
+	result = libmodi_udif_block_table_get_entry_by_index(
+	          block_table,
+	          0,
+	          &block_table_entry,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "block_table_entry",
+	 block_table_entry );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmodi_udif_block_table_get_entry_by_index(
+	          NULL,
+	          0,
+	          &block_table_entry,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_block_table_get_entry_by_index(
+	          block_table,
+	          -1,
+	          &block_table_entry,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_udif_block_table_get_entry_by_index(
+	          block_table,
+	          0,
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 /* The main program
@@ -489,6 +656,14 @@ int main(
      char * const argv[] MODI_TEST_ATTRIBUTE_UNUSED )
 #endif
 {
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
+
+	libcerror_error_t *error                = NULL;
+	libmodi_udif_block_table_t *block_table = NULL;
+	int result                              = 0;
+
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
+
 	MODI_TEST_UNREFERENCED_PARAMETER( argc )
 	MODI_TEST_UNREFERENCED_PARAMETER( argv )
 
@@ -506,13 +681,92 @@ int main(
 	 "libmodi_udif_block_table_read_data",
 	 modi_test_udif_block_table_read_data );
 
+#if !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 )
+
+	/* Initialize test
+	 */
+	result = libmodi_udif_block_table_initialize(
+	          &block_table,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "block_table",
+	 block_table );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_udif_block_table_read_data(
+	          block_table,
+	          modi_test_udif_block_table_data1,
+	          284,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Run tests
+	 */
+	MODI_TEST_RUN_WITH_ARGS(
+	 "libmodi_udif_block_table_get_number_of_entries",
+	 modi_test_block_table_get_number_of_entries,
+	 block_table );
+
+	MODI_TEST_RUN_WITH_ARGS(
+	 "libmodi_udif_block_table_get_entry_by_index",
+	 modi_test_block_table_get_entry_by_index,
+	 block_table );
+
+	/* Clean up
+	 */
+	result = libmodi_udif_block_table_free(
+	          &block_table,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "block_table",
+	 block_table );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+#endif /* !defined( __BORLANDC__ ) || ( __BORLANDC__ >= 0x0560 ) */
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
-
 on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	if( block_table != NULL )
+	{
+		libmodi_udif_block_table_free(
+		 &block_table,
+		 NULL );
+	}
 	return( EXIT_FAILURE );
 
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */

@@ -24,6 +24,8 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libmodi_definitions.h"
+#include "libmodi_libcdata.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_udif_block_table.h"
@@ -92,6 +94,25 @@ int libmodi_udif_block_table_initialize(
 		 "%s: unable to clear block table.",
 		 function );
 
+		memory_free(
+		 *block_table );
+
+		*block_table = NULL;
+
+		return( -1 );
+	}
+	if( libcdata_array_initialize(
+	     &( ( *block_table )->entries_array ),
+	     0,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create entries array.",
+		 function );
+
 		goto on_error;
 	}
 	return( 1 );
@@ -115,6 +136,7 @@ int libmodi_udif_block_table_free(
      libcerror_error_t **error )
 {
 	static char *function = "libmodi_udif_block_table_free";
+	int result            = 1;
 
 	if( block_table == NULL )
 	{
@@ -129,12 +151,26 @@ int libmodi_udif_block_table_free(
 	}
 	if( *block_table != NULL )
 	{
+		if( libcdata_array_free(
+		     &( ( *block_table )->entries_array ),
+		     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_udif_block_table_entry_free,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+			 "%s: unable to free entries array.",
+			 function );
+
+			result = -1;
+		}
 		memory_free(
 		 *block_table );
 
 		*block_table = NULL;
 	}
-	return( 1 );
+	return( result );
 }
 
 /* Reads a block table
@@ -151,11 +187,10 @@ int libmodi_udif_block_table_read_data(
 	size_t data_offset                                  = 0;
 	uint64_t calculated_number_of_sectors               = 0;
 	uint64_t number_of_sectors                          = 0;
-	uint64_t start_sector                               = 0;
-	uint32_t compressed_entry_type                      = 0;
-	uint32_t entry_index                                = 0;
+	uint32_t block_table_entry_index                    = 0;
 	uint32_t format_version                             = 0;
 	uint32_t number_of_entries                          = 0;
+	int entry_index                                     = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	uint64_t value_64bit                                = 0;
@@ -228,7 +263,7 @@ int libmodi_udif_block_table_read_data(
 
 	byte_stream_copy_to_uint64_big_endian(
 	 ( (modi_udif_block_table_header_t *) data )->start_sector,
-	 start_sector );
+	 block_table->start_sector );
 
 	byte_stream_copy_to_uint64_big_endian(
 	 ( (modi_udif_block_table_header_t *) data )->number_of_sectors,
@@ -257,7 +292,7 @@ int libmodi_udif_block_table_read_data(
 		libcnotify_printf(
 		 "%s: start sector\t\t\t: %" PRIu64 "\n",
 		 function,
-		 start_sector );
+		 block_table->start_sector );
 
 		libcnotify_printf(
 		 "%s: number of sectors\t\t\t: %" PRIu64 "\n",
@@ -367,9 +402,9 @@ int libmodi_udif_block_table_read_data(
 	}
 	data_offset = sizeof( modi_udif_block_table_header_t );
 
-	for( entry_index = 0;
-	     entry_index < number_of_entries;
-	     entry_index++ )
+	for( block_table_entry_index = 0;
+	     block_table_entry_index < number_of_entries;
+	     block_table_entry_index++ )
 	{
 		if( data_offset > ( data_size - sizeof( modi_udif_block_table_entry_t ) ) )
 		{
@@ -410,52 +445,15 @@ int libmodi_udif_block_table_read_data(
 
 			goto on_error;
 		}
-		if( ( entry_index + 1 ) == number_of_entries )
+		if( ( block_table_entry_index + 1 ) == number_of_entries )
 		{
-			if( block_table_entry->type != 0xffffffffUL )
+			if( block_table_entry->type != LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_TERMINATOR )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
 				 "%s: unsupported last block table entry type.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		else
-		{
-			if( ( block_table_entry->type == 0x80000004UL )
-			 || ( block_table_entry->type == 0x80000005UL )
-			 || ( block_table_entry->type == 0x80000006UL )
-			 || ( block_table_entry->type == 0x80000007UL ) )
-			{
-				if( compressed_entry_type == 0 )
-				{
-					compressed_entry_type = block_table_entry->type;
-				}
-				else if( compressed_entry_type != block_table_entry->type )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: mismatch between previous and current compressed entry type.",
-					 function );
-
-					goto on_error;
-				}
-			}
-			else if( ( block_table_entry->type != 0x00000000UL )
-			      && ( block_table_entry->type != 0x00000001UL )
-			      && ( block_table_entry->type != 0x00000002UL ) )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-				 "%s: unsupported block table entry type.",
 				 function );
 
 				goto on_error;
@@ -472,23 +470,44 @@ int libmodi_udif_block_table_read_data(
 
 			goto on_error;
 		}
-		if( block_table_entry->type != 0xffffffffUL )
+		if( block_table_entry->type != LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_TERMINATOR )
 		{
 			calculated_number_of_sectors += block_table_entry->number_of_sectors;
-		}
-/* TODO use the block table entry */
-		if( libmodi_udif_block_table_entry_free(
-		     &block_table_entry,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free block table entry.",
-			 function );
 
-			goto on_error;
+			/* block_table->entries_array takes over management of block_table_entry
+			 */
+			if( libcdata_array_append_entry(
+			     block_table->entries_array,
+			     &entry_index,
+			     (intptr_t *) block_table_entry,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append entry to array.",
+				 function );
+
+				goto on_error;
+			}
+			block_table_entry = NULL;
+		}
+		else
+		{
+			if( libmodi_udif_block_table_entry_free(
+			     &block_table_entry,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+				 "%s: unable to free block table entry.",
+				 function );
+
+				goto on_error;
+			}
 		}
 		data_offset += sizeof( modi_udif_block_table_entry_t );
 	}
@@ -528,5 +547,84 @@ on_error:
 		 NULL );
 	}
 	return( -1 );
+}
+
+/* Retrieves the number of entries
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_udif_block_table_get_number_of_entries(
+     libmodi_udif_block_table_t *block_table,
+     int *number_of_entries,
+     libcerror_error_t **error )
+{
+	static char *function = "libmodi_udif_block_table_get_number_of_entries";
+
+	if( block_table == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block table.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_number_of_entries(
+	     block_table->entries_array,
+	     number_of_entries,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve number of entries from entries array.",
+		 function );
+
+		return( -1 );
+	}
+	return( 1 );
+}
+
+/* Retrieves a specific entry
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_udif_block_table_get_entry_by_index(
+     libmodi_udif_block_table_t *block_table,
+     int entry_index,
+     libmodi_udif_block_table_entry_t **block_table_entry,
+     libcerror_error_t **error )
+{
+	static char *function = "libmodi_udif_block_table_get_entry_by_index";
+
+	if( block_table == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid block table.",
+		 function );
+
+		return( -1 );
+	}
+	if( libcdata_array_get_entry_by_index(
+	     block_table->entries_array,
+	     entry_index,
+	     (intptr_t **) block_table_entry,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve entry: %d from entries array.",
+		 function,
+		 entry_index );
+
+		return( -1 );
+	}
+	return( 1 );
 }
 

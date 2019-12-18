@@ -39,6 +39,7 @@ libmodi_la_SOURCES = \
 	libmodi_i18n.c libmodi_i18n.h \
 	libmodi_io_handle.c libmodi_io_handle.h \
 	libmodi_libbfio.h \
+	libmodi_libcdata.h \
 	libmodi_libcdirectory.h \
 	libmodi_libcerror.h \
 	libmodi_libcfile.h \

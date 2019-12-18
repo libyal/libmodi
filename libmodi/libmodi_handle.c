@@ -45,6 +45,8 @@
 #include "libmodi_sparse_bundle_xml_plist.h"
 #include "libmodi_sparse_image_header.h"
 #include "libmodi_system_string.h"
+#include "libmodi_udif_block_table.h"
+#include "libmodi_udif_block_table_entry.h"
 #include "libmodi_udif_resource_file.h"
 #include "libmodi_udif_xml_plist.h"
 
@@ -2465,19 +2467,9 @@ int libmodi_internal_handle_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	libmodi_sparse_bundle_xml_plist_t *sparse_bundle_xml_plist = NULL;
-	libmodi_sparse_image_header_t *sparse_image_header         = NULL;
-	libmodi_udif_resource_file_t *udif_resource_file           = NULL;
-	libmodi_udif_xml_plist_t *udif_xml_plist                   = NULL;
-	static char *function                                      = "libmodi_internal_handle_open_read";
-	size64_t band_data_size                                    = 0;
-	size64_t file_size                                         = 0;
-	off64_t band_data_offset                                   = 0;
-	uint32_t band_data_range_flags                             = 0;
-	uint32_t band_reference                                    = 0;
-	uint32_t band_reference_index                              = 0;
-	int result                                                 = 0;
-	int segment_index                                          = 0;
+	static char *function = "libmodi_internal_handle_open_read";
+	size64_t file_size    = 0;
+	int segment_index     = 0;
 
 	if( internal_handle == NULL )
 	{
@@ -2523,21 +2515,6 @@ int libmodi_internal_handle_open_read(
 
 		return( -1 );
 	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_grab_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to grab read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	if( libbfio_handle_get_size(
 	     file_io_handle,
 	     &file_size,
@@ -2576,131 +2553,17 @@ int libmodi_internal_handle_open_read(
 	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
 	 && ( file_size >= 512 ) )
 	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "Reading Universal Disk Image Format (UDIF) resource file:\n" );
-		}
-#endif
-		if( libmodi_udif_resource_file_initialize(
-		     &udif_resource_file,
+		if( libmodi_internal_handle_open_read_udif_image(
+		     internal_handle,
+		     file_io_handle,
+		     file_size,
 		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create UDIF resource file.",
-			 function );
-
-			goto on_error;
-		}
-		result = libmodi_udif_resource_file_read_file_io_handle(
-		          udif_resource_file,
-		          file_io_handle,
-		          file_size - 512,
-		          error );
-
-		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read UDIF resource file at offset: %" PRIi64 " (0x%08" PRIx64 ").",
-			 function,
-			 file_size - 512,
-			 file_size - 512 );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "Reading Universal Disk Image Format (UDIF) XML plist:\n" );
-			}
-#endif
-			if( libmodi_udif_xml_plist_initialize(
-			     &udif_xml_plist,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to create UDIF XML plist.",
-				 function );
-
-				goto on_error;
-			}
-			result = libmodi_udif_xml_plist_read_file_io_handle(
-			          udif_xml_plist,
-			          file_io_handle,
-			          udif_resource_file->xml_plist_offset,
-			          udif_resource_file->xml_plist_size,
-			          error );
-
-			if( result == -1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_IO,
-				 LIBCERROR_IO_ERROR_READ_FAILED,
-				 "%s: unable to read UDIF XML plist at offset: %" PRIi64 " (0x%08" PRIx64 ").",
-				 function,
-				 udif_resource_file->xml_plist_offset,
-				 udif_resource_file->xml_plist_offset );
-
-				goto on_error;
-			}
-			if( libmodi_udif_xml_plist_free(
-			     &udif_xml_plist,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-				 "%s: unable to free UDIF resource file.",
-				 function );
-
-				goto on_error;
-			}
-			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED;
-			internal_handle->io_handle->media_size = 0;
-
-			if( libfdata_vector_append_segment(
-			     internal_handle->bands_vector,
-			     &segment_index,
-			     0,
-			     udif_resource_file->data_fork_offset,
-			     udif_resource_file->data_fork_size,
-			     0,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-				 "%s: unable to append data fork as segment to bands vector.",
-				 function );
-
-				goto on_error;
-			}
-		}
-		if( libmodi_udif_resource_file_free(
-		     &udif_resource_file,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to free UDIF resource file.",
+			 "%s: unable to read UDIF image from file IO handle.",
 			 function );
 
 			goto on_error;
@@ -2709,125 +2572,16 @@ int libmodi_internal_handle_open_read(
 	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
 	 && ( file_size >= 4096 ) )
 	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "Reading sparse image header:\n" );
-		}
-#endif
-		if( libmodi_sparse_image_header_initialize(
-		     &sparse_image_header,
+		if( libmodi_internal_handle_open_read_sparse_image(
+		     internal_handle,
+		     file_io_handle,
 		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create sparse image header.",
-			 function );
-
-			goto on_error;
-		}
-		result = libmodi_sparse_image_header_read_file_io_handle(
-		          sparse_image_header,
-		          file_io_handle,
-		          0,
-		          error );
-
-		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read sparse image header at offset: 0 (0x00000000).",
-			 function );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_SPARSE_IMAGE;
-			internal_handle->io_handle->media_size = (size64_t) sparse_image_header->number_of_sectors * 512;
-
-			band_data_size = (size64_t) sparse_image_header->sectors_per_band * 512;
-
-			for( band_reference_index = 0;
-			     band_reference_index < sparse_image_header->number_of_bands;
-			     band_reference_index++ )
-			{
-				band_reference = sparse_image_header->band_references[ band_reference_index ];
-
-#if defined( HAVE_DEBUG_OUTPUT )
-				if( libcnotify_verbose != 0 )
-				{
-					libcnotify_printf(
-					 "%s: band reference: %03" PRIu32 "\t\t: 0x%08" PRIx32 "",
-					 function,
-					 band_reference_index,
-					 band_reference );
-
-					if( band_reference == 0xffffffffUL )
-					{
-						libcnotify_printf(
-						 " (sparse)\n" );
-					}
-					else
-					{
-						libcnotify_printf(
-						 " (data offset: 0x%08" PRIx64 ")\n",
-						 4096 + ( band_reference * band_data_size ) );
-					}
-				}
-#endif
-				if( band_reference == 0xffffffffUL )
-				{
-					band_data_offset      = 0;
-					band_data_range_flags = LIBFDATA_RANGE_FLAG_IS_SPARSE;
-				}
-				else
-				{
-					band_data_offset      = 4096 + ( band_reference * band_data_size );
-					band_data_range_flags = 0;
-				}
-				if( libfdata_vector_append_segment(
-				     internal_handle->bands_vector,
-				     &segment_index,
-				     0,
-				     band_data_offset,
-				     band_data_size,
-				     band_data_range_flags,
-				     error ) != 1 )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-					 "%s: unable to append band reference: %" PRIu32 " as segment to bands vector.",
-					 function,
-					 band_reference_index );
-
-					goto on_error;
-				}
-			}
-#if defined( HAVE_DEBUG_OUTPUT )
-			if( libcnotify_verbose != 0 )
-			{
-				libcnotify_printf(
-				 "\n" );
-			}
-#endif
-		}
-		if( libmodi_sparse_image_header_free(
-		     &sparse_image_header,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to free sparse image header.",
+			 "%s: unable to read sparse image from file IO handle.",
 			 function );
 
 			goto on_error;
@@ -2835,60 +2589,17 @@ int libmodi_internal_handle_open_read(
 	}
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
 	{
-#if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "Reading info.plist:\n" );
-		}
-#endif
-		if( libmodi_sparse_bundle_xml_plist_initialize(
-		     &sparse_bundle_xml_plist,
+		if( libmodi_internal_handle_open_read_sparse_bundle(
+		     internal_handle,
+		     file_io_handle,
+		     file_size,
 		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create sparse bundle XML plist",
-			 function );
-
-			goto on_error;
-		}
-		result = libmodi_sparse_bundle_xml_plist_read_file_io_handle(
-		          sparse_bundle_xml_plist,
-		          file_io_handle,
-		          0,
-		          file_size,
-		          error );
-
-		if( result == -1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read sparse bundle info.plist.",
-			 function );
-
-			goto on_error;
-		}
-		else if( result != 0 )
-		{
-			internal_handle->io_handle->image_type      = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
-			internal_handle->io_handle->band_data_size  = (size64_t) sparse_bundle_xml_plist->band_data_size;
-			internal_handle->io_handle->number_of_bands = (int) sparse_bundle_xml_plist->number_of_bands;
-			internal_handle->io_handle->media_size      = (size64_t) sparse_bundle_xml_plist->media_size;
-		}
-		if( libmodi_sparse_bundle_xml_plist_free(
-		     &sparse_bundle_xml_plist,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free sparse bundle XML plist",
+			 "%s: unable to read sparse bundle from file IO handle.",
 			 function );
 
 			goto on_error;
@@ -2897,7 +2608,7 @@ int libmodi_internal_handle_open_read(
 	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
 	{
 /* TODO check MBR boot and HFS+/HFSX signatures */
-		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED;
+		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_RAW;
 		internal_handle->io_handle->media_size = file_size;
 
 		if( libfdata_vector_append_segment(
@@ -2933,21 +2644,6 @@ int libmodi_internal_handle_open_read(
 
 		goto on_error;
 	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	if( libcthreads_read_write_lock_release_for_write(
-	     internal_handle->read_write_lock,
-	     error ) != 1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
-		 "%s: unable to release read/write lock for writing.",
-		 function );
-
-		return( -1 );
-	}
-#endif
 	return( 1 );
 
 on_error:
@@ -2957,41 +2653,564 @@ on_error:
 		 &( internal_handle->bands_cache ),
 		 NULL );
 	}
-	if( sparse_bundle_xml_plist != NULL )
-	{
-		libmodi_sparse_bundle_xml_plist_free(
-		 &sparse_bundle_xml_plist,
-		 NULL );
-	}
-	if( sparse_image_header != NULL )
-	{
-		libmodi_sparse_image_header_free(
-		 &sparse_image_header,
-		 NULL );
-	}
-	if( udif_xml_plist != NULL )
-	{
-		libmodi_udif_xml_plist_free(
-		 &udif_xml_plist,
-		 NULL );
-	}
-	if( udif_resource_file != NULL )
-	{
-		libmodi_udif_resource_file_free(
-		 &udif_resource_file,
-		 NULL );
-	}
 	if( internal_handle->bands_vector != NULL )
 	{
 		libfdata_vector_free(
 		 &( internal_handle->bands_vector ),
 		 NULL );
 	}
-#if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
-	libcthreads_read_write_lock_release_for_write(
-	 internal_handle->read_write_lock,
-	 NULL );
+	return( -1 );
+}
+
+/* Opens a handle of a sparse bundle for reading
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_internal_handle_open_read_sparse_bundle(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_handle_t *file_io_handle,
+     size64_t file_size,
+     libcerror_error_t **error )
+{
+	libmodi_sparse_bundle_xml_plist_t *sparse_bundle_xml_plist = NULL;
+	static char *function                                      = "libmodi_internal_handle_open_read_sparse_bundle";
+	int result                                                 = 0;
+
+	if( internal_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "Reading info.plist:\n" );
+	}
 #endif
+	if( libmodi_sparse_bundle_xml_plist_initialize(
+	     &sparse_bundle_xml_plist,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create sparse bundle XML plist",
+		 function );
+
+		goto on_error;
+	}
+	result = libmodi_sparse_bundle_xml_plist_read_file_io_handle(
+	          sparse_bundle_xml_plist,
+	          file_io_handle,
+	          0,
+	          file_size,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read sparse bundle info.plist.",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		internal_handle->io_handle->image_type      = LIBMODI_IMAGE_TYPE_SPARSE_BUNDLE;
+		internal_handle->io_handle->band_data_size  = (size64_t) sparse_bundle_xml_plist->band_data_size;
+		internal_handle->io_handle->number_of_bands = (int) sparse_bundle_xml_plist->number_of_bands;
+		internal_handle->io_handle->media_size      = (size64_t) sparse_bundle_xml_plist->media_size;
+	}
+	if( libmodi_sparse_bundle_xml_plist_free(
+	     &sparse_bundle_xml_plist,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free sparse bundle XML plist",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( sparse_bundle_xml_plist != NULL )
+	{
+		libmodi_sparse_bundle_xml_plist_free(
+		 &sparse_bundle_xml_plist,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Opens a handle of a sparse image for reading
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_internal_handle_open_read_sparse_image(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_handle_t *file_io_handle,
+     libcerror_error_t **error )
+{
+	libmodi_sparse_image_header_t *sparse_image_header = NULL;
+	static char *function                              = "libmodi_internal_handle_open_read_sparse_image";
+	size64_t band_data_size                            = 0;
+	off64_t band_data_offset                           = 0;
+	uint32_t band_data_range_flags                     = 0;
+	uint32_t band_reference                            = 0;
+	uint32_t band_reference_index                      = 0;
+	int result                                         = 0;
+	int segment_index                                  = 0;
+
+	if( internal_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "Reading sparse image header:\n" );
+	}
+#endif
+	if( libmodi_sparse_image_header_initialize(
+	     &sparse_image_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create sparse image header.",
+		 function );
+
+		goto on_error;
+	}
+	result = libmodi_sparse_image_header_read_file_io_handle(
+	          sparse_image_header,
+	          file_io_handle,
+	          0,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read sparse image header at offset: 0 (0x00000000).",
+		 function );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+		internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_SPARSE_IMAGE;
+		internal_handle->io_handle->media_size = (size64_t) sparse_image_header->number_of_sectors * 512;
+
+		band_data_size = (size64_t) sparse_image_header->sectors_per_band * 512;
+
+		for( band_reference_index = 0;
+		     band_reference_index < sparse_image_header->number_of_bands;
+		     band_reference_index++ )
+		{
+			band_reference = sparse_image_header->band_references[ band_reference_index ];
+
+#if defined( HAVE_DEBUG_OUTPUT )
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "%s: band reference: %03" PRIu32 "\t\t: 0x%08" PRIx32 "",
+				 function,
+				 band_reference_index,
+				 band_reference );
+
+				if( band_reference == 0xffffffffUL )
+				{
+					libcnotify_printf(
+					 " (sparse)\n" );
+				}
+				else
+				{
+					libcnotify_printf(
+					 " (data offset: 0x%08" PRIx64 ")\n",
+					 4096 + ( band_reference * band_data_size ) );
+				}
+			}
+#endif
+			if( band_reference == 0xffffffffUL )
+			{
+				band_data_offset      = 0;
+				band_data_range_flags = LIBFDATA_RANGE_FLAG_IS_SPARSE;
+			}
+			else
+			{
+				band_data_offset      = 4096 + ( band_reference * band_data_size );
+				band_data_range_flags = 0;
+			}
+			if( libfdata_vector_append_segment(
+			     internal_handle->bands_vector,
+			     &segment_index,
+			     0,
+			     band_data_offset,
+			     band_data_size,
+			     band_data_range_flags,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append band reference: %" PRIu32 " as segment to bands vector.",
+				 function,
+				 band_reference_index );
+
+				goto on_error;
+			}
+		}
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "\n" );
+		}
+#endif
+	}
+	if( libmodi_sparse_image_header_free(
+	     &sparse_image_header,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to free sparse image header.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( sparse_image_header != NULL )
+	{
+		libmodi_sparse_image_header_free(
+		 &sparse_image_header,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Opens a handle of an UDIF image for reading
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_internal_handle_open_read_udif_image(
+     libmodi_internal_handle_t *internal_handle,
+     libbfio_handle_t *file_io_handle,
+     size64_t file_size,
+     libcerror_error_t **error )
+{
+	libmodi_udif_block_table_t *block_table             = NULL;
+	libmodi_udif_block_table_entry_t *block_table_entry = NULL;
+	libmodi_udif_resource_file_t *resource_file         = NULL;
+	libmodi_udif_xml_plist_t *xml_plist                 = NULL;
+	static char *function                               = "libmodi_internal_handle_open_read_udif_image";
+	uint32_t compressed_entry_type                      = 0;
+	int block_table_entry_index                         = 0;
+	int block_table_index                               = 0;
+	int number_of_block_table_entries                   = 0;
+	int number_of_block_tables                          = 0;
+	int result                                          = 0;
+	int segment_index                                   = 0;
+
+	if( internal_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid handle.",
+		 function );
+
+		return( -1 );
+	}
+#if defined( HAVE_DEBUG_OUTPUT )
+	if( libcnotify_verbose != 0 )
+	{
+		libcnotify_printf(
+		 "Reading Universal Disk Image Format (UDIF) resource file:\n" );
+	}
+#endif
+	if( libmodi_udif_resource_file_initialize(
+	     &resource_file,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create resource file.",
+		 function );
+
+		goto on_error;
+	}
+	result = libmodi_udif_resource_file_read_file_io_handle(
+	          resource_file,
+	          file_io_handle,
+	          file_size - 512,
+	          error );
+
+	if( result == -1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_IO,
+		 LIBCERROR_IO_ERROR_READ_FAILED,
+		 "%s: unable to read resource file at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 file_size - 512,
+		 file_size - 512 );
+
+		goto on_error;
+	}
+	else if( result != 0 )
+	{
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "Reading Universal Disk Image Format (UDIF) XML plist:\n" );
+		}
+#endif
+		if( libmodi_udif_xml_plist_initialize(
+		     &xml_plist,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to create XML plist.",
+			 function );
+
+			goto on_error;
+		}
+		result = libmodi_udif_xml_plist_read_file_io_handle(
+			  xml_plist,
+			  file_io_handle,
+			  resource_file->xml_plist_offset,
+			  resource_file->xml_plist_size,
+			  error );
+
+		if( result == -1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read XML plist at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 resource_file->xml_plist_offset,
+			 resource_file->xml_plist_offset );
+
+			goto on_error;
+		}
+		internal_handle->io_handle->media_size = 0;
+
+		if( libmodi_udif_xml_plist_get_number_of_block_tables(
+		     xml_plist,
+		     &number_of_block_tables,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of block tables in XML plist.",
+			 function );
+
+			goto on_error;
+		}
+		for( block_table_index = 0;
+		     block_table_index < number_of_block_tables;
+		     block_table_index++ )
+		{
+			if( libmodi_udif_xml_plist_get_block_table_by_index(
+			     xml_plist,
+			     block_table_index,
+			     &block_table,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve block table: %d from XML plist.",
+				 function,
+				 block_table_index );
+
+				goto on_error;
+			}
+			if( libmodi_udif_block_table_get_number_of_entries(
+			     block_table,
+			     &number_of_block_table_entries,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve number of entries in block table: %d.",
+				 function,
+				 block_table_index );
+
+				goto on_error;
+			}
+			for( block_table_entry_index = 0;
+			     block_table_entry_index < number_of_block_table_entries;
+			     block_table_entry_index++ )
+			{
+				if( libmodi_udif_block_table_get_entry_by_index(
+				     block_table,
+				     block_table_entry_index,
+				     &block_table_entry,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve entry: %d from block table: %d.",
+					 function,
+					 block_table_entry_index,
+					 block_table_index );
+
+					goto on_error;
+				}
+				if( ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ADC_COMPRESSED )
+				 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ZLIB_COMPRESSED )
+				 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_BZIP2_COMPRESSED )
+				 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZFSE_COMPRESSED ) )
+				{
+					if( compressed_entry_type == 0 )
+					{
+						compressed_entry_type = block_table_entry->type;
+					}
+					else if( compressed_entry_type != block_table_entry->type )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+						 "%s: mixed compressed entry types not supported.",
+						 function );
+
+						goto on_error;
+					}
+				}
+				else if( ( block_table_entry->type != 0x00000000UL )
+				      && ( block_table_entry->type != 0x00000001UL )
+				      && ( block_table_entry->type != 0x00000002UL ) )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+					 "%s: unsupported block table entry type.",
+					 function );
+
+					goto on_error;
+				}
+/* TODO */
+				if( libfdata_vector_append_segment(
+				     internal_handle->bands_vector,
+				     &segment_index,
+				     0,
+				     block_table_entry->data_offset,
+				     block_table_entry->data_size,
+				     0,
+				     error ) != 1 )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+					 "%s: unable to append data fork as segment to bands vector.",
+					 function );
+
+					goto on_error;
+				}
+			}
+		}
+		if( compressed_entry_type != 0 )
+		{
+			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_COMPRESSED;
+		}
+		else
+		{
+			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED;
+		}
+		if( libmodi_udif_xml_plist_free(
+		     &xml_plist,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+			 "%s: unable to free resource file.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	if( libmodi_udif_resource_file_free(
+	     &resource_file,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to free resource file.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( xml_plist != NULL )
+	{
+		libmodi_udif_xml_plist_free(
+		 &xml_plist,
+		 NULL );
+	}
+	if( resource_file != NULL )
+	{
+		libmodi_udif_resource_file_free(
+		 &resource_file,
+		 NULL );
+	}
 	return( -1 );
 }
 
