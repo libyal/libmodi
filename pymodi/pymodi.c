@@ -58,14 +58,14 @@ PyMethodDef pymodi_module_methods[] = {
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_file_signature(filename) -> Boolean\n"
 	  "\n"
-	  "Checks if a file has a Virtual Hard Disk (VHD) image file signature." },
+	  "Checks if a file has a Mac OS disk image signature." },
 
 	{ "check_file_signature_file_object",
 	  (PyCFunction) pymodi_check_file_signature_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "check_file_signature(file_object) -> Boolean\n"
 	  "\n"
-	  "Checks if a file has a Virtual Hard Disk (VHD) image file signature using a file-like object." },
+	  "Checks if a file has a Mac OS disk image signature using a file-like object." },
 
 	{ "open",
 	  (PyCFunction) pymodi_handle_new_open,
@@ -118,7 +118,7 @@ PyObject *pymodi_get_version(
 	         errors ) );
 }
 
-/* Checks if the file has a Virtual Hard Disk (VHD) image file signature
+/* Checks if the file has a Mac OS disk image signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymodi_check_file_signature(
@@ -312,7 +312,7 @@ PyObject *pymodi_check_file_signature(
 	return( NULL );
 }
 
-/* Checks if the file has a Virtual Hard Disk (VHD) image file signature using a file-like object
+/* Checks if the file has a Mac OS disk image signature using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymodi_check_file_signature_file_object(

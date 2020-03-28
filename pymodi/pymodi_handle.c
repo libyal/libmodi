@@ -29,6 +29,7 @@
 #include "pymodi_error.h"
 #include "pymodi_handle.h"
 #include "pymodi_file_object_io_handle.h"
+#include "pymodi_file_objects_io_pool.h"
 #include "pymodi_integer.h"
 #include "pymodi_libbfio.h"
 #include "pymodi_libcerror.h"
@@ -44,6 +45,12 @@ int libmodi_handle_open_file_io_handle(
      libmodi_handle_t *handle,
      libbfio_handle_t *file_io_handle,
      int access_flags,
+     libmodi_error_t **error );
+
+LIBMODI_EXTERN \
+int libmodi_handle_open_band_data_files_file_io_pool(
+     libmodi_handle_t *handle,
+     libbfio_pool_t *file_io_pool,
      libmodi_error_t **error );
 
 #endif /* !defined( LIBMODI_HAVE_BFIO ) */
@@ -72,6 +79,20 @@ PyMethodDef pymodi_handle_object_methods[] = {
 	  "open_file_object(file_object, mode='r') -> None\n"
 	  "\n"
 	  "Opens a handle using a file-like object." },
+
+	{ "open_band_data_files",
+	  (PyCFunction) pymodi_handle_open_band_data_files,
+	  METH_NOARGS,
+	  "open_band_data_files() -> None\n"
+	  "\n"
+	  "Opens the band data files." },
+
+	{ "open_band_data_files_as_file_objects",
+	  (PyCFunction) pymodi_handle_open_band_data_files_as_file_objects,
+	  METH_VARARGS | METH_KEYWORDS,
+	  "open_band_data_files_as_file_objects(file_objects) -> None\n"
+	  "\n"
+	  "Opens band data files using a list of file-like objects." },
 
 	{ "close",
 	  (PyCFunction) pymodi_handle_close,
@@ -358,6 +379,7 @@ int pymodi_handle_init(
 	}
 	pymodi_handle->handle         = NULL;
 	pymodi_handle->file_io_handle = NULL;
+	pymodi_handle->file_io_pool   = NULL;
 
 	if( libmodi_handle_initialize(
 	     &( pymodi_handle->handle ),
@@ -714,9 +736,9 @@ PyObject *pymodi_handle_open_file_object(
 {
 	PyObject *file_object       = NULL;
 	libcerror_error_t *error    = NULL;
-	char *mode                  = NULL;
-	static char *keyword_list[] = { "file_object", "mode", NULL };
 	static char *function       = "pymodi_handle_open_file_object";
+	static char *keyword_list[] = { "file_object", "mode", NULL };
+	char *mode                  = NULL;
 	int result                  = 0;
 
 	if( pymodi_handle == NULL )
@@ -748,6 +770,16 @@ PyObject *pymodi_handle_open_file_object(
 		 mode );
 
 		return( NULL );
+	}
+	if( pymodi_handle->file_io_handle != NULL )
+	{
+		pymodi_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: invalid handle - file IO handle already set.",
+		 function );
+
+		goto on_error;
 	}
 	if( pymodi_file_object_initialize(
 	     &( pymodi_handle->file_io_handle ),
@@ -798,6 +830,139 @@ on_error:
 	{
 		libbfio_handle_free(
 		 &( pymodi_handle->file_io_handle ),
+		 NULL );
+	}
+	return( NULL );
+}
+
+/* Opens the band data files
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymodi_handle_open_band_data_files(
+           pymodi_handle_t *pymodi_handle,
+           PyObject *arguments PYMODI_ATTRIBUTE_UNUSED )
+{
+	libcerror_error_t *error = NULL;
+	static char *function    = "pymodi_handle_open_band_data_files";
+	int result               = 0;
+
+	if( pymodi_handle == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid handle.",
+		 function );
+
+		return( NULL );
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmodi_handle_open_band_data_files(
+	          pymodi_handle->handle,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymodi_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to open band data files.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		return( NULL );
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+}
+
+/* Opens band data files using a list of file-like objects
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymodi_handle_open_band_data_files_as_file_objects(
+           pymodi_handle_t *pymodi_handle,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *file_objects      = NULL;
+	libcerror_error_t *error    = NULL;
+	static char *keyword_list[] = { "file_object", NULL };
+	static char *function       = "pymodi_handle_open_band_data_files_as_file_objects";
+	int result                  = 0;
+
+	if( pymodi_handle == NULL )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid file.",
+		 function );
+
+		return( NULL );
+	}
+	if( PyArg_ParseTupleAndKeywords(
+	     arguments,
+	     keywords,
+	     "O",
+	     keyword_list,
+	     &file_objects ) == 0 )
+	{
+		return( NULL );
+	}
+	if( pymodi_file_objects_pool_initialize(
+	     &( pymodi_handle->file_io_pool ),
+	     file_objects,
+	     LIBBFIO_OPEN_READ,
+	     &error ) != 1 )
+	{
+		pymodi_error_raise(
+		 error,
+		 PyExc_MemoryError,
+		 "%s: unable to initialize file IO pool.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	Py_BEGIN_ALLOW_THREADS
+
+	result = libmodi_handle_open_band_data_files_file_io_pool(
+	          pymodi_handle->handle,
+	          pymodi_handle->file_io_pool,
+	          &error );
+
+	Py_END_ALLOW_THREADS
+
+	if( result != 1 )
+	{
+		pymodi_error_raise(
+		 error,
+		 PyExc_IOError,
+		 "%s: unable to open band data files.",
+		 function );
+
+		libcerror_error_free(
+		 &error );
+
+		goto on_error;
+	}
+	Py_IncRef(
+	 Py_None );
+
+	return( Py_None );
+
+on_error:
+	if( pymodi_handle->file_io_pool != NULL )
+	{
+		libbfio_pool_free(
+		 &( pymodi_handle->file_io_pool ),
 		 NULL );
 	}
 	return( NULL );
@@ -870,6 +1035,30 @@ PyObject *pymodi_handle_close(
 			return( NULL );
 		}
 	}
+	if( pymodi_handle->file_io_pool != NULL )
+	{
+		Py_BEGIN_ALLOW_THREADS
+
+		result = libbfio_pool_free(
+		          &( pymodi_handle->file_io_pool ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pymodi_error_raise(
+			 error,
+			 PyExc_IOError,
+			 "%s: unable to free libbfio file IO pool.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+
+			return( NULL );
+		}
+	}
 	Py_IncRef(
 	 Py_None );
 
@@ -884,20 +1073,20 @@ PyObject *pymodi_handle_read_buffer(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *integer_object    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	char *buffer                = NULL;
 	static char *function       = "pymodi_handle_read_buffer";
 	static char *keyword_list[] = { "size", NULL };
-	char *buffer                = NULL;
-	size64_t read_size          = 0;
 	ssize_t read_count          = 0;
+	int64_t read_size           = 0;
 	int result                  = 0;
 
 	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid handle.",
 		 function );
 
@@ -937,8 +1126,8 @@ PyObject *pymodi_handle_read_buffer(
 			PyErr_Clear();
 
 			result = PyObject_IsInstance(
-				  integer_object,
-				  (PyObject *) &PyInt_Type );
+			          integer_object,
+			          (PyObject *) &PyInt_Type );
 
 			if( result == -1 )
 			{
@@ -954,14 +1143,14 @@ PyObject *pymodi_handle_read_buffer(
 	}
 	if( result != 0 )
 	{
-		if( pymodi_integer_unsigned_copy_to_64bit(
+		if( pymodi_integer_signed_copy_to_64bit(
 		     integer_object,
-		     (uint64_t *) &read_size,
+		     &read_size,
 		     &error ) != 1 )
 		{
 			pymodi_error_raise(
 			 error,
-			 PyExc_IOError,
+			 PyExc_ValueError,
 			 "%s: unable to convert integer object into read size.",
 			 function );
 
@@ -977,9 +1166,9 @@ PyObject *pymodi_handle_read_buffer(
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libmodi_handle_get_media_size(
-			  pymodi_handle->handle,
-			  &read_size,
-			  &error );
+		          pymodi_handle->handle,
+		          (size64_t *) &read_size,
+		          &error );
 
 		Py_END_ALLOW_THREADS
 
@@ -1017,10 +1206,19 @@ PyObject *pymodi_handle_read_buffer(
 #endif
 		return( string_object );
 	}
+	if( read_size < 0 )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid read size value less than zero.",
+		 function );
+
+		return( NULL );
+	}
 	/* Make sure the data fits into a memory buffer
 	 */
-	if( ( read_size > (size64_t) INT_MAX )
-	 || ( read_size > (size64_t) SSIZE_MAX ) )
+	if( ( read_size > (int64_t) INT_MAX )
+	 || ( read_size > (int64_t) SSIZE_MAX ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -1032,7 +1230,7 @@ PyObject *pymodi_handle_read_buffer(
 #if PY_MAJOR_VERSION >= 3
 	string_object = PyBytes_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyBytes_AsString(
 	          string_object );
@@ -1041,7 +1239,7 @@ PyObject *pymodi_handle_read_buffer(
 	 */
 	string_object = PyString_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyString_AsString(
 	          string_object );
@@ -1056,7 +1254,7 @@ PyObject *pymodi_handle_read_buffer(
 
 	Py_END_ALLOW_THREADS
 
-	if( read_count <= -1 )
+	if( read_count == -1 )
 	{
 		pymodi_error_raise(
 		 error,
@@ -1100,21 +1298,21 @@ PyObject *pymodi_handle_read_buffer_at_offset(
            PyObject *arguments,
            PyObject *keywords )
 {
-	libcerror_error_t *error    = NULL;
 	PyObject *integer_object    = NULL;
 	PyObject *string_object     = NULL;
+	libcerror_error_t *error    = NULL;
+	char *buffer                = NULL;
 	static char *function       = "pymodi_handle_read_buffer_at_offset";
 	static char *keyword_list[] = { "size", "offset", NULL };
-	char *buffer                = NULL;
-	off64_t read_offset         = 0;
-	size64_t read_size          = 0;
 	ssize_t read_count          = 0;
+	off64_t read_offset         = 0;
+	int64_t read_size           = 0;
 	int result                  = 0;
 
 	if( pymodi_handle == NULL )
 	{
 		PyErr_Format(
-		 PyExc_TypeError,
+		 PyExc_ValueError,
 		 "%s: invalid handle.",
 		 function );
 
@@ -1137,7 +1335,7 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 	if( result == -1 )
 	{
 		pymodi_error_fetch_and_raise(
-	         PyExc_RuntimeError,
+		 PyExc_RuntimeError,
 		 "%s: unable to determine if integer object is of type long.",
 		 function );
 
@@ -1155,7 +1353,7 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 		if( result == -1 )
 		{
 			pymodi_error_fetch_and_raise(
-		         PyExc_RuntimeError,
+			 PyExc_RuntimeError,
 			 "%s: unable to determine if integer object is of type int.",
 			 function );
 
@@ -1165,40 +1363,15 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 #endif
 	if( result != 0 )
 	{
-		if( pymodi_integer_unsigned_copy_to_64bit(
+		if( pymodi_integer_signed_copy_to_64bit(
 		     integer_object,
-		     (uint64_t *) &read_size,
+		     &read_size,
 		     &error ) != 1 )
 		{
 			pymodi_error_raise(
 			 error,
 			 PyExc_IOError,
 			 "%s: unable to convert integer object into read size.",
-			 function );
-
-			libcerror_error_free(
-			 &error );
-
-			return( NULL );
-		}
-	}
-	else if( integer_object == Py_None )
-	{
-		Py_BEGIN_ALLOW_THREADS
-
-		result = libmodi_handle_get_media_size(
-			  pymodi_handle->handle,
-			  &read_size,
-			  &error );
-
-		Py_END_ALLOW_THREADS
-
-		if( result != 1 )
-		{
-			pymodi_error_raise(
-			 error,
-			 PyExc_IOError,
-			 "%s: unable to retrieve media size.",
 			 function );
 
 			libcerror_error_free(
@@ -1227,10 +1400,19 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 #endif
 		return( string_object );
 	}
+	if( read_size < 0 )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid read size value less than zero.",
+		 function );
+
+		return( NULL );
+	}
 	/* Make sure the data fits into a memory buffer
 	 */
-	if( ( read_size > (size64_t) INT_MAX )
-	 || ( read_size > (size64_t) SSIZE_MAX ) )
+	if( ( read_size > (int64_t) INT_MAX )
+	 || ( read_size > (int64_t) SSIZE_MAX ) )
 	{
 		PyErr_Format(
 		 PyExc_ValueError,
@@ -1239,10 +1421,19 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 
 		return( NULL );
 	}
+	if( read_offset < 0 )
+	{
+		PyErr_Format(
+		 PyExc_ValueError,
+		 "%s: invalid read offset value less than zero.",
+		 function );
+
+		return( NULL );
+	}
 #if PY_MAJOR_VERSION >= 3
 	string_object = PyBytes_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyBytes_AsString(
 	          string_object );
@@ -1251,7 +1442,7 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 	 */
 	string_object = PyString_FromStringAndSize(
 	                 NULL,
-	                 read_size );
+	                 (Py_ssize_t) read_size );
 
 	buffer = PyString_AsString(
 	          string_object );
@@ -1267,7 +1458,7 @@ PyObject *pymodi_handle_read_buffer_at_offset(
 
 	Py_END_ALLOW_THREADS
 
-	if( read_count != (ssize_t) read_size )
+	if( read_count == -1 )
 	{
 		pymodi_error_raise(
 		 error,

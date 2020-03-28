@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\pymodi\pymodi_file_objects_io_pool.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\pymodi\pymodi_handle.c"
 				>
 			</File>
@@ -205,6 +209,10 @@
 			</File>
 			<File
 				RelativePath="..\..\pymodi\pymodi_file_object_io_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\pymodi\pymodi_file_objects_io_pool.h"
 				>
 			</File>
 			<File

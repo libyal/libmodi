@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_system_string"
-	ProjectGUID="{71202A66-0D6F-44A1-A746-5C68CCE5BC8C}"
-	RootNamespace="modi_test_system_string"
+	Name="modi_test_deflate"
+	ProjectGUID="{1F39FC31-589D-40F4-AF9C-DE659911B7C6}"
+	RootNamespace="modi_test_deflate"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_system_string.c"
+				RelativePath="..\..\tests\modi_test_deflate.c"
 				>
 			</File>
 		</Filter>
@@ -187,6 +187,10 @@
 			>
 			<File
 				RelativePath="..\..\tests\modi_test_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_libcnotify.h"
 				>
 			</File>
 			<File

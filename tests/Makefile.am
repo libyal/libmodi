@@ -17,6 +17,10 @@ AM_CPPFLAGS = \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
 	@LIBFPLIST_CPPFLAGS@ \
+	@LIBCRYPTO_CPPFLAGS@ \
+	@LIBHMAC_CPPFLAGS@ \
+	@LIBCAES_CPPFLAGS@ \
+	@ZLIB_CPPFLAGS@ \
 	@PTHREAD_CPPFLAGS@ \
 	@LIBMODI_DLL_IMPORT@
 
@@ -44,6 +48,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	modi_test_data_block \
+	modi_test_deflate \
 	modi_test_error \
 	modi_test_handle \
 	modi_test_io_handle \
@@ -76,6 +81,19 @@ modi_test_data_block_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_deflate_SOURCES = \
+	modi_test_deflate.c \
+	modi_test_libcerror.h \
+	modi_test_libcnotify.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_unused.h
+
+modi_test_deflate_LDADD = \
+	@LIBCNOTIFY_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 

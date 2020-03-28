@@ -19,6 +19,7 @@ MSVSCPP_FILES = \
 	libmodi/libmodi.vcproj \
 	libuna/libuna.vcproj \
 	modi_test_data_block/modi_test_data_block.vcproj \
+	modi_test_deflate/modi_test_deflate.vcproj \
 	modi_test_error/modi_test_error.vcproj \
 	modi_test_handle/modi_test_handle.vcproj \
 	modi_test_io_handle/modi_test_io_handle.vcproj \

@@ -48,6 +48,10 @@ struct pymodi_handle
 	/* The libbfio file IO handle
 	 */
 	libbfio_handle_t *file_io_handle;
+
+	/* The file IO pool
+	 */
+	libbfio_pool_t *file_io_pool;
 };
 
 extern PyMethodDef pymodi_handle_object_methods[];
@@ -82,6 +86,15 @@ PyObject *pymodi_handle_open(
            PyObject *keywords );
 
 PyObject *pymodi_handle_open_file_object(
+           pymodi_handle_t *pymodi_handle,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pymodi_handle_open_band_data_files(
+           pymodi_handle_t *pymodi_handle,
+           PyObject *arguments );
+
+PyObject *pymodi_handle_open_band_data_files_as_file_objects(
            pymodi_handle_t *pymodi_handle,
            PyObject *arguments,
            PyObject *keywords );

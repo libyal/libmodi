@@ -129,6 +129,7 @@ stamp-h[1-9]
 /tests/*.exe
 /tests/input
 /tests/modi_test_data_block
+/tests/modi_test_deflate
 /tests/modi_test_error
 /tests/modi_test_handle
 /tests/modi_test_io_handle

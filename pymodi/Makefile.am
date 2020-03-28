@@ -18,6 +18,7 @@ pymodi_la_SOURCES = \
 	pymodi.c pymodi.h \
 	pymodi_error.c pymodi_error.h \
 	pymodi_file_object_io_handle.c pymodi_file_object_io_handle.h \
+	pymodi_file_objects_io_pool.c pymodi_file_objects_io_pool.h \
 	pymodi_handle.c pymodi_handle.h \
 	pymodi_integer.c pymodi_integer.h \
 	pymodi_libbfio.h \

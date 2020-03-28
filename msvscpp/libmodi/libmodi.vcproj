@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_deflate.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_error.c"
 				>
 			</File>
@@ -261,6 +265,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_definitions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_deflate.h"
 				>
 			</File>
 			<File
