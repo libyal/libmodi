@@ -29,19 +29,22 @@
 
 #include "pymodi.h"
 #include "pymodi_error.h"
+#include "pymodi_file_object_io_handle.h"
+#include "pymodi_handle.h"
+#include "pymodi_libbfio.h"
 #include "pymodi_libcerror.h"
 #include "pymodi_libmodi.h"
-#include "pymodi_handle.h"
-#include "pymodi_file_object_io_handle.h"
 #include "pymodi_python.h"
 #include "pymodi_unused.h"
 
 #if !defined( LIBMODI_HAVE_BFIO )
+
 LIBMODI_EXTERN \
 int libmodi_check_file_signature_file_io_handle(
      libbfio_handle_t *file_io_handle,
      libmodi_error_t **error );
-#endif
+
+#endif /* !defined( LIBMODI_HAVE_BFIO ) */
 
 /* The pymodi module methods
  */
@@ -63,23 +66,23 @@ PyMethodDef pymodi_module_methods[] = {
 	{ "check_file_signature_file_object",
 	  (PyCFunction) pymodi_check_file_signature_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
-	  "check_file_signature(file_object) -> Boolean\n"
+	  "check_file_signature_file_object(file_object) -> Boolean\n"
 	  "\n"
 	  "Checks if a file has a Mac OS disk image signature using a file-like object." },
 
 	{ "open",
-	  (PyCFunction) pymodi_handle_new_open,
+	  (PyCFunction) pymodi_open_new_file,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open(filename, mode='r') -> Object\n"
 	  "\n"
-	  "Opens a handle." },
+	  "Opens a file." },
 
 	{ "open_file_object",
-	  (PyCFunction) pymodi_handle_new_open_file_object,
+	  (PyCFunction) pymodi_open_new_file_with_file_object,
 	  METH_VARARGS | METH_KEYWORDS,
 	  "open_file_object(file_object, mode='r') -> Object\n"
 	  "\n"
-	  "Opens a handle using a file-like object." },
+	  "Opens a file using a file-like object." },
 
 	/* Sentinel */
 	{ NULL, NULL, 0, NULL }
@@ -118,7 +121,7 @@ PyObject *pymodi_get_version(
 	         errors ) );
 }
 
-/* Checks if the file has a Mac OS disk image signature
+/* Checks if a file has a Mac OS disk image signature
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymodi_check_file_signature(
@@ -149,7 +152,7 @@ PyObject *pymodi_check_file_signature(
 	if( PyArg_ParseTupleAndKeywords(
 	     arguments,
 	     keywords,
-	     "|O",
+	     "O|",
 	     keyword_list,
 	     &string_object ) == 0 )
 	{
@@ -165,7 +168,7 @@ PyObject *pymodi_check_file_signature(
 	{
 		pymodi_error_fetch_and_raise(
 	         PyExc_RuntimeError,
-		 "%s: unable to determine if string object is of type unicode.",
+		 "%s: unable to determine if string object is of type Unicode.",
 		 function );
 
 		return( NULL );
@@ -192,7 +195,7 @@ PyObject *pymodi_check_file_signature(
 		{
 			pymodi_error_fetch_and_raise(
 			 PyExc_RuntimeError,
-			 "%s: unable to convert unicode string to UTF-8.",
+			 "%s: unable to convert Unicode string to UTF-8.",
 			 function );
 
 			return( NULL );
@@ -214,7 +217,9 @@ PyObject *pymodi_check_file_signature(
 
 		Py_DecRef(
 		 utf8_string_object );
-#endif
+
+#endif /* defined( HAVE_WIDE_SYSTEM_CHARACTER ) */
+
 		if( result == -1 )
 		{
 			pymodi_error_raise(
@@ -312,7 +317,7 @@ PyObject *pymodi_check_file_signature(
 	return( NULL );
 }
 
-/* Checks if the file has a Mac OS disk image signature using a file-like object
+/* Checks if a file has a Mac OS disk image signature using a file-like object
  * Returns a Python object if successful or NULL on error
  */
 PyObject *pymodi_check_file_signature_file_object(
@@ -412,6 +417,52 @@ on_error:
 	return( NULL );
 }
 
+/* Creates a new file object and opens it
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymodi_open_new_file(
+           PyObject *self PYMODI_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pymodi_handle = NULL;
+
+	PYMODI_UNREFERENCED_PARAMETER( self )
+
+	pymodi_handle_init(
+	 (pymodi_handle_t *) pymodi_handle );
+
+	pymodi_handle_open(
+	 (pymodi_handle_t *) pymodi_handle,
+	 arguments,
+	 keywords );
+
+	return( pymodi_handle );
+}
+
+/* Creates a new file object and opens it using a file-like object
+ * Returns a Python object if successful or NULL on error
+ */
+PyObject *pymodi_open_new_file_with_file_object(
+           PyObject *self PYMODI_ATTRIBUTE_UNUSED,
+           PyObject *arguments,
+           PyObject *keywords )
+{
+	PyObject *pymodi_handle = NULL;
+
+	PYMODI_UNREFERENCED_PARAMETER( self )
+
+	pymodi_handle_init(
+	 (pymodi_handle_t *) pymodi_handle );
+
+	pymodi_handle_open_file_object(
+	 (pymodi_handle_t *) pymodi_handle,
+	 arguments,
+	 keywords );
+
+	return( pymodi_handle );
+}
+
 #if PY_MAJOR_VERSION >= 3
 
 /* The pymodi module definition
@@ -449,9 +500,8 @@ PyMODINIT_FUNC initpymodi(
                 void )
 #endif
 {
-	PyObject *module                 = NULL;
-	PyTypeObject *handle_type_object = NULL;
-	PyGILState_STATE gil_state       = 0;
+	PyObject *module           = NULL;
+	PyGILState_STATE gil_state = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
 	libmodi_notify_set_stream(
@@ -498,12 +548,10 @@ PyMODINIT_FUNC initpymodi(
 	Py_IncRef(
 	 (PyObject *) &pymodi_handle_type_object );
 
-	handle_type_object = &pymodi_handle_type_object;
-
 	PyModule_AddObject(
 	 module,
 	 "handle",
-	 (PyObject *) handle_type_object );
+	 (PyObject *) &pymodi_handle_type_object );
 
 	PyGILState_Release(
 	 gil_state );

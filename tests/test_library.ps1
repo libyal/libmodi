@@ -6,7 +6,7 @@ $ExitSuccess = 0
 $ExitFailure = 1
 $ExitIgnore = 77
 
-$LibraryTests = "data_block error io_handle notify sparse_bundle_xml_plist sparse_image_header system_string udif_block_table udif_block_table_entry udif_resource_file udif_xml_plist"
+$LibraryTests = "data_block deflate error io_handle notify sparse_bundle_xml_plist sparse_image_header system_string udif_block_table udif_block_table_entry udif_resource_file udif_xml_plist"
 $LibraryTestsWithInput = "handle support"
 
 $InputGlob = "*"

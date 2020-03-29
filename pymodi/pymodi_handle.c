@@ -272,93 +272,6 @@ PyTypeObject pymodi_handle_type_object = {
 	0
 };
 
-/* Creates a new handle object
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymodi_handle_new(
-           void )
-{
-	pymodi_handle_t *pymodi_handle = NULL;
-	static char *function          = "pymodi_handle_new";
-
-	pymodi_handle = PyObject_New(
-	                 struct pymodi_handle,
-	                 &pymodi_handle_type_object );
-
-	if( pymodi_handle == NULL )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize handle.",
-		 function );
-
-		goto on_error;
-	}
-	if( pymodi_handle_init(
-	     pymodi_handle ) != 0 )
-	{
-		PyErr_Format(
-		 PyExc_MemoryError,
-		 "%s: unable to initialize handle.",
-		 function );
-
-		goto on_error;
-	}
-	return( (PyObject *) pymodi_handle );
-
-on_error:
-	if( pymodi_handle != NULL )
-	{
-		Py_DecRef(
-		 (PyObject *) pymodi_handle );
-	}
-	return( NULL );
-}
-
-/* Creates a new handle object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymodi_handle_new_open(
-           PyObject *self PYMODI_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pymodi_handle = NULL;
-
-	PYMODI_UNREFERENCED_PARAMETER( self )
-
-	pymodi_handle = pymodi_handle_new();
-
-	pymodi_handle_open(
-	 (pymodi_handle_t *) pymodi_handle,
-	 arguments,
-	 keywords );
-
-	return( pymodi_handle );
-}
-
-/* Creates a new handle object and opens it
- * Returns a Python object if successful or NULL on error
- */
-PyObject *pymodi_handle_new_open_file_object(
-           PyObject *self PYMODI_ATTRIBUTE_UNUSED,
-           PyObject *arguments,
-           PyObject *keywords )
-{
-	PyObject *pymodi_handle = NULL;
-
-	PYMODI_UNREFERENCED_PARAMETER( self )
-
-	pymodi_handle = pymodi_handle_new();
-
-	pymodi_handle_open_file_object(
-	 (pymodi_handle_t *) pymodi_handle,
-	 arguments,
-	 keywords );
-
-	return( pymodi_handle );
-}
-
 /* Intializes a handle object
  * Returns 0 if successful or -1 on error
  */
@@ -448,24 +361,27 @@ void pymodi_handle_free(
 
 		return;
 	}
-	Py_BEGIN_ALLOW_THREADS
-
-	result = libmodi_handle_free(
-	          &( pymodi_handle->handle ),
-	          &error );
-
-	Py_END_ALLOW_THREADS
-
-	if( result != 1 )
+	if( pymodi_handle->handle != NULL )
 	{
-		pymodi_error_raise(
-		 error,
-		 PyExc_MemoryError,
-		 "%s: unable to free libmodi handle.",
-		 function );
+		Py_BEGIN_ALLOW_THREADS
 
-		libcerror_error_free(
-		 &error );
+		result = libmodi_handle_free(
+		          &( pymodi_handle->handle ),
+		          &error );
+
+		Py_END_ALLOW_THREADS
+
+		if( result != 1 )
+		{
+			pymodi_error_raise(
+			 error,
+			 PyExc_MemoryError,
+			 "%s: unable to free libmodi handle.",
+			 function );
+
+			libcerror_error_free(
+			 &error );
+		}
 	}
 	ob_type->tp_free(
 	 (PyObject*) pymodi_handle );

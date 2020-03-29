@@ -1,5 +1,5 @@
 /*
- * Python bindings for libmodi (pymodi)
+ * Python bindings module for libmodi (pymodi)
  *
  * Copyright (C) 2012-2020, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -41,6 +41,16 @@ PyObject *pymodi_check_file_signature(
            PyObject *keywords );
 
 PyObject *pymodi_check_file_signature_file_object(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pymodi_open_new_file(
+           PyObject *self,
+           PyObject *arguments,
+           PyObject *keywords );
+
+PyObject *pymodi_open_new_file_with_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

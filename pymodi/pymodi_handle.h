@@ -57,19 +57,6 @@ struct pymodi_handle
 extern PyMethodDef pymodi_handle_object_methods[];
 extern PyTypeObject pymodi_handle_type_object;
 
-PyObject *pymodi_handle_new(
-           void );
-
-PyObject *pymodi_handle_new_open(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
-PyObject *pymodi_handle_new_open_file_object(
-           PyObject *self,
-           PyObject *arguments,
-           PyObject *keywords );
-
 int pymodi_handle_init(
      pymodi_handle_t *pymodi_handle );
 

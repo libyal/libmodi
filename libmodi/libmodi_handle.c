@@ -51,10 +51,6 @@
 #include "libmodi_udif_resource_file.h"
 #include "libmodi_udif_xml_plist.h"
 
-#if !defined( SIZEOF_INT )
-#define SIZEOF_INT sizeof( int )
-#endif
-
 /* Creates a handle
  * Make sure the value handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
