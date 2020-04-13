@@ -13,6 +13,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libfguid", "libfguid\libfgu
 		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_bands_data_handle", "modi_test_bands_data_handle\modi_test_bands_data_handle.vcproj", "{C594F101-8F9B-4B9C-946D-44F2ACD52DC6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1660EB10-5241-431C-B3A2-607341435A83} = {1660EB10-5241-431C-B3A2-607341435A83}
+		{53AF92FF-83E9-4842-9BA8-8EC24E40F556} = {53AF92FF-83E9-4842-9BA8-8EC24E40F556}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modi_test_data_block", "modi_test_data_block\modi_test_data_block.vcproj", "{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4B3B6824-5C4C-45A1-AAA2-FDD030F42397} = {4B3B6824-5C4C-45A1-AAA2-FDD030F42397}
@@ -335,6 +341,10 @@ Global
 		{B8A0F522-AB25-4D77-823B-CF6541B98131}.Release|Win32.Build.0 = Release|Win32
 		{B8A0F522-AB25-4D77-823B-CF6541B98131}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
 		{B8A0F522-AB25-4D77-823B-CF6541B98131}.VSDebug|Win32.Build.0 = VSDebug|Win32
+		{C594F101-8F9B-4B9C-946D-44F2ACD52DC6}.Release|Win32.ActiveCfg = Release|Win32
+		{C594F101-8F9B-4B9C-946D-44F2ACD52DC6}.Release|Win32.Build.0 = Release|Win32
+		{C594F101-8F9B-4B9C-946D-44F2ACD52DC6}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
+		{C594F101-8F9B-4B9C-946D-44F2ACD52DC6}.VSDebug|Win32.Build.0 = VSDebug|Win32
 		{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}.Release|Win32.ActiveCfg = Release|Win32
 		{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}.Release|Win32.Build.0 = Release|Win32
 		{A7E4A887-4C48-4D8B-A6FA-EBDE12CF5F5A}.VSDebug|Win32.ActiveCfg = VSDebug|Win32
