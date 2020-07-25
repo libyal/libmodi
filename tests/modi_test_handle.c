@@ -321,6 +321,8 @@ int modi_test_handle_initialize(
 	          &handle,
 	          &error );
 
+	handle = NULL;
+
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
 	 result,
@@ -332,8 +334,6 @@ int modi_test_handle_initialize(
 
 	libcerror_error_free(
 	 &error );
-
-	handle = NULL;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
 

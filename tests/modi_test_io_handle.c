@@ -429,12 +429,6 @@ int main(
 	 "libmodi_io_handle_clear",
 	 modi_test_io_handle_clear );
 
-	/* TODO: add tests for libmodi_io_handle_read_sparse_image_header */
-
-	/* TODO: add tests for libmodi_io_handle_read_info_plist */
-
-	/* TODO: add tests for libmodi_io_handle_read_data_block */
-
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );

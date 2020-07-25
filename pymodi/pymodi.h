@@ -45,12 +45,12 @@ PyObject *pymodi_check_file_signature_file_object(
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_open_new_file(
+PyObject *pymodi_open_new_handle(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );
 
-PyObject *pymodi_open_new_file_with_file_object(
+PyObject *pymodi_open_new_handle_with_file_object(
            PyObject *self,
            PyObject *arguments,
            PyObject *keywords );

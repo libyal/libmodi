@@ -687,6 +687,36 @@ PyObject *pymodi_handle_open_file_object(
 
 		return( NULL );
 	}
+	PyErr_Clear();
+
+	result = PyObject_HasAttrString(
+	          file_object,
+	          "read" );
+
+	if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported file object - missing read attribute.",
+		 function );
+
+		return( NULL );
+	}
+	PyErr_Clear();
+
+	result = PyObject_HasAttrString(
+	          file_object,
+	          "seek" );
+
+	if( result != 1 )
+	{
+		PyErr_Format(
+		 PyExc_TypeError,
+		 "%s: unsupported file object - missing seek attribute.",
+		 function );
+
+		return( NULL );
+	}
 	if( pymodi_handle->file_io_handle != NULL )
 	{
 		pymodi_error_raise(

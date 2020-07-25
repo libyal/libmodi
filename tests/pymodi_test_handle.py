@@ -76,8 +76,7 @@ class HandleTypeTests(unittest.TestCase):
 
       modi_handle.close()
 
-      # TODO: change IOError into TypeError
-      with self.assertRaises(IOError):
+      with self.assertRaises(TypeError):
         modi_handle.open_file_object(None)
 
       with self.assertRaises(ValueError):
@@ -211,22 +210,21 @@ class HandleTypeTests(unittest.TestCase):
     if not os.path.isfile(unittest.source):
       raise unittest.SkipTest("source not a regular file")
 
-    file_object = open(unittest.source, "rb")
-
     modi_handle = pymodi.handle()
 
-    modi_handle.open_file_object(file_object)
-    modi_handle.open_band_data_files()
+    with open(unittest.source, "rb") as file_object:
+      modi_handle.open_file_object(file_object)
+      modi_handle.open_band_data_files()
 
-    media_size = modi_handle.get_media_size()
+      media_size = modi_handle.get_media_size()
 
-    # Test normal read.
-    data = modi_handle.read_buffer(size=4096)
+      # Test normal read.
+      data = modi_handle.read_buffer(size=4096)
 
-    self.assertIsNotNone(data)
-    self.assertEqual(len(data), min(media_size, 4096))
+      self.assertIsNotNone(data)
+      self.assertEqual(len(data), min(media_size, 4096))
 
-    modi_handle.close()
+      modi_handle.close()
 
   def test_read_buffer_at_offset(self):
     """Tests the read_buffer_at_offset function."""
@@ -357,11 +355,12 @@ class HandleTypeTests(unittest.TestCase):
       modi_handle.seek_offset(16, os.SEEK_SET)
 
   def test_get_offset(self):
-    """Tests the get_offset function and offset property."""
+    """Tests the get_offset function."""
     if not unittest.source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
+
     modi_handle.open(unittest.source)
 
     offset = modi_handle.get_offset()

@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #endif
 
-#include "modi_test_libcerror.h"
 #include "modi_test_libmodi.h"
 #include "modi_test_macros.h"
 #include "modi_test_unused.h"
