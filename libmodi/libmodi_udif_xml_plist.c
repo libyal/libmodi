@@ -323,14 +323,25 @@ int libmodi_udif_xml_plist_read_blkx_array_entry_property(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve size of data from data property.",
+			 "%s: unable to retrieve value data size of data from data property.",
 			 function );
 
 			goto on_error;
 		}
-/* TODO check if data_size is in bounds */
+		if( ( data_size == 0 )
+		 || ( data_size > (size_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid data property - value data size value out of bounds.",
+			 function );
+
+			goto on_error;
+		}
 		data = (uint8_t *) memory_allocate(
-		                    (size_t) data_size );
+		                    sizeof( uint8_t ) * data_size );
 
 		if( data == NULL )
 		{
@@ -353,7 +364,7 @@ int libmodi_udif_xml_plist_read_blkx_array_entry_property(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve data from data property.",
+			 "%s: unable to retrieve value data from data property.",
 			 function );
 
 			goto on_error;
@@ -709,7 +720,8 @@ int libmodi_udif_xml_plist_read_file_io_handle(
 
 		return( -1 );
 	}
-	if( size > (size64_t) SSIZE_MAX )
+	if( ( size == 0 )
+	 || ( size > (size64_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -790,7 +802,7 @@ int libmodi_udif_xml_plist_read_file_io_handle(
 		goto on_error;
 	}
 	xml_plist_data = (uint8_t *) memory_allocate(
-	                              (size_t) size );
+	                              sizeof( uint8_t ) * (size_t) size );
 
 	if( xml_plist_data == NULL )
 	{

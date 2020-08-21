@@ -509,7 +509,8 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 
 		return( -1 );
 	}
-	if( size > (size64_t) SSIZE_MAX )
+	if( ( size == 0 )
+	 || ( size > (size64_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		libcerror_error_set(
 		 error,

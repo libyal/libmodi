@@ -315,8 +315,7 @@ int libmodi_sparse_image_header_read_data(
 	}
 	if( sparse_image_header->number_of_bands > 0 )
 	{
-#if ( SIZEOF_SIZE_T <= 4 )
-		if( sparse_image_header->number_of_bands > (uint32_t) ( SSIZE_MAX / 4 ) )
+		if( sparse_image_header->number_of_bands > (uint32_t) ( MEMORY_MAXIMUM_ALLOCATION_SIZE / sizeof( uint32_t ) ) )
 		{
 			libcerror_error_set(
 			 error,
@@ -327,7 +326,6 @@ int libmodi_sparse_image_header_read_data(
 
 			goto on_error;
 		}
-#endif
 		bands_table_data_size = sparse_image_header->number_of_bands * sizeof( uint32_t );
 
 		if( bands_table_data_size > ( data_size - data_offset ) )
@@ -391,8 +389,6 @@ int libmodi_sparse_image_header_read_data(
 
 			data_offset += 4;
 
-/* TODO check bounds of reference */
-
 #if defined( HAVE_DEBUG_OUTPUT )
 			if( libcnotify_verbose != 0 )
 			{
@@ -406,6 +402,17 @@ int libmodi_sparse_image_header_read_data(
 #endif
 			if( bands_table_reference != 0 )
 			{
+				if( bands_table_reference > sparse_image_header->number_of_bands )
+				{
+					libcerror_error_set(
+					 error,
+					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+					 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+					 "%s: invalid bands table reference value out of bounds.",
+					 function );
+
+					goto on_error;
+				}
 				( sparse_image_header->band_references )[ bands_table_reference - 1 ] = bands_table_index;
 			}
 		}
