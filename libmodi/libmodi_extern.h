@@ -30,7 +30,11 @@
 
 #include <libmodi/extern.h>
 
+#if defined( __CYGWIN__ )
+#define LIBMODI_EXTERN_VARIABLE	extern
+#else
 #define LIBMODI_EXTERN_VARIABLE	LIBMODI_EXTERN
+#endif
 
 #else
 #define LIBMODI_EXTERN		/* extern */
