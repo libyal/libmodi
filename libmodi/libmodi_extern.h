@@ -30,7 +30,7 @@
 
 #include <libmodi/extern.h>
 
-#if defined( __CYGWIN__ )
+#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
 #define LIBMODI_EXTERN_VARIABLE	extern
 #else
 #define LIBMODI_EXTERN_VARIABLE	LIBMODI_EXTERN

@@ -584,25 +584,11 @@ int libmodi_check_file_signature_file_io_handle(
 	{
 		return( 0 );
 	}
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     0,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek sparse disk image file header offset: 0.",
-		 function );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              header_signature,
 	              5,
+	              0,
 	              error );
 
 	if( read_count != 5 )
@@ -611,32 +597,18 @@ int libmodi_check_file_signature_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read header signature.",
+		 "%s: unable to read header signature at offset: 0 (0x00000000).",
 		 function );
 
 		goto on_error;
 	}
 	if( file_size >= 512 )
 	{
-		if( libbfio_handle_seek_offset(
-		     file_io_handle,
-		     510,
-		     SEEK_SET,
-		     error ) == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek sparse disk image file header offset: 510.",
-			 function );
-
-			goto on_error;
-		}
-		read_count = libbfio_handle_read_buffer(
+		read_count = libbfio_handle_read_buffer_at_offset(
 		              file_io_handle,
 		              mbr_boot_signature,
 		              2,
+		              510,
 		              error );
 
 		if( read_count != 2 )
@@ -645,7 +617,7 @@ int libmodi_check_file_signature_file_io_handle(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read MBR boot signature.",
+			 "%s: unable to read MBR boot signature at offset: 510 (0x000001fe).",
 			 function );
 
 			goto on_error;
@@ -660,7 +632,7 @@ int libmodi_check_file_signature_file_io_handle(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek UDIF resource file file offset: -512 from the end.",
+			 "%s: unable to seek UDIF resource file offset: -512 from the end.",
 			 function );
 
 			goto on_error;
@@ -685,25 +657,11 @@ int libmodi_check_file_signature_file_io_handle(
 	}
 	if( file_size >= 1536 )
 	{
-		if( libbfio_handle_seek_offset(
-		     file_io_handle,
-		     1024,
-		     SEEK_SET,
-		     error ) == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek sparse disk image file header offset: 510.",
-			 function );
-
-			goto on_error;
-		}
-		read_count = libbfio_handle_read_buffer(
+		read_count = libbfio_handle_read_buffer_at_offset(
 		              file_io_handle,
 		              hfs_signature,
 		              2,
+		              1024,
 		              error );
 
 		if( read_count != 2 )
@@ -712,7 +670,7 @@ int libmodi_check_file_signature_file_io_handle(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_IO,
 			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read HFS signature.",
+			 "%s: unable to read HFS signature at offset: 1024 (0x00000400).",
 			 function );
 
 			goto on_error;

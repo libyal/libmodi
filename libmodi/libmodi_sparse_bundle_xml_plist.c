@@ -531,27 +531,11 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 		 offset );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek sparse bundle XML plist offset: %" PRIi64 " (0x%08" PRIx64 ").",
-		 function,
-		 offset,
-		 offset );
-
-		goto on_error;
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              header_data,
 	              5,
+	              offset,
 	              error );
 
 	if( read_count != (ssize_t) 5 )
@@ -560,8 +544,10 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read XML plist data.",
-		 function );
+		 "%s: unable to read XML plist data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
 
 		goto on_error;
 	}
@@ -572,23 +558,6 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 	 || ( header_data[ 4 ] != 'l' ) )
 	{
 		return( 0 );
-	}
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek sparse bundle XML plist offset: %" PRIi64 " (0x%08" PRIx64 ").",
-		 function,
-		 offset,
-		 offset );
-
-		goto on_error;
 	}
 	xml_plist_data = (uint8_t *) memory_allocate(
 	                              (size_t) size );
@@ -604,10 +573,11 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 
 		goto on_error;
 	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              xml_plist_data,
 	              (size_t) size,
+	              offset,
 	              error );
 
 	if( read_count != (ssize_t) size )
@@ -616,8 +586,10 @@ int libmodi_sparse_bundle_xml_plist_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read XML plist data.",
-		 function );
+		 "%s: unable to read XML plist data at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 offset,
+		 offset );
 
 		goto on_error;
 	}

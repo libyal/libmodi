@@ -255,26 +255,11 @@ int libmodi_data_block_read_file_io_handle(
 		 data_block_offset );
 	}
 #endif
-	if( libbfio_handle_seek_offset(
-	     file_io_handle,
-	     data_block_offset,
-	     SEEK_SET,
-	     error ) == -1 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_IO,
-		 LIBCERROR_IO_ERROR_SEEK_FAILED,
-		 "%s: unable to seek data block offset: %" PRIi64 ".",
-		 function,
-		 data_block_offset );
-
-		return( -1 );
-	}
-	read_count = libbfio_handle_read_buffer(
+	read_count = libbfio_handle_read_buffer_at_offset(
 	              file_io_handle,
 	              data_block->data,
 	              data_block->data_size,
+	              data_block_offset,
 	              error );
 
 	if( read_count != (ssize_t) data_block->data_size )
@@ -283,8 +268,10 @@ int libmodi_data_block_read_file_io_handle(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_IO,
 		 LIBCERROR_IO_ERROR_READ_FAILED,
-		 "%s: unable to read data block.",
-		 function );
+		 "%s: unable to read data block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+		 function,
+		 data_block_offset,
+		 data_block_offset );
 
 		return( -1 );
 	}
