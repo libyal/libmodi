@@ -31,6 +31,7 @@ endif
 
 TESTS = \
 	test_library.sh \
+	test_tools.sh \
 	test_modiinfo.sh \
 	$(TESTS_PYMODI)
 
@@ -41,7 +42,8 @@ check_SCRIPTS = \
 	test_manpage.sh \
 	test_modiinfo.sh \
 	test_python_module.sh \
-	test_runner.sh
+	test_runner.sh \
+	test_tools.sh
 
 EXTRA_DIST = \
 	$(check_SCRIPTS)
@@ -58,6 +60,9 @@ check_PROGRAMS = \
 	modi_test_sparse_image_header \
 	modi_test_support \
 	modi_test_system_string \
+	modi_test_tools_info_handle \
+	modi_test_tools_output \
+	modi_test_tools_signal \
 	modi_test_udif_block_table \
 	modi_test_udif_block_table_entry \
 	modi_test_udif_resource_file \
@@ -254,6 +259,42 @@ modi_test_system_string_SOURCES = \
 	modi_test_unused.h
 
 modi_test_system_string_LDADD = \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_tools_info_handle_SOURCES = \
+	../moditools/byte_size_string.c ../moditools/byte_size_string.h \
+	../moditools/info_handle.c ../moditools/info_handle.h \
+	modi_test_libcerror.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_tools_info_handle.c \
+	modi_test_unused.h
+
+modi_test_tools_info_handle_LDADD = \
+	@LIBCLOCALE_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_tools_output_SOURCES = \
+	../moditools/moditools_output.c ../moditools/moditools_output.h \
+	modi_test_libcerror.h \
+	modi_test_macros.h \
+	modi_test_tools_output.c \
+	modi_test_unused.h
+
+modi_test_tools_output_LDADD = \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_tools_signal_SOURCES = \
+	../moditools/moditools_signal.c ../moditools/moditools_signal.h \
+	modi_test_libcerror.h \
+	modi_test_macros.h \
+	modi_test_tools_signal.c \
+	modi_test_unused.h
+
+modi_test_tools_signal_LDADD = \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 

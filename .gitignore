@@ -140,6 +140,9 @@ stamp-h[1-9]
 /tests/modi_test_sparse_image_header
 /tests/modi_test_support
 /tests/modi_test_system_string
+/tests/modi_test_tools_info_handle
+/tests/modi_test_tools_output
+/tests/modi_test_tools_signal
 /tests/modi_test_udif_block_table
 /tests/modi_test_udif_block_table_entry
 /tests/modi_test_udif_resource_file
