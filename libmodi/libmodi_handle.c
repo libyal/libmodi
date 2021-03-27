@@ -3050,174 +3050,196 @@ int libmodi_internal_handle_open_read_udif_image(
 	}
 	else if( result != 0 )
 	{
+		if( resource_file->xml_plist_size == 0 )
+		{
+			internal_handle->io_handle->media_size = resource_file->data_fork_size;
+		}
+		else
+		{
 #if defined( HAVE_DEBUG_OUTPUT )
-		if( libcnotify_verbose != 0 )
-		{
-			libcnotify_printf(
-			 "Reading Universal Disk Image Format (UDIF) XML plist:\n" );
-		}
+			if( libcnotify_verbose != 0 )
+			{
+				libcnotify_printf(
+				 "Reading Universal Disk Image Format (UDIF) XML plist:\n" );
+			}
 #endif
-		if( libmodi_udif_xml_plist_initialize(
-		     &xml_plist,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to create XML plist.",
-			 function );
+			if( libmodi_udif_xml_plist_initialize(
+			     &xml_plist,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to create XML plist.",
+				 function );
 
-			goto on_error;
-		}
-		result = libmodi_udif_xml_plist_read_file_io_handle(
-			  xml_plist,
-			  file_io_handle,
-			  resource_file->xml_plist_offset,
-			  resource_file->xml_plist_size,
-			  error );
+				goto on_error;
+			}
+			result = libmodi_udif_xml_plist_read_file_io_handle(
+				  xml_plist,
+				  file_io_handle,
+				  resource_file->xml_plist_offset,
+				  resource_file->xml_plist_size,
+				  error );
 
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read XML plist at offset: %" PRIi64 " (0x%08" PRIx64 ").",
-			 function,
-			 resource_file->xml_plist_offset,
-			 resource_file->xml_plist_offset );
+			if( result == -1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_IO,
+				 LIBCERROR_IO_ERROR_READ_FAILED,
+				 "%s: unable to read XML plist at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+				 function,
+				 resource_file->xml_plist_offset,
+				 resource_file->xml_plist_offset );
 
-			goto on_error;
-		}
-		internal_handle->io_handle->media_size = 0;
+				goto on_error;
+			}
+			internal_handle->io_handle->media_size = 0;
 
-		if( libmodi_udif_xml_plist_get_number_of_block_tables(
-		     xml_plist,
-		     &number_of_block_tables,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve number of block tables in XML plist.",
-			 function );
-
-			goto on_error;
-		}
-		for( block_table_index = 0;
-		     block_table_index < number_of_block_tables;
-		     block_table_index++ )
-		{
-			if( libmodi_udif_xml_plist_get_block_table_by_index(
+			if( libmodi_udif_xml_plist_get_number_of_block_tables(
 			     xml_plist,
-			     block_table_index,
-			     &block_table,
+			     &number_of_block_tables,
 			     error ) != 1 )
 			{
 				libcerror_error_set(
 				 error,
 				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve block table: %d from XML plist.",
-				 function,
-				 block_table_index );
+				 "%s: unable to retrieve number of block tables in XML plist.",
+				 function );
 
 				goto on_error;
 			}
-			if( libmodi_udif_block_table_get_number_of_entries(
-			     block_table,
-			     &number_of_block_table_entries,
-			     error ) != 1 )
+			for( block_table_index = 0;
+			     block_table_index < number_of_block_tables;
+			     block_table_index++ )
 			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve number of entries in block table: %d.",
-				 function,
-				 block_table_index );
-
-				goto on_error;
-			}
-			for( block_table_entry_index = 0;
-			     block_table_entry_index < number_of_block_table_entries;
-			     block_table_entry_index++ )
-			{
-				if( libmodi_udif_block_table_get_entry_by_index(
-				     block_table,
-				     block_table_entry_index,
-				     &block_table_entry,
+				if( libmodi_udif_xml_plist_get_block_table_by_index(
+				     xml_plist,
+				     block_table_index,
+				     &block_table,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-					 "%s: unable to retrieve entry: %d from block table: %d.",
+					 "%s: unable to retrieve block table: %d from XML plist.",
 					 function,
-					 block_table_entry_index,
 					 block_table_index );
 
 					goto on_error;
 				}
-				if( ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ADC_COMPRESSED )
-				 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ZLIB_COMPRESSED )
-				 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_BZIP2_COMPRESSED )
-				 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZFSE_COMPRESSED ) )
-				{
-					if( compressed_entry_type == 0 )
-					{
-						compressed_entry_type = block_table_entry->type;
-					}
-					else if( compressed_entry_type != block_table_entry->type )
-					{
-						libcerror_error_set(
-						 error,
-						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-						 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-						 "%s: mixed compressed entry types not supported.",
-						 function );
-
-						goto on_error;
-					}
-				}
-				else if( ( block_table_entry->type != 0x00000000UL )
-				      && ( block_table_entry->type != 0x00000001UL )
-				      && ( block_table_entry->type != 0x00000002UL ) )
-				{
-					libcerror_error_set(
-					 error,
-					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-					 "%s: unsupported block table entry type.",
-					 function );
-
-					goto on_error;
-				}
-/* TODO
-				if( libfdata_vector_append_segment(
-				     internal_handle->bands_vector,
-				     &segment_index,
-				     0,
-				     block_table_entry->data_offset,
-				     block_table_entry->data_size,
-				     0,
+				if( libmodi_udif_block_table_get_number_of_entries(
+				     block_table,
+				     &number_of_block_table_entries,
 				     error ) != 1 )
 				{
 					libcerror_error_set(
 					 error,
 					 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-					 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-					 "%s: unable to append data fork as segment to bands vector.",
-					 function );
+					 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+					 "%s: unable to retrieve number of entries in block table: %d.",
+					 function,
+					 block_table_index );
 
 					goto on_error;
 				}
+				for( block_table_entry_index = 0;
+				     block_table_entry_index < number_of_block_table_entries;
+				     block_table_entry_index++ )
+				{
+					if( libmodi_udif_block_table_get_entry_by_index(
+					     block_table,
+					     block_table_entry_index,
+					     &block_table_entry,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+						 "%s: unable to retrieve entry: %d from block table: %d.",
+						 function,
+						 block_table_entry_index,
+						 block_table_index );
+
+						goto on_error;
+					}
+					if( ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ADC_COMPRESSED )
+					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ZLIB_COMPRESSED )
+					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_BZIP2_COMPRESSED )
+					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZFSE_COMPRESSED ) )
+					{
+						if( compressed_entry_type == 0 )
+						{
+							compressed_entry_type = block_table_entry->type;
+						}
+						else if( compressed_entry_type != block_table_entry->type )
+						{
+							libcerror_error_set(
+							 error,
+							 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+							 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+							 "%s: mixed compressed entry types not supported.",
+							 function );
+
+							goto on_error;
+						}
+					}
+					else if( ( block_table_entry->type != 0x00000000UL )
+					      && ( block_table_entry->type != 0x00000001UL )
+					      && ( block_table_entry->type != 0x00000002UL ) )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+						 "%s: unsupported block table entry type.",
+						 function );
+
+						goto on_error;
+					}
+/* TODO
+					if( libfdata_vector_append_segment(
+					     internal_handle->bands_vector,
+					     &segment_index,
+					     0,
+					     block_table_entry->data_offset,
+					     block_table_entry->data_size,
+					     0,
+					     error ) != 1 )
+					{
+						libcerror_error_set(
+						 error,
+						 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+						 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+						 "%s: unable to append data fork as segment to bands vector.",
+						 function );
+
+						goto on_error;
+					}
 */
 
-				internal_handle->io_handle->media_size += block_table_entry->number_of_sectors;
+					internal_handle->io_handle->media_size += block_table_entry->number_of_sectors;
+				}
+			}
+			internal_handle->io_handle->media_size *= 512;
+
+			if( libmodi_udif_xml_plist_free(
+			     &xml_plist,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+				 "%s: unable to free resource file.",
+				 function );
+
+				goto on_error;
 			}
 		}
 		if( compressed_entry_type != 0 )
@@ -3227,21 +3249,6 @@ int libmodi_internal_handle_open_read_udif_image(
 		else
 		{
 			internal_handle->io_handle->image_type = LIBMODI_IMAGE_TYPE_UDIF_UNCOMPRESSED;
-		}
-		internal_handle->io_handle->media_size *= 512;
-
-		if( libmodi_udif_xml_plist_free(
-		     &xml_plist,
-		     error ) != 1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-			 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-			 "%s: unable to free resource file.",
-			 function );
-
-			goto on_error;
 		}
 	}
 	if( libmodi_udif_resource_file_free(

@@ -518,10 +518,12 @@ int libmodi_check_file_signature_file_io_handle(
 	uint8_t mbr_boot_signature[ 2 ];
 	uint8_t resource_file_signature[ 4 ];
 
-	static char *function      = "libmodi_check_file_signature_file_io_handle";
-	size64_t file_size         = 0;
-	ssize_t read_count         = 0;
-	int file_io_handle_is_open = 1;
+	static char *function       = "libmodi_check_file_signature_file_io_handle";
+	size64_t file_size          = 0;
+	ssize_t read_count          = 0;
+	int file_io_handle_is_open  = 1;
+	uint8_t has_file_system     = 0;
+	uint8_t has_partition_table = 0;
 
 	if( file_io_handle == NULL )
 	{
@@ -718,25 +720,32 @@ int libmodi_check_file_signature_file_io_handle(
 		     modi_mbr_boot_signature,
 		     2 ) == 0 )
 		{
-			return( 1 );
+			has_partition_table = 1;
 		}
+/* TODO add support for GPT */
 	}
 	if( file_size >= 1536 )
 	{
+/* TODO add support for APFS */
 		if( memory_compare(
 		     hfs_signature,
 		     modi_hfsplus_signature,
 		     2 ) == 0 )
 		{
-			return( 1 );
+			has_file_system = 1;
 		}
-		if( memory_compare(
-		     hfs_signature,
-		     modi_hfsx_signature,
-		     2 ) == 0 )
+		else if( memory_compare(
+		          hfs_signature,
+		          modi_hfsx_signature,
+		          2 ) == 0 )
 		{
-			return( 1 );
+			has_file_system = 1;
 		}
+	}
+	if( ( has_partition_table != 0 )
+	 || ( has_file_system != 0 ) )
+	{
+		return( 1 );
 	}
 /* TODO improve check for sparse bundles and uncompressed UDIF */
 	if( memory_compare(

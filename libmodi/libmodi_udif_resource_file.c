@@ -341,7 +341,7 @@ int libmodi_udif_resource_file_read_data(
 		libcnotify_print_data(
 		 ( (modi_udif_resource_file_t *) data )->data_checksum,
 		 128,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		libcnotify_printf(
 		 "%s: XML plist offset\t\t\t: 0x%08" PRIx64 "\n",
@@ -359,7 +359,7 @@ int libmodi_udif_resource_file_read_data(
 		libcnotify_print_data(
 		 ( (modi_udif_resource_file_t *) data )->unknown3,
 		 120,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		byte_stream_copy_to_uint32_big_endian(
 		 ( (modi_udif_resource_file_t *) data )->master_checksum_type,
@@ -378,12 +378,12 @@ int libmodi_udif_resource_file_read_data(
 		 value_32bit );
 
 		libcnotify_printf(
-		 "%s: master checksum:\n",
+		 "%s: master checksum data:\n",
 		 function );
 		libcnotify_print_data(
 		 ( (modi_udif_resource_file_t *) data )->master_checksum,
 		 128,
-		 0 );
+		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		byte_stream_copy_to_uint32_big_endian(
 		 ( (modi_udif_resource_file_t *) data )->unknown4,

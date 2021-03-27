@@ -13,9 +13,8 @@ operating system, e.g. software distribution in the form of .dmg files. This
 specification is based on available documentation and was enhanced by analyzing
 test data.
 
-This document is intended as a working document for the Mac OS disk image
-formats specification. Which should allow existing Open Source forensic tooling
-to be able to process this file type.
+This document is intended as a working document of the data format specification
+for the libmodi project.
 
 [preface]
 == Document information
@@ -32,7 +31,7 @@ to be able to process this file type.
 == License
 
 ....
-Copyright (C) 2012-2019, Joachim Metz <joachim.metz@gmail.com>.
+Copyright (C) 2012-2021, Joachim Metz <joachim.metz@gmail.com>.
 Permission is granted to copy, distribute and/or modify this document under the
 terms of the GNU Free Documentation License, Version 1.3 or any later version
 published by the Free Software Foundation; with no Invariant Sections, no
@@ -51,9 +50,10 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.3 | J.B. Metz | October 2016 | Textual changes and additional information about formats.
 | 0.0.4 | J.B. Metz | November 2016 | Textual changes and additional information about formats.
 | 0.0.5 | J.B. Metz | January 2017 | Additional information about UDIF data format.
-| 0.0.8 | J.B. Metz | December 2018 | Changes to formatting and addtional informatio about formats.
-| 0.0.9 | J.B. Metz | January 2019 | Additional information about formats.
-| 0.0.10 | J.B. Metz | December 2019 | Additional information about UDIF format.
+| 0.0.7 | J.B. Metz | December 2018 | Changes to formatting and addtional informatio about formats.
+| 0.0.8 | J.B. Metz | January 2019 | Additional information about formats.
+| 0.0.9 | J.B. Metz | December 2019 | Additional information about UDIF format.
+| 0.0.10 | J.B. Metz | March 2021 | Additional information.
 |===
 
 :numbered:
@@ -76,6 +76,7 @@ UDSP | .sparseimage | Sparse disk image
 | UDCO | .dmg | Apple Data Compression (ADC) compressed Universal Disk Image Format (UDIF) image
 | UDIF | .dmg | Read-only uncompressed Universal Disk Image Format (UDIF) image
 | UDRO | .dmg | Read-write uncompressed Universal Disk Image Format (UDIF) image
+| UDxx | .dmg | Uncompressed Universal Disk Image Format (UDIF) image
 | UDZO | .dmg | zlib/DEFLATE compressed Universal Disk Image Format (UDIF) image
 | ULFO | .dmg | LZFSE compressed Universal Disk Image Format (UDIF) image
 |===
@@ -83,7 +84,6 @@ UDSP | .sparseimage | Sparse disk image
 ....
 #   UFBI - entire device
 #   IPOD - iPod image, similar to UDZO
-#   UDxx - UDIF stub
 #   UDRW - read/write
 #   UDTO - DVD/CD master
 #   RdWr - NDIF read/write
@@ -91,6 +91,10 @@ UDSP | .sparseimage | Sparse disk image
 #   ROCo - NDIF compressed
 #   Rken - NDIF compressed (KenCode)
 #   UNIV - hybrid image (HFS+/ISO/UDF)
+....
+
+....
+New Disk Image Format (NDIF)
 ....
 
 === Test version
@@ -118,8 +122,8 @@ A compressed UDIF image consist of:
 
 * Data fork
 * Optional resource fork
-* XML plist
-* resource file at the end of the image file.
+* Optional XML plist
+* resource file at the end of the image file
 
 [cols="1,5",options="header"]
 |===
@@ -166,6 +170,9 @@ The offset is relative from the start of the image file
 | 504 | 4 | | [yellow-background]*Unknown (reserved3)*
 | 508 | 4 | | [yellow-background]*Unknown (reserved4)*
 |===
+
+[NOTE]
+The XML plist size can be 0, such as in an UDIF stub (UDxx) image.
 
 === UDIF XML plist
 
