@@ -79,6 +79,7 @@ UDSP | .sparseimage | Sparse disk image
 | UDxx | .dmg | Uncompressed Universal Disk Image Format (UDIF) image
 | UDZO | .dmg | zlib/DEFLATE compressed Universal Disk Image Format (UDIF) image
 | ULFO | .dmg | LZFSE compressed Universal Disk Image Format (UDIF) image
+| ULMO | .dmg | LZMA compressed Universal Disk Image Format (UDIF) image
 |===
 
 ....
@@ -349,6 +350,7 @@ Seen in UDZO image
 | 0x80000005 | | zlib compressed data
 | 0x80000006 | | bzip2 compressed data
 | 0x80000007 | | LZFSE compressed data
+| 0x80000008 | | LZMA compressed data
 3+|
 | 0xffffffff | | Block table entries terminator
 |===

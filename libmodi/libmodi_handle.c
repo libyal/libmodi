@@ -3171,7 +3171,8 @@ int libmodi_internal_handle_open_read_udif_image(
 					if( ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ADC_COMPRESSED )
 					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ZLIB_COMPRESSED )
 					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_BZIP2_COMPRESSED )
-					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZFSE_COMPRESSED ) )
+					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZFSE_COMPRESSED )
+					 || ( block_table_entry->type == LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZMA_COMPRESSED ) )
 					{
 						if( compressed_entry_type == 0 )
 						{
