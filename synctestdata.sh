@@ -5,7 +5,7 @@
 
 TEST_SET="public";
 TEST_INPUT_DIRECTORY="tests/input";
-TEST_FILES="hfsplus.sparseimage";
+TEST_FILES="hfsplus_zlib.dmg hfsplus.sparseimage";
 
 mkdir -p "${TEST_INPUT_DIRECTORY}/${TEST_SET}";
 

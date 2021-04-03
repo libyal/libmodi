@@ -1,12 +1,11 @@
 TODO:
-* libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
-* add compressed dmg support
-  - add support for resource fork
+* add ADC decompression support
+* add bzip2 decompression fallback implementation
+* add lzfse decompression support
+* add lzma decompression support
+* add lzma decompression fallback implementation
 * add support for encrypted disk images
-* improve check signature to detect sparse bundle
-* move libmodi_io_handle_read_data_block
-* replace vector by data stream?
-* move libmodi_io_handle_read_data_block
+* libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
 
 20161030
 * see `git log' for more recent change log

@@ -119,6 +119,13 @@ dnl Check if zlib or required headers and functions are available
 AX_ZLIB_CHECK_ENABLE
 AX_ZLIB_CHECK_UNCOMPRESS
 
+dnl Check if bzip2 or required headers and functions are available
+AX_BZIP2_CHECK_ENABLE
+AX_BZIP2_CHECK_DECOMPRESS
+
+dnl Check if lzma or required headers and functions are available
+AX_LZMA_CHECK_ENABLE
+
 dnl Check if libhmac or required headers and functions are available
 AX_LIBHMAC_CHECK_ENABLE
 
@@ -254,7 +261,9 @@ Building:
    libfguid support:                          $ac_cv_libfguid
    libfvalue support:                         $ac_cv_libfvalue
    libfplist support:                         $ac_cv_libfplist
+   BZIP2 compression support:                 $ac_cv_bzip2
    DEFLATE compression support:               $ac_cv_uncompress
+   LZMA compression support:                  $ac_cv_lzma
    libhmac support:                           $ac_cv_libhmac
    SHA256 support:                            $ac_cv_libhmac_sha256
    libcaes support:                           $ac_cv_libcaes
