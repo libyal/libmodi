@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libmodi_debug.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 #include "libmodi_udif_block_table_entry.h"
@@ -218,9 +219,11 @@ int libmodi_udif_block_table_entry_read_data(
 	if( libcnotify_verbose != 0 )
 	{
 		libcnotify_printf(
-		 "%s: type\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: type\t\t\t\t: 0x%08" PRIx32 " (%s)\n",
 		 function,
-		 block_table_entry->type );
+		 block_table_entry->type,
+		 libmodi_debug_get_udif_block_table_entry_type(
+		  block_table_entry->type ) );
 
 		byte_stream_copy_to_uint32_big_endian(
 		 ( (modi_udif_block_table_entry_t *) data )->unknown1,

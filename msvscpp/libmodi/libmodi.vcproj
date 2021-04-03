@@ -178,6 +178,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_block_chunks_data_handle.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_compression.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_data_block.c"
 				>
 			</File>
@@ -252,7 +260,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_block_chunks_data_handle.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_codepage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_compression.h"
 				>
 			</File>
 			<File

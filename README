@@ -16,6 +16,7 @@ Unsupported Mac OS image formats:
 * ADC compressed Universal Disk Image Format (UDIF) image
 * bzip2 compressed Universal Disk Image Format (UDIF) image
 * LZFSE compressed Universal Disk Image Format (UDIF) image
+* LZMA compressed Universal Disk Image Format (UDIF) image
 * zlib/DEFLATE compressed Universal Disk Image Format (UDIF) image
 * encrypted images
 

@@ -1,5 +1,5 @@
 /*
- * The bands data handle functions
+ * The block chunks data handle functions
  *
  * Copyright (C) 2010-2021, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -23,7 +23,7 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libmodi_bands_data_handle.h"
+#include "libmodi_block_chunks_data_handle.h"
 #include "libmodi_data_block.h"
 #include "libmodi_definitions.h"
 #include "libmodi_io_handle.h"
@@ -34,16 +34,16 @@
 #include "libmodi_libfcache.h"
 #include "libmodi_unused.h"
 
-/* Creates bands data handle
+/* Creates block chunks data handle
  * Make sure the value data_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error
  */
-int libmodi_bands_data_handle_initialize(
-     libmodi_bands_data_handle_t **data_handle,
+int libmodi_block_chunks_data_handle_initialize(
+     libmodi_block_chunks_data_handle_t **data_handle,
      libmodi_io_handle_t *io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_bands_data_handle_initialize";
+	static char *function = "libmodi_block_chunks_data_handle_initialize";
 
 	if( data_handle == NULL )
 	{
@@ -79,7 +79,7 @@ int libmodi_bands_data_handle_initialize(
 		return( -1 );
 	}
 	*data_handle = memory_allocate_structure(
-	                libmodi_bands_data_handle_t );
+	                libmodi_block_chunks_data_handle_t );
 
 	if( *data_handle == NULL )
 	{
@@ -95,7 +95,7 @@ int libmodi_bands_data_handle_initialize(
 	if( memory_set(
 	     *data_handle,
 	     0,
-	     sizeof( libmodi_bands_data_handle_t ) ) == NULL )
+	     sizeof( libmodi_block_chunks_data_handle_t ) ) == NULL )
 	{
 		libcerror_error_set(
 		 error,
@@ -111,13 +111,12 @@ int libmodi_bands_data_handle_initialize(
 
 		return( -1 );
 	}
-	if( libfdata_vector_initialize(
-	     &( ( *data_handle )->bands_vector ),
-	     (size64_t) 512,
+	if( libfdata_list_initialize(
+	     &( ( *data_handle )->block_chunks_list ),
 	     (intptr_t *) io_handle,
 	     NULL,
 	     NULL,
-	     (int (*)(intptr_t *, intptr_t *, libfdata_vector_t *, libfdata_cache_t *, int, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libmodi_data_block_read_vector_element_data,
+	     (int (*)(intptr_t *, intptr_t *, libfdata_list_element_t *, libfdata_cache_t *, int, off64_t, size64_t, uint32_t, uint8_t, libcerror_error_t **)) &libmodi_data_block_read_list_element_data,
 	     NULL,
 	     LIBFDATA_DATA_HANDLE_FLAG_NON_MANAGED,
 	     error ) != 1 )
@@ -126,21 +125,21 @@ int libmodi_bands_data_handle_initialize(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bands vector.",
+		 "%s: unable to create block chunks list.",
 		 function );
 
 		goto on_error;
 	}
 	if( libfcache_cache_initialize(
-	     &( ( *data_handle )->bands_cache ),
-	     LIBMODI_MAXIMUM_CACHE_ENTRIES_DATA_BANDS,
+	     &( ( *data_handle )->block_chunks_cache ),
+	     LIBMODI_MAXIMUM_CACHE_ENTRIES_DATA_BLOCK_CHUNKS,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bands cache.",
+		 "%s: unable to create block chunks cache.",
 		 function );
 
 		goto on_error;
@@ -150,10 +149,10 @@ int libmodi_bands_data_handle_initialize(
 on_error:
 	if( *data_handle != NULL )
 	{
-		if( ( *data_handle )->bands_vector != NULL )
+		if( ( *data_handle )->block_chunks_list != NULL )
 		{
-			libfdata_vector_free(
-			 &( ( *data_handle )->bands_vector ),
+			libfdata_list_free(
+			 &( ( *data_handle )->block_chunks_list ),
 			 NULL );
 		}
 		memory_free(
@@ -167,11 +166,11 @@ on_error:
 /* Frees a data handle
  * Returns 1 if successful or -1 on error
  */
-int libmodi_bands_data_handle_free(
-     libmodi_bands_data_handle_t **data_handle,
+int libmodi_block_chunks_data_handle_free(
+     libmodi_block_chunks_data_handle_t **data_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_bands_data_handle_free";
+	static char *function = "libmodi_block_chunks_data_handle_free";
 	int result            = 1;
 
 	if( data_handle == NULL )
@@ -188,27 +187,27 @@ int libmodi_bands_data_handle_free(
 	if( *data_handle != NULL )
 	{
 		if( libfcache_cache_free(
-		     &( ( *data_handle )->bands_cache ),
+		     &( ( *data_handle )->block_chunks_cache ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free bands cache.",
+			 "%s: unable to free block chunks cache.",
 			 function );
 
 			result = -1;
 		}
-		if( libfdata_vector_free(
-		     &( ( *data_handle )->bands_vector ),
+		if( libfdata_list_free(
+		     &( ( *data_handle )->block_chunks_list ),
 		     error ) != 1 )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-			 "%s: unable to free bands vector.",
+			 "%s: unable to free block chunks list.",
 			 function );
 
 			result = -1;
@@ -224,16 +223,17 @@ int libmodi_bands_data_handle_free(
 /* Appends a segment
  * Returns 1 if successful or -1 on error
  */
-int libmodi_bands_data_handle_append_segment(
-     libmodi_bands_data_handle_t *data_handle,
+int libmodi_block_chunks_data_handle_append_segment(
+     libmodi_block_chunks_data_handle_t *data_handle,
      int segment_file_index,
      off64_t segment_offset,
      size64_t segment_size,
      uint32_t segment_flags,
+     size64_t mapped_size,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_bands_data_handle_append_segment";
-	int segment_index     = 0;
+	static char *function = "libmodi_block_chunks_data_handle_append_segment";
+	int element_index     = 0;
 
 	if( data_handle == NULL )
 	{
@@ -246,20 +246,21 @@ int libmodi_bands_data_handle_append_segment(
 
 		return( -1 );
 	}
-	if( libfdata_vector_append_segment(
-	     data_handle->bands_vector,
-	     &segment_index,
+	if( libfdata_list_append_element_with_mapped_size(
+	     data_handle->block_chunks_list,
+	     &element_index,
 	     segment_file_index,
 	     segment_offset,
 	     segment_size,
 	     segment_flags,
+	     mapped_size,
 	     error ) != 1 )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to append segment to bands vector.",
+		 "%s: unable to append element to block chunks list.",
 		 function );
 
 		return( -1 );
@@ -271,8 +272,8 @@ int libmodi_bands_data_handle_append_segment(
  * Callback for the data stream
  * Returns the number of bytes read or -1 on error
  */
-ssize_t libmodi_bands_data_handle_read_segment_data(
-         libmodi_bands_data_handle_t *data_handle,
+ssize_t libmodi_block_chunks_data_handle_read_segment_data(
+         libmodi_block_chunks_data_handle_t *data_handle,
          libbfio_handle_t *file_io_handle,
          int segment_index,
          int segment_file_index LIBMODI_ATTRIBUTE_UNUSED,
@@ -283,10 +284,11 @@ ssize_t libmodi_bands_data_handle_read_segment_data(
          libcerror_error_t **error )
 {
 	libmodi_data_block_t *data_block = NULL;
-	static char *function            = "libmodi_bands_data_handle_read_segment_data";
+	static char *function            = "libmodi_block_chunks_data_handle_read_segment_data";
 	size_t read_size                 = 0;
 	size_t segment_data_offset       = 0;
 	off64_t element_data_offset      = 0;
+	int element_index                = 0;
 
 	LIBMODI_UNREFERENCED_PARAMETER( segment_file_index )
 	LIBMODI_UNREFERENCED_PARAMETER( segment_flags )
@@ -349,8 +351,8 @@ ssize_t libmodi_bands_data_handle_read_segment_data(
 	}
 	if( data_handle->data_size == 0 )
 	{
-		if( libfdata_vector_get_size(
-		     data_handle->bands_vector,
+		if( libfdata_list_get_size(
+		     data_handle->block_chunks_list,
 		     &( data_handle->data_size ),
 		     error ) != 1 )
 		{
@@ -358,7 +360,7 @@ ssize_t libmodi_bands_data_handle_read_segment_data(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-			 "%s: unable to retrieve size of bands vector.",
+			 "%s: unable to retrieve size of block chunks list.",
 			 function );
 
 			return( -1 );
@@ -370,11 +372,12 @@ ssize_t libmodi_bands_data_handle_read_segment_data(
 	}
 	while( segment_data_size > 0 )
 	{
-		if( libfdata_vector_get_element_value_at_offset(
-		     data_handle->bands_vector,
+		if( libfdata_list_get_element_value_at_offset(
+		     data_handle->block_chunks_list,
 		     (intptr_t *) file_io_handle,
-		     (libfdata_cache_t *) data_handle->bands_cache,
+		     (libfdata_cache_t *) data_handle->block_chunks_cache,
 		     data_handle->current_offset,
+		     &element_index,
 		     &element_data_offset,
 		     (intptr_t **) &data_block,
 		     0,
@@ -462,15 +465,15 @@ ssize_t libmodi_bands_data_handle_read_segment_data(
  * Callback for the data stream
  * Returns the offset if seek is successful or -1 on error
  */
-off64_t libmodi_bands_data_handle_seek_segment_offset(
-         libmodi_bands_data_handle_t *data_handle,
+off64_t libmodi_block_chunks_data_handle_seek_segment_offset(
+         libmodi_block_chunks_data_handle_t *data_handle,
          intptr_t *file_io_handle LIBMODI_ATTRIBUTE_UNUSED,
          int segment_index,
          int segment_file_index LIBMODI_ATTRIBUTE_UNUSED,
          off64_t segment_offset,
          libcerror_error_t **error )
 {
-	static char *function = "libmodi_bands_data_handle_seek_segment_offset";
+	static char *function = "libmodi_block_chunks_data_handle_seek_segment_offset";
 
 	LIBMODI_UNREFERENCED_PARAMETER( file_io_handle )
 	LIBMODI_UNREFERENCED_PARAMETER( segment_file_index )

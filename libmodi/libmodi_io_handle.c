@@ -27,15 +27,6 @@
 #include "libmodi_io_handle.h"
 #include "libmodi_libcerror.h"
 
-const uint8_t modi_mbr_boot_signature[ 2 ] = {
-	0x55, 0xaa };
-
-const uint8_t modi_hfsplus_signature[ 2 ] = {
-	'H', '+' };
-
-const uint8_t modi_hfsx_signature[ 2 ] = {
-	'H', 'X' };
-
 const uint8_t modi_sparse_image_signature[ 4 ] = {
 	's', 'p', 'r', 's' };
 
@@ -100,12 +91,7 @@ int libmodi_io_handle_initialize(
 		 "%s: unable to clear IO handle.",
 		 function );
 
-		memory_free(
-		 *io_handle );
-
-		*io_handle = NULL;
-
-		return( -1 );
+		goto on_error;
 	}
 	( *io_handle )->image_type = LIBMODI_IMAGE_TYPE_UNKNOWN;
 

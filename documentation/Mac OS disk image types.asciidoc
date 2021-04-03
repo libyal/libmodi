@@ -124,7 +124,7 @@ A compressed UDIF image consist of:
 * Data fork
 * Optional resource fork
 * Optional XML plist
-* resource file at the end of the image file
+* Resource file at the end of the image file
 
 [cols="1,5",options="header"]
 |===
@@ -337,12 +337,9 @@ Contains the byte offset relative to the start of the UDIF image file
 [cols="1,1,5",options="header"]
 |===
 | Value | Identifier | Description
-| 0x00000000 | | [yellow-background]*Unknown (sparse block?)* +
-Seen in UDRO image
-| 0x00000001 | | [yellow-background]*Unknown (uncompressed data)* +
-Seen in UDRO image
-| 0x00000002 | | [yellow-background]*Unknown (unknown?)* +
-Seen in UDZO image
+| 0x00000000 | | [yellow-background]*Unknown (sparse)*
+| 0x00000001 | | Uncompressed (raw) data
+| 0x00000002 | | Sparse (used for Apple_Free)
 3+|
 | 0x7ffffffe | | [yellow-background]*Unknown (comment)*
 3+|
@@ -361,6 +358,10 @@ struct UDIFChecksum {
   uint32_t size;
   uint8_t data[128];
 };
+....
+
+....
+Is the maximum chunk size 2048 sectors?
 ....
 
 === UDIF data fork

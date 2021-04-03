@@ -23,11 +23,52 @@
 #include <types.h>
 
 #include "libmodi_debug.h"
+#include "libmodi_definitions.h"
 #include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
 
 #if defined( HAVE_DEBUG_OUTPUT )
+
+/* Retrieves a string containing the UDIF block table entry type
+ */
+const char *libmodi_debug_get_udif_block_table_entry_type(
+             uint32_t udif_block_table_entry )
+{
+	switch( udif_block_table_entry )
+	{
+		case 0x00000000UL:
+			return( "sparse" );
+
+		case 0x00000001UL:
+			return( "raw" );
+
+		case 0x00000002UL:
+			return( "sparse" );
+
+		case 0x7ffffffeUL:
+			return( "comment" );
+
+		case LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ADC_COMPRESSED:
+			return( "ADC compressed" );
+
+		case LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_ZLIB_COMPRESSED:
+			return( "zlib compressed" );
+
+		case LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_BZIP2_COMPRESSED:
+			return( "bzip2 compressed" );
+
+		case LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZFSE_COMPRESSED:
+			return( "LZFSE compressed" );
+
+		case LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_LZMA_COMPRESSED:
+			return( "LZMA compressed" );
+
+		case LIBMODI_UDIF_BLOCK_TABLE_ENTRY_TYPE_TERMINATOR:
+			return( "terminator" );
+	}
+	return( "UNKNOWN" );
+}
 
 /* Prints the read offsets
  * Returns 1 if successful or -1 on error

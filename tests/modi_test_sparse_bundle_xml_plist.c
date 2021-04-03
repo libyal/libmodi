@@ -312,9 +312,9 @@ on_error:
 int modi_test_sparse_bundle_xml_plist_read_data(
      void )
 {
-	libcerror_error_t *error                         = NULL;
+	libcerror_error_t *error                                   = NULL;
 	libmodi_sparse_bundle_xml_plist_t *sparse_bundle_xml_plist = NULL;
-	int result                                       = 0;
+	int result                                                 = 0;
 
 	/* Initialize test
 	 */
@@ -425,6 +425,66 @@ int modi_test_sparse_bundle_xml_plist_read_data(
 
 	libcerror_error_free(
 	 &error );
+
+#if defined( HAVE_MODI_TEST_MEMORY )
+
+	/* Test libmodi_sparse_bundle_xml_plist_read_data with malloc failing in libfplist_property_list_initialize
+	 */
+	modi_test_malloc_attempts_before_fail = 0;
+
+	result = libmodi_sparse_bundle_xml_plist_read_data(
+	          sparse_bundle_xml_plist,
+	          modi_test_sparse_bundle_xml_plist_data1,
+	          494,
+	          &error );
+
+	if( modi_test_malloc_attempts_before_fail != -1 )
+	{
+		modi_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		MODI_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+	/* Test libmodi_sparse_bundle_xml_plist_read_data with malloc failing in libfplist_property_list_get_root_property
+	 */
+	modi_test_malloc_attempts_before_fail = 1;
+
+	result = libmodi_sparse_bundle_xml_plist_read_data(
+	          sparse_bundle_xml_plist,
+	          modi_test_sparse_bundle_xml_plist_data1,
+	          494,
+	          &error );
+
+	if( modi_test_malloc_attempts_before_fail != -1 )
+	{
+		modi_test_malloc_attempts_before_fail = -1;
+	}
+	else
+	{
+		MODI_TEST_ASSERT_EQUAL_INT(
+		 "result",
+		 result,
+		 -1 );
+
+		MODI_TEST_ASSERT_IS_NOT_NULL(
+		 "error",
+		 error );
+
+		libcerror_error_free(
+		 &error );
+	}
+#endif /* defined( HAVE_MODI_TEST_MEMORY ) */
 
 	/* Clean up
 	 */

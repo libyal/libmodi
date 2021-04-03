@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include "libmodi_bands_data_handle.h"
+#include "libmodi_block_chunks_data_handle.h"
 #include "libmodi_extern.h"
 #include "libmodi_io_handle.h"
 #include "libmodi_libbfio.h"
@@ -82,6 +83,10 @@ struct libmodi_internal_handle
 	/* The bands data handle
 	 */
 	libmodi_bands_data_handle_t *bands_data_handle;
+
+	/* The block chunks data handle
+	 */
+	libmodi_block_chunks_data_handle_t *block_chunks_data_handle;
 
 	/* The data stream
 	 */

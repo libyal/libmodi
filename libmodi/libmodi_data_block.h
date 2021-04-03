@@ -66,7 +66,19 @@ int libmodi_data_block_read_file_io_handle(
      off64_t data_offset,
      libcerror_error_t **error );
 
-int libmodi_io_handle_read_data_block(
+int libmodi_data_block_read_list_element_data(
+     libmodi_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libfdata_list_element_t *element,
+     libfdata_cache_t *cache,
+     int element_data_file_index,
+     off64_t element_data_offset,
+     size64_t element_data_size,
+     uint32_t element_data_flags,
+     uint8_t read_flags,
+     libcerror_error_t **error );
+
+int libmodi_data_block_read_vector_element_data(
      libmodi_io_handle_t *io_handle,
      intptr_t *file_io_handle,
      libfdata_vector_t *vector,

@@ -1,5 +1,5 @@
 /*
- * Debug functions
+ * Compression functions
  *
  * Copyright (C) 2012-2021, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -19,33 +19,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if !defined( _LIBMODI_DEBUG_H )
-#define _LIBMODI_DEBUG_H
+#if !defined( _LIBMODI_COMPRESSION_H )
+#define _LIBMODI_COMPRESSION_H
 
 #include <common.h>
 #include <types.h>
 
-#include "libmodi_libbfio.h"
 #include "libmodi_libcerror.h"
 
 #if defined( __cplusplus )
 extern "C" {
 #endif
 
-#if defined( HAVE_DEBUG_OUTPUT )
-
-const char *libmodi_debug_get_udif_block_table_entry_type(
-             uint32_t udif_block_table_entry );
-
-int libmodi_debug_print_read_offsets(
-     libbfio_handle_t *file_io_handle,
+int libmodi_decompress_data(
+     const uint8_t *compressed_data,
+     size_t compressed_data_size,
+     int compression_method,
+     uint8_t *uncompressed_data,
+     size_t *uncompressed_data_size,
      libcerror_error_t **error );
-
-#endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
 #if defined( __cplusplus )
 }
 #endif
 
-#endif /* !defined( _LIBMODI_DEBUG_H ) */
+#endif /* !defined( _LIBMODI_COMPRESSION_H ) */
 

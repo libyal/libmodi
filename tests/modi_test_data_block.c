@@ -368,6 +368,7 @@ int modi_test_data_block_clear(
 {
 	libcerror_error_t *error         = NULL;
 	libmodi_data_block_t *data_block = NULL;
+	uint8_t *data                    = NULL;
 	int result                       = 0;
 
 	/* Initialize test
@@ -410,6 +411,28 @@ int modi_test_data_block_clear(
 	result = libmodi_data_block_clear(
 	          NULL,
 	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	data = data_block->data;
+
+	data_block->data = NULL;
+
+	result = libmodi_data_block_clear(
+	          data_block,
+	          &error );
+
+	data_block->data = data;
 
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -723,6 +746,53 @@ on_error:
 	return( 0 );
 }
 
+/* Tests the libmodi_data_block_read_vector_element_data function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_data_block_read_vector_element_data(
+     void )
+{
+	libcerror_error_t *error = NULL;
+	int result               = 0;
+
+	/* Test error cases
+	 */
+	result = libmodi_data_block_read_vector_element_data(
+	          NULL,
+	          NULL,
+	          NULL,
+	          NULL,
+	          0,
+	          0,
+	          0,
+	          0,
+	          0,
+	          0,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	return( 1 );
+
+on_error:
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 /* The main program
@@ -758,11 +828,19 @@ int main(
 	 "libmodi_data_block_read_file_io_handle",
 	 modi_test_data_block_read_file_io_handle );
 
+	MODI_TEST_RUN(
+	 "libmodi_data_block_read_vector_element_data",
+	 modi_test_data_block_read_vector_element_data );
+
 #endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 }
 

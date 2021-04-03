@@ -65,11 +65,6 @@
 #if !defined( LIBMODI_HAVE_BFIO )
 
 LIBMODI_EXTERN \
-int libmodi_check_file_signature_file_io_handle(
-     libbfio_handle_t *file_io_handle,
-     libcerror_error_t **error );
-
-LIBMODI_EXTERN \
 int libmodi_handle_open_file_io_handle(
      libmodi_handle_t *handle,
      libbfio_handle_t *file_io_handle,
@@ -2520,22 +2515,6 @@ int main(
 
 			info_plist_path = NULL;
 		} 
-		result = libmodi_check_file_signature_file_io_handle(
-		          file_io_handle,
-		          &error );
-
-		MODI_TEST_ASSERT_NOT_EQUAL_INT(
-		 "result",
-		 result,
-		 -1 );
-
-		MODI_TEST_ASSERT_IS_NULL(
-		 "error",
-		 error );
-	}
-	if( ( source != NULL )
-	 && ( result != 0 ) )
-	{
 		MODI_TEST_RUN_WITH_ARGS(
 		 "libmodi_handle_open",
 		 modi_test_handle_open,

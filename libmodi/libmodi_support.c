@@ -514,16 +514,12 @@ int libmodi_check_file_signature_file_io_handle(
      libcerror_error_t **error )
 {
 	uint8_t header_signature[ 5 ];
-	uint8_t hfs_signature[ 2 ];
-	uint8_t mbr_boot_signature[ 2 ];
 	uint8_t resource_file_signature[ 4 ];
 
-	static char *function       = "libmodi_check_file_signature_file_io_handle";
-	size64_t file_size          = 0;
-	ssize_t read_count          = 0;
-	int file_io_handle_is_open  = 1;
-	uint8_t has_file_system     = 0;
-	uint8_t has_partition_table = 0;
+	static char *function      = "libmodi_check_file_signature_file_io_handle";
+	size64_t file_size         = 0;
+	ssize_t read_count         = 0;
+	int file_io_handle_is_open = 1;
 
 	if( file_io_handle == NULL )
 	{
@@ -604,80 +600,6 @@ int libmodi_check_file_signature_file_io_handle(
 
 		goto on_error;
 	}
-	if( file_size >= 512 )
-	{
-		read_count = libbfio_handle_read_buffer_at_offset(
-		              file_io_handle,
-		              mbr_boot_signature,
-		              2,
-		              510,
-		              error );
-
-		if( read_count != 2 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read MBR boot signature at offset: 510 (0x000001fe).",
-			 function );
-
-			goto on_error;
-		}
-		if( libbfio_handle_seek_offset(
-		     file_io_handle,
-		     -512,
-		     SEEK_END,
-		     error ) == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_SEEK_FAILED,
-			 "%s: unable to seek UDIF resource file offset: -512 from the end.",
-			 function );
-
-			goto on_error;
-		}
-		read_count = libbfio_handle_read_buffer(
-		              file_io_handle,
-		              resource_file_signature,
-		              4,
-		              error );
-
-		if( read_count != 4 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read UDIF resource file signature.",
-			 function );
-
-			goto on_error;
-		}
-	}
-	if( file_size >= 1536 )
-	{
-		read_count = libbfio_handle_read_buffer_at_offset(
-		              file_io_handle,
-		              hfs_signature,
-		              2,
-		              1024,
-		              error );
-
-		if( read_count != 2 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read HFS signature at offset: 1024 (0x00000400).",
-			 function );
-
-			goto on_error;
-		}
-	}
 	if( file_io_handle_is_open == 0 )
 	{
 		file_io_handle_is_open = 1;
@@ -715,37 +637,6 @@ int libmodi_check_file_signature_file_io_handle(
 		{
 			return( 1 );
 		}
-		if( memory_compare(
-		     mbr_boot_signature,
-		     modi_mbr_boot_signature,
-		     2 ) == 0 )
-		{
-			has_partition_table = 1;
-		}
-/* TODO add support for GPT */
-	}
-	if( file_size >= 1536 )
-	{
-/* TODO add support for APFS */
-		if( memory_compare(
-		     hfs_signature,
-		     modi_hfsplus_signature,
-		     2 ) == 0 )
-		{
-			has_file_system = 1;
-		}
-		else if( memory_compare(
-		          hfs_signature,
-		          modi_hfsx_signature,
-		          2 ) == 0 )
-		{
-			has_file_system = 1;
-		}
-	}
-	if( ( has_partition_table != 0 )
-	 || ( has_file_system != 0 ) )
-	{
-		return( 1 );
 	}
 /* TODO improve check for sparse bundles and uncompressed UDIF */
 	if( memory_compare(

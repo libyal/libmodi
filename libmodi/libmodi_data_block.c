@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libmodi_compression.h"
 #include "libmodi_data_block.h"
 #include "libmodi_definitions.h"
 #include "libmodi_io_handle.h"
@@ -291,10 +292,246 @@ int libmodi_data_block_read_file_io_handle(
 }
 
 /* Reads a data block
+ * Callback function for the block chunks list
+ * Returns 1 if successful or -1 on error
+ */
+int libmodi_data_block_read_list_element_data(
+     libmodi_io_handle_t *io_handle,
+     libbfio_handle_t *file_io_handle,
+     libfdata_list_element_t *element,
+     libfdata_cache_t *cache,
+     int element_data_file_index LIBMODI_ATTRIBUTE_UNUSED,
+     off64_t element_data_offset,
+     size64_t element_data_size,
+     uint32_t element_data_flags,
+     uint8_t read_flags LIBMODI_ATTRIBUTE_UNUSED,
+     libcerror_error_t **error )
+{
+	libmodi_data_block_t *data_block = NULL;
+	static char *function            = "libmodi_data_block_read_list_element_data";
+	uint8_t *compressed_data         = NULL;
+	size64_t mapped_size             = 0;
+	size_t uncompressed_data_size    = 0;
+	ssize_t read_count               = 0;
+
+	LIBMODI_UNREFERENCED_PARAMETER( data_range_file_index )
+	LIBMODI_UNREFERENCED_PARAMETER( read_flags )
+
+	if( io_handle == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
+		 "%s: invalid IO handle.",
+		 function );
+
+		return( -1 );
+	}
+	if( ( element_data_flags & LIBFDATA_RANGE_FLAG_IS_COMPRESSED ) != 0 )
+	{
+		if( ( element_data_size == 0 )
+		 || ( element_data_size > (size64_t) SSIZE_MAX ) )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
+			 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+			 "%s: invalid element data size value out of bounds.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	if( libfdata_list_element_get_mapped_size(
+	     element,
+	     &mapped_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve mapped size from element.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( mapped_size == 0 )
+	 || ( mapped_size > (size64_t) SSIZE_MAX ) )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid block chunk data size value out of bounds.",
+		 function );
+
+		goto on_error;
+	}
+	if( libmodi_data_block_initialize(
+	     &data_block,
+	     (size_t) mapped_size,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create data block.",
+		 function );
+
+		goto on_error;
+	}
+	if( ( element_data_flags & LIBFDATA_RANGE_FLAG_IS_SPARSE ) != 0 )
+	{
+		if( memory_set(
+		     data_block->data,
+		     0,
+		     data_block->data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear data block.",
+			 function );
+
+			goto on_error;
+		}
+	}
+	else if( ( element_data_flags & LIBFDATA_RANGE_FLAG_IS_COMPRESSED ) != 0 )
+	{
+#if defined( HAVE_DEBUG_OUTPUT )
+		if( libcnotify_verbose != 0 )
+		{
+			libcnotify_printf(
+			 "%s: reading compressed block chunk at offset: %" PRIi64 " (0x%08" PRIx64 ")\n",
+			 function,
+			 element_data_offset,
+			 element_data_offset );
+		}
+#endif
+		compressed_data = (uint8_t *) memory_allocate(
+		                               sizeof( uint8_t ) * element_data_size );
+
+		if( compressed_data == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+			 "%s: unable to create compressed data.",
+			 function );
+
+			goto on_error;
+		}
+		read_count = libbfio_handle_read_buffer_at_offset(
+		              file_io_handle,
+		              compressed_data,
+		              element_data_size,
+		              element_data_offset,
+		              error );
+
+		if( read_count != (ssize_t) element_data_size )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read compressed block chunk at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 element_data_offset,
+			 element_data_offset );
+
+			goto on_error;
+		}
+		uncompressed_data_size = data_block->data_size;
+
+		if( libmodi_decompress_data(
+		     compressed_data,
+		     (size_t) read_count,
+		     io_handle->compression_method,
+		     data_block->data,
+		     &uncompressed_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
+			 "%s: unable to decompress block chunk at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 element_data_offset,
+			 element_data_offset );
+
+			goto on_error;
+		}
+		memory_free(
+		 compressed_data );
+
+		compressed_data = NULL;
+	}
+	else
+	{
+		if( libmodi_data_block_read_file_io_handle(
+		     data_block,
+		     file_io_handle,
+		     element_data_offset,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read data block at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 element_data_offset,
+			 element_data_offset );
+
+			goto on_error;
+		}
+	}
+	if( libfdata_list_element_set_element_value(
+	     element,
+	     (intptr_t *) file_io_handle,
+	     cache,
+	     (intptr_t *) data_block,
+	     (int (*)(intptr_t **, libcerror_error_t **)) &libmodi_data_block_free,
+	     LIBFDATA_LIST_ELEMENT_VALUE_FLAG_MANAGED,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_SET_FAILED,
+		 "%s: unable to set data block as element value.",
+		 function );
+
+		goto on_error;
+	}
+	return( 1 );
+
+on_error:
+	if( compressed_data != NULL )
+	{
+		memory_free(
+		 compressed_data );
+	}
+	if( data_block != NULL )
+	{
+		libmodi_data_block_free(
+		 &data_block,
+		 NULL );
+	}
+	return( -1 );
+}
+
+/* Reads a data block
  * Callback function for the data block vector
  * Returns 1 if successful or -1 on error
  */
-int libmodi_io_handle_read_data_block(
+int libmodi_data_block_read_vector_element_data(
      libmodi_io_handle_t *io_handle,
      intptr_t *file_io_handle,
      libfdata_vector_t *vector,
@@ -309,7 +546,7 @@ int libmodi_io_handle_read_data_block(
 {
 	libbfio_handle_t *bfio_handle    = NULL;
 	libmodi_data_block_t *data_block = NULL;
-	static char *function            = "libmodi_io_handle_read_data_block";
+	static char *function            = "libmodi_data_block_read_vector_element_data";
 
 	LIBMODI_UNREFERENCED_PARAMETER( read_flags );
 
@@ -336,13 +573,14 @@ int libmodi_io_handle_read_data_block(
 
 		return( -1 );
 	}
-	if( element_data_size > (size64_t) SSIZE_MAX )
+	if( ( element_data_size == 0 )
+	 || ( element_data_size > (size64_t) SSIZE_MAX ) )
 	{
 		libcerror_error_set(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid element data size value exceeds maximum.",
+		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
+		 "%s: invalid element data size value out of bounds.",
 		 function );
 
 		return( -1 );
@@ -384,24 +622,21 @@ int libmodi_io_handle_read_data_block(
 		{
 			bfio_handle = (libbfio_handle_t *) file_io_handle;
 		}
-		else
+		else if( libbfio_pool_get_handle(
+		          (libbfio_pool_t *) file_io_handle,
+		          element_data_file_index,
+		          &bfio_handle,
+		          error ) != 1 )
 		{
-			if( libbfio_pool_get_handle(
-			     (libbfio_pool_t *) file_io_handle,
-			     element_data_file_index,
-			     &bfio_handle,
-			     error ) != 1 )
-			{
-				libcerror_error_set(
-				 error,
-				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
-				 "%s: unable to retrieve handle: %d from file IO pool.",
-				 function,
-				 element_data_file_index );
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve handle: %d from file IO pool.",
+			 function,
+			 element_data_file_index );
 
-				return( -1 );
-			}
+			goto on_error;
 		}
 		if( libmodi_data_block_read_file_io_handle(
 		     data_block,
