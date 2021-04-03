@@ -35,6 +35,7 @@
 #include <zlib.h>
 #endif
 
+#include "libmodi_adc.h"
 #include "libmodi_compression.h"
 #include "libmodi_definitions.h"
 #include "libmodi_deflate.h"
@@ -106,7 +107,28 @@ int libmodi_decompress_data(
 
 		return( -1 );
 	}
-	if( compression_method == LIBMODI_COMPRESSION_METHOD_BZIP2 )
+	if( compression_method == LIBMODI_COMPRESSION_METHOD_ADC )
+	{
+		result = libmodi_adc_decompress(
+		          compressed_data,
+		          compressed_data_size,
+		          uncompressed_data,
+		          uncompressed_data_size,
+		          error );
+
+		if( result != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_ENCRYPTION,
+			 LIBCERROR_ENCRYPTION_ERROR_GENERIC,
+			 "%s: unable to decompress ADC compressed data.",
+			 function );
+
+			return( -1 );
+		}
+	}
+	else if( compression_method == LIBMODI_COMPRESSION_METHOD_BZIP2 )
 	{
 #if defined( HAVE_BZLIB ) || defined( BZLIB_DLL )
 		if( compressed_data_size > (size_t) UINT_MAX )

@@ -69,7 +69,7 @@ Currently Mac OS is known to support:
 | Identifier | Extension | Description
 | DC42 | | [yellow-background]*Unknown (Disk Copy 4.2)*
 | SPARSEBUNDLE +
-UDSB | .sparseimage | Sparse bundle disk image
+UDSB | .sparsebundle | Sparse bundle disk image
 | SPARSE +
 UDSP | .sparseimage | Sparse disk image
 | UDBZ | .dmg | bzip2 compressed Universal Disk Image Format (UDIF) image
@@ -83,10 +83,10 @@ UDSP | .sparseimage | Sparse disk image
 |===
 
 ....
-#   UFBI - entire device
-#   IPOD - iPod image, similar to UDZO
 #   UDRW - read/write
 #   UDTO - DVD/CD master
+#   UFBI - entire device, uncompressed UDIF
+#   IPOD - iPod image, similar to UDZO
 #   RdWr - NDIF read/write
 #   Rdxx - NDIF read-only
 #   ROCo - NDIF compressed
@@ -105,6 +105,7 @@ document:
 
 * Mac OS X 10.7 (Lion)
 * macOS 10.14 (Mojave)
+* macOS 11.2 (BigSur)
 
 [yellow-background]*TODO add other Mac OS test versions*
 
@@ -143,7 +144,7 @@ The UDIF resource file (UDIFResourceFile) is 512 bytes of size and consists of:
 | 4 | 4 | 4 | Format version
 | 8 | 4 | 512 | Resource file size +
 Contains number of bytes
-| 12 | 4 | | Flags
+| 12 | 4 | | UDIF image flags
 | 16 | 8 | | [yellow-background]*Unknown (RunningDataForkOffset)*
 | 24 | 8 | | Data fork offset +
 The offset is relative from the start of the image file
@@ -152,7 +153,8 @@ The offset is relative from the start of the image file
 The offset is relative from the start of the image file
 | 48 | 8 | | Resource fork size
 | 56 | 4 | | [yellow-background]*Unknown (SegmentNumber)*
-| 60 | 4 | | Number of segments
+| 60 | 4 | | Number of segments +
+Contains 0 if not set
 | 64 | 16 | | Segment identifier +
 Contains an UUID
 | 80 | 4 | | Type of the data checksum
@@ -165,7 +167,7 @@ The offset is relative from the start of the image file
 | 352 | 4 | | Type of the master checksum
 | 356 | 4 | | Size of the master checksum
 | 360 | 128 | | Master checksum
-| 488 | 4 | | [yellow-background]*Unknown (ImageVariant)*
+| 488 | 4 | | UDIF Image type (or variant)
 | 492 | 8 | | Number of sectors
 | 500 | 4 | | [yellow-background]*Unknown (reserved2)*
 | 504 | 4 | | [yellow-background]*Unknown (reserved3)*
@@ -174,6 +176,25 @@ The offset is relative from the start of the image file
 
 [NOTE]
 The XML plist size can be 0, such as in an UDIF stub (UDxx) image.
+
+=== UDIF image flags
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 0x00000001 | kUDIFFlagsFlattened | [yellow-background]*Unknown (flattened?)*
+3+|
+| 0x00000004 | kUDIFFlagsInternetEnabled | [yellow-background]*Unknown (internet enabled?)*
+|===
+
+=== UDIF image types
+
+[cols="1,1,5",options="header"]
+|===
+| Value | Identifier | Description
+| 1 | kUDIFDeviceImageType | Device image
+| 2 | kUDIFPartitionImageType | Paritition image
+|===
 
 === UDIF XML plist
 

@@ -140,10 +140,10 @@ struct modi_udif_resource_file
 	 */
 	uint8_t master_checksum[ 128 ];
 
-	/* Unknown
+	/* The image type
 	 * Consists of 4 bytes
 	 */
-	uint8_t unknown4[ 4 ];
+	uint8_t image_type[ 4 ];
 
 	/* The number of sectors
 	 * Consists of 8 bytes

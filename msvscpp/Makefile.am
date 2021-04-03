@@ -1,4 +1,5 @@
 MSVSCPP_FILES = \
+	bzip2/bzip2.vcproj \
 	libbfio/libbfio.vcproj \
 	libcaes/libcaes.vcproj \
 	libcdata/libcdata.vcproj \

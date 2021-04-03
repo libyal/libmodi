@@ -144,11 +144,12 @@ int libmodi_udif_resource_file_read_data(
      size_t data_size,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_udif_resource_file_read_data";
+	static char *function       = "libmodi_udif_resource_file_read_data";
+	uint32_t number_of_segments = 0;
 
 #if defined( HAVE_DEBUG_OUTPUT )
-	uint64_t value_64bit  = 0;
-	uint32_t value_32bit  = 0;
+	uint64_t value_64bit        = 0;
+	uint32_t value_32bit        = 0;
 #endif
 
 	if( resource_file == NULL )
@@ -219,6 +220,10 @@ int libmodi_udif_resource_file_read_data(
 	byte_stream_copy_to_uint64_big_endian(
 	 ( (modi_udif_resource_file_t *) data )->resource_fork_size,
 	 resource_file->resource_fork_size );
+
+	byte_stream_copy_to_uint32_big_endian(
+	 ( (modi_udif_resource_file_t *) data )->number_of_segments,
+	 number_of_segments );
 
 	byte_stream_copy_to_uint64_big_endian(
 	 ( (modi_udif_resource_file_t *) data )->xml_plist_offset,
@@ -303,13 +308,10 @@ int libmodi_udif_resource_file_read_data(
 		 function,
 		 value_32bit );
 
-		byte_stream_copy_to_uint32_big_endian(
-		 ( (modi_udif_resource_file_t *) data )->number_of_segments,
-		 value_32bit );
 		libcnotify_printf(
 		 "%s: number of segments\t\t: %" PRIu32 "\n",
 		 function,
-		 value_32bit );
+		 number_of_segments );
 
 		libcnotify_printf(
 		 "%s: segment identifier:\n",
@@ -386,10 +388,10 @@ int libmodi_udif_resource_file_read_data(
 		 LIBCNOTIFY_PRINT_DATA_FLAG_GROUP_DATA );
 
 		byte_stream_copy_to_uint32_big_endian(
-		 ( (modi_udif_resource_file_t *) data )->unknown4,
+		 ( (modi_udif_resource_file_t *) data )->image_type,
 		 value_32bit );
 		libcnotify_printf(
-		 "%s: unknown4\t\t\t\t: 0x%08" PRIx32 "\n",
+		 "%s: image type\t\t\t: %" PRIu32 "\n",
 		 function,
 		 value_32bit );
 
@@ -427,6 +429,17 @@ int libmodi_udif_resource_file_read_data(
 	}
 #endif /* defined( HAVE_DEBUG_OUTPUT ) */
 
+	if( number_of_segments > 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
+		 "%s: unsupported number of segments.",
+		 function );
+
+		return( -1 );
+	}
 	return( 1 );
 }
 

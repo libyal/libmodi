@@ -79,14 +79,14 @@ uint8_t modi_test_sparse_bundle_xml_plist_data1[ 494 ] = {
 int modi_test_sparse_bundle_xml_plist_initialize(
      void )
 {
-	libcerror_error_t *error                         = NULL;
+	libcerror_error_t *error                                   = NULL;
 	libmodi_sparse_bundle_xml_plist_t *sparse_bundle_xml_plist = NULL;
-	int result                                       = 0;
+	int result                                                 = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_malloc_fail_tests                  = 1;
-	int number_of_memset_fail_tests                  = 1;
-	int test_number                                  = 0;
+	int number_of_malloc_fail_tests                            = 1;
+	int number_of_memset_fail_tests                            = 1;
+	int test_number                                            = 0;
 #endif
 
 	/* Test regular cases
@@ -426,7 +426,8 @@ int modi_test_sparse_bundle_xml_plist_read_data(
 	libcerror_error_free(
 	 &error );
 
-#if defined( HAVE_MODI_TEST_MEMORY )
+#if defined( HAVE_MODI_TEST_MEMORY ) && defined( BOGUS )
+	/* TODO handle "out of dynamic memory in yy_scan_buffer()" */
 
 	/* Test libmodi_sparse_bundle_xml_plist_read_data with malloc failing in libfplist_property_list_initialize
 	 */
