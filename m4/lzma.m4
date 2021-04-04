@@ -1,6 +1,6 @@
 dnl Checks for lzma required headers and functions
 dnl
-dnl Version: 20210304
+dnl Version: 20210404
 
 dnl Function to detect if lzma is available
 AC_DEFUN([AX_LZMA_CHECK_LIB],
@@ -31,8 +31,8 @@ AC_DEFUN([AX_LZMA_CHECK_LIB],
         ])
       AS_IF(
         [test "x$ac_cv_lzma" = xliblzma],
-        [ac_cv_lzma_CPPFLAGS="$pkg_cv_lzma_CFLAGS"
-        ac_cv_lzma_LIBADD="$pkg_cv_lzma_LIBS"])
+        [ac_cv_lzma_CPPFLAGS="$pkg_cv_liblzma_CFLAGS"
+        ac_cv_lzma_LIBADD="$pkg_cv_liblzma_LIBS"])
       ])
 
     AS_IF(
@@ -67,7 +67,7 @@ AC_DEFUN([AX_LZMA_CHECK_LIB],
   AS_IF(
     [test "x$ac_cv_lzma" = xliblzma],
     [AC_DEFINE(
-      [HAVE_LZMA],
+      [HAVE_LIBLZMA],
       [1],
       [Define to 1 if you have the 'lzma' library (-llzma).])
     ])
@@ -75,10 +75,10 @@ AC_DEFUN([AX_LZMA_CHECK_LIB],
   AS_IF(
     [test "x$ac_cv_lzma" != xno],
     [AC_SUBST(
-      [HAVE_LZMA],
+      [HAVE_LIBLZMA],
       [1]) ],
     [AC_SUBST(
-      [HAVE_LZMA],
+      [HAVE_LIBLZMA],
       [0])
     ])
   ])

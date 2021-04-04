@@ -1,8 +1,10 @@
 man_MANS = \
-	libmodi.3
+	libmodi.3 \
+	modiinfo.1
 
 EXTRA_DIST = \
-	libmodi.3
+	libmodi.3 \
+	modiinfo.1
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

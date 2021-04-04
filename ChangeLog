@@ -1,7 +1,6 @@
 TODO:
 * add bzip2 decompression fallback implementation
 * add lzfse decompression support
-* add lzma decompression support
 * add lzma decompression fallback implementation
 * add support for encrypted disk images
 * libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
@@ -9,6 +8,8 @@ TODO:
 Tests:
 * add tests for libmodi_adc.[ch]
 * add tests for libmodi_compression.[ch]
+* add tests for libmodi_lzfse.[ch]
+* add tests for libmodi_lzvn.[ch]
 
 20161030
 * see `git log' for more recent change log

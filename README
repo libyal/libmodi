@@ -11,7 +11,9 @@ Supported Mac OS image formats:
 * Sparse disk image
 * Universal Disk Image Format (UDIF) image
   * uncompressed
+  * ADC compressed
   * bzip2 compressed
+  * LZMA compressed
   * zlib/DEFLATE compressed
 
 Unsupported Mac OS image formats:
@@ -21,9 +23,7 @@ Unsupported Mac OS image formats:
 * New Disk Image Format (NDIF)
 * Universal Disk Image Format (UDIF) image
   * multi-segment
-  * ADC compressed
   * LZFSE compressed
-  * LZMA compressed
 
 Work in progress:
 

@@ -1,0 +1,59 @@
+.Dd April  3, 2021
+.Dt modiinfo
+.Os libmodi
+.Sh NAME
+.Nm modiinfo
+.Nd determines information about a Mac OS disk image
+.Sh SYNOPSIS
+.Nm modiinfo
+.Op Fl hvV
+.Ar source
+.Sh DESCRIPTION
+.Nm modiinfo
+is a utility to determine information about a Mac OS disk image
+.Pp
+.Nm modiinfo
+is part of the
+.Nm libmodi
+package.
+.Nm libmodi
+is a library to access Mac OS disk image formats
+.Pp
+.Ar source
+is the source file.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h
+shows this help
+.It Fl v
+verbose output to stderr
+.It Fl V
+print version
+.El
+.Sh ENVIRONMENT
+None
+.Sh FILES
+None
+.Sh EXAMPLES
+.Bd -literal
+# modiinfo folder-ufbi.dmg
+modiinfo 20210403
+.sp
+Mac OS disk image information:
+.sp
+	Image type:		UDIF uncompressed
+	Media size:		4.0 MiB (4194304 bytes)
+.sp
+.Ed
+.Sh DIAGNOSTICS
+Errors, verbose and debug output are printed to stderr when verbose output \-v is enabled.
+Verbose and debug output are only printed when enabled at compilation.
+.Sh BUGS
+Please report bugs of any kind to <joachim.metz@gmail.com> or on the project website:
+https://github.com/libyal/libmodi/
+.Sh AUTHOR
+These man pages were written by Joachim Metz.
+.Sh COPYRIGHT
+Copyright (C) 2012-2021, Joachim Metz <joachim.metz@gmail.com>.
+.Sh SEE ALSO

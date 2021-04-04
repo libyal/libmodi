@@ -1,6 +1,6 @@
 dnl Checks for bzip2 required headers and functions
 dnl
-dnl Version: 20210304
+dnl Version: 20210403
 
 dnl Function to detect if bzip2 is available
 AC_DEFUN([AX_BZIP2_CHECK_LIB],
