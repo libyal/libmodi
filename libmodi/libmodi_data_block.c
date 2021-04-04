@@ -314,7 +314,7 @@ int libmodi_data_block_read_list_element_data(
 	size_t uncompressed_data_size    = 0;
 	ssize_t read_count               = 0;
 
-	LIBMODI_UNREFERENCED_PARAMETER( data_range_file_index )
+	LIBMODI_UNREFERENCED_PARAMETER( element_data_file_index )
 	LIBMODI_UNREFERENCED_PARAMETER( read_flags )
 
 	if( io_handle == NULL )

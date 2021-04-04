@@ -4,6 +4,11 @@ TODO:
 * add lzma decompression fallback implementation
 * add support for encrypted disk images
 * libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
+* improve signature check for sparse bundles
+
+msvscpp build:
+* add libbz2 support
+* add liblzma support
 
 Tests:
 * add tests for libmodi_adc.[ch]

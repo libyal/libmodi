@@ -600,6 +600,29 @@ int libmodi_check_file_signature_file_io_handle(
 
 		goto on_error;
 	}
+	if( file_size >= 512 )
+	{
+		read_count = libbfio_handle_read_buffer_at_offset(
+		              file_io_handle,
+		              resource_file_signature,
+		              4,
+		              file_size - 512,
+		              error );
+
+		if( read_count != 4 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_IO,
+			 LIBCERROR_IO_ERROR_READ_FAILED,
+			 "%s: unable to read footer signature at offset: %" PRIi64 " (0x%08" PRIx64 ").",
+			 function,
+			 file_size - 512,
+			 file_size - 512 );
+
+			goto on_error;
+		}
+	}
 	if( file_io_handle_is_open == 0 )
 	{
 		file_io_handle_is_open = 1;
