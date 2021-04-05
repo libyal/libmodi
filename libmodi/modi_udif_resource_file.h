@@ -29,6 +29,9 @@
 extern "C" {
 #endif
 
+static uint8_t modi_udif_resource_file_signature[ 4 ] = {
+	'k', 'o', 'l', 'y' };
+
 typedef struct modi_udif_resource_file modi_udif_resource_file_t;
 
 struct modi_udif_resource_file

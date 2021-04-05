@@ -29,6 +29,9 @@
 extern "C" {
 #endif
 
+static uint8_t modi_sparse_image_signature[ 4 ] = {
+	's', 'p', 'r', 's' };
+
 typedef struct modi_sparse_image_header modi_sparse_image_header_t;
 
 struct modi_sparse_image_header

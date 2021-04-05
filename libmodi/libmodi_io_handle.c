@@ -27,12 +27,6 @@
 #include "libmodi_io_handle.h"
 #include "libmodi_libcerror.h"
 
-const uint8_t modi_sparse_image_signature[ 4 ] = {
-	's', 'p', 'r', 's' };
-
-const uint8_t modi_udif_resource_file_signature[ 4 ] = {
-	'k', 'o', 'l', 'y' };
-
 /* Creates an IO handle
  * Make sure the value io_handle is referencing, is set to NULL
  * Returns 1 if successful or -1 on error

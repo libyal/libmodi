@@ -34,6 +34,9 @@
 #include "libmodi_libcpath.h"
 #include "libmodi_support.h"
 
+#include "modi_sparse_image_header.h"
+#include "modi_udif_resource_file.h"
+
 #if !defined( HAVE_LOCAL_LIBMODI )
 
 /* Returns the library version

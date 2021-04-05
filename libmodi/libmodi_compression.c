@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #endif
 
-#if defined( HAVE_BZLIB ) || defined( BZLIB_DLL )
+#if defined( HAVE_BZLIB ) || defined( BZ_DLL )
 #include <bzlib.h>
 #endif
 
@@ -59,7 +59,7 @@ int libmodi_decompress_data(
 {
 	static char *function                     = "libmodi_decompress_data";
 
-#if defined( HAVE_BZLIB ) || defined( BZLIB_DLL )
+#if defined( HAVE_BZLIB ) || defined( BZ_DLL )
 	unsigned int bzip2_uncompressed_data_size = 0;
 	int bzlib_result                          = 0;
 #endif
@@ -137,7 +137,7 @@ int libmodi_decompress_data(
 	}
 	else if( compression_method == LIBMODI_COMPRESSION_METHOD_BZIP2 )
 	{
-#if defined( HAVE_BZLIB ) || defined( BZLIB_DLL )
+#if defined( HAVE_BZLIB ) || defined( BZ_DLL )
 		if( compressed_data_size > (size_t) UINT_MAX )
 		{
 			libcerror_error_set(
@@ -226,7 +226,7 @@ int libmodi_decompress_data(
 		 function );
 
 		goto on_error;
-#endif /* defined( HAVE_BZLIB ) || defined( BZLIB_DLL ) */
+#endif /* defined( HAVE_BZLIB ) || defined( BZ_DLL ) */
 	}
 	else if( compression_method == LIBMODI_COMPRESSION_METHOD_DEFLATE )
 	{

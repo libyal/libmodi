@@ -32,12 +32,6 @@
 extern "C" {
 #endif
 
-LIBMODI_EXTERN_VARIABLE \
-const uint8_t modi_sparse_image_signature[ 4 ];
-
-LIBMODI_EXTERN_VARIABLE \
-const uint8_t modi_udif_resource_file_signature[ 4 ];
-
 typedef struct libmodi_io_handle libmodi_io_handle_t;
 
 struct libmodi_io_handle
