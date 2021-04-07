@@ -2696,6 +2696,12 @@ on_error:
 		 &( internal_handle->data_stream ),
 		 NULL );
 	}
+	if( internal_handle->block_chunks_data_handle != NULL )
+	{
+		libmodi_block_chunks_data_handle_free(
+		 &( internal_handle->block_chunks_data_handle ),
+		 NULL );
+	}
 	if( internal_handle->bands_data_handle != NULL )
 	{
 		libmodi_bands_data_handle_free(
