@@ -39,15 +39,16 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
 
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
 
     with self.assertRaises(IOError):
-      modi_handle.open(unittest.source)
+      modi_handle.open(test_source)
 
     modi_handle.close()
 
@@ -55,19 +56,20 @@ class HandleTypeTests(unittest.TestCase):
       modi_handle.open(None)
 
     with self.assertRaises(ValueError):
-      modi_handle.open(unittest.source, mode="w")
+      modi_handle.open(test_source, mode="w")
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     modi_handle = pymodi.handle()
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
 
       modi_handle.open_file_object(file_object)
 
@@ -84,7 +86,8 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_close(self):
     """Tests the close function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
@@ -94,21 +97,22 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_open_close(self):
     """Tests the open and close functions."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       return
 
     modi_handle = pymodi.handle()
 
     # Test open and close.
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
     modi_handle.close()
 
     # Test open and close a second time to validate clean up on close.
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
     modi_handle.close()
 
-    if os.path.isfile(unittest.source):
-      with open(unittest.source, "rb") as file_object:
+    if os.path.isfile(test_source):
+      with open(test_source, "rb") as file_object:
 
         # Test open_file_object and close.
         modi_handle.open_file_object(file_object)
@@ -125,12 +129,13 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_read_buffer(self):
     """Tests the read_buffer function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
 
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
     modi_handle.open_band_data_files()
 
     media_size = modi_handle.get_media_size()
@@ -204,15 +209,16 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_read_buffer_file_object(self):
     """Tests the read_buffer function on a file-like object."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
-    if not os.path.isfile(unittest.source):
+    if not os.path.isfile(test_source):
       raise unittest.SkipTest("source not a regular file")
 
     modi_handle = pymodi.handle()
 
-    with open(unittest.source, "rb") as file_object:
+    with open(test_source, "rb") as file_object:
       modi_handle.open_file_object(file_object)
       modi_handle.open_band_data_files()
 
@@ -228,12 +234,13 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_read_buffer_at_offset(self):
     """Tests the read_buffer_at_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
 
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
     modi_handle.open_band_data_files()
 
     media_size = modi_handle.get_media_size()
@@ -296,12 +303,13 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_seek_offset(self):
     """Tests the seek_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
 
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
     modi_handle.open_band_data_files()
 
     media_size = modi_handle.get_media_size()
@@ -356,12 +364,13 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_get_offset(self):
     """Tests the get_offset function."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
 
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
 
     offset = modi_handle.get_offset()
     self.assertIsNotNone(offset)
@@ -370,12 +379,13 @@ class HandleTypeTests(unittest.TestCase):
 
   def test_get_media_size(self):
     """Tests the get_media_size function and media_size property."""
-    if not unittest.source:
+    test_source = unittest.source
+    if not test_source:
       raise unittest.SkipTest("missing source")
 
     modi_handle = pymodi.handle()
 
-    modi_handle.open(unittest.source)
+    modi_handle.open(test_source)
 
     media_size = modi_handle.get_media_size()
     self.assertIsNotNone(media_size)
