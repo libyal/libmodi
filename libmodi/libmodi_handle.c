@@ -3236,6 +3236,10 @@ int libmodi_internal_handle_open_read_udif_image(
 
 						goto on_error;
 					}
+					if( block_table_entry->type == 0x7ffffffeUL )
+					{
+						continue;
+					}
 					if( block_table_entry->type == 0xffffffffUL )
 					{
 						break;
