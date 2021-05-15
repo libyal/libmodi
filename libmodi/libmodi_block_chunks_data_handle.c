@@ -279,7 +279,7 @@ ssize_t libmodi_block_chunks_data_handle_read_segment_data(
          int segment_file_index LIBMODI_ATTRIBUTE_UNUSED,
          uint8_t *segment_data,
          size_t segment_data_size,
-         uint32_t segment_flags LIBMODI_ATTRIBUTE_UNUSED,
+         uint32_t segment_flags,
          uint8_t read_flags LIBMODI_ATTRIBUTE_UNUSED,
          libcerror_error_t **error )
 {
@@ -291,7 +291,6 @@ ssize_t libmodi_block_chunks_data_handle_read_segment_data(
 	int element_index                = 0;
 
 	LIBMODI_UNREFERENCED_PARAMETER( segment_file_index )
-	LIBMODI_UNREFERENCED_PARAMETER( segment_flags )
 	LIBMODI_UNREFERENCED_PARAMETER( read_flags )
 
 	if( data_handle == NULL )
@@ -370,7 +369,25 @@ ssize_t libmodi_block_chunks_data_handle_read_segment_data(
 	{
 		return( 0 );
 	}
-	while( segment_data_size > 0 )
+	if( ( segment_flags & LIBFDATA_RANGE_FLAG_IS_SPARSE ) != 0 )
+	{
+		if( memory_set(
+		     segment_data,
+		     0,
+		     segment_data_size ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear segment data.",
+			 function );
+
+			return( -1 );
+		}
+		segment_data_offset = (size_t) segment_data_size;
+	}
+	else while( segment_data_size > 0 )
 	{
 		if( libfdata_list_get_element_value_at_offset(
 		     data_handle->block_chunks_list,
@@ -468,7 +485,7 @@ ssize_t libmodi_block_chunks_data_handle_read_segment_data(
 off64_t libmodi_block_chunks_data_handle_seek_segment_offset(
          libmodi_block_chunks_data_handle_t *data_handle,
          intptr_t *file_io_handle LIBMODI_ATTRIBUTE_UNUSED,
-         int segment_index,
+         int segment_index LIBMODI_ATTRIBUTE_UNUSED,
          int segment_file_index LIBMODI_ATTRIBUTE_UNUSED,
          off64_t segment_offset,
          libcerror_error_t **error )
@@ -476,6 +493,7 @@ off64_t libmodi_block_chunks_data_handle_seek_segment_offset(
 	static char *function = "libmodi_block_chunks_data_handle_seek_segment_offset";
 
 	LIBMODI_UNREFERENCED_PARAMETER( file_io_handle )
+	LIBMODI_UNREFERENCED_PARAMETER( segment_index )
 	LIBMODI_UNREFERENCED_PARAMETER( segment_file_index )
 
 	if( data_handle == NULL )
@@ -485,17 +503,6 @@ off64_t libmodi_block_chunks_data_handle_seek_segment_offset(
 		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
 		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
 		 "%s: invalid data handle.",
-		 function );
-
-		return( -1 );
-	}
-	if( segment_index != 0 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_OUT_OF_BOUNDS,
-		 "%s: invalid segment index value out of bounds.",
 		 function );
 
 		return( -1 );

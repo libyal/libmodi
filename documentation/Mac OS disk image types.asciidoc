@@ -352,7 +352,8 @@ Contains the sector number relative to the start of the start sector of the bloc
 | 16 | 8 | | Number of sectors
 | 24 | 8 | | Data offset +
 Contains the byte offset relative to the start of the UDIF image file
-| 32 | 8 | | Data size
+| 32 | 8 | | Data size +
+Contain the number of bytes of data stored, which is 0 for sparse data
 |===
 
 [cols="1,1,5",options="header"]

@@ -5,6 +5,7 @@ TODO:
 * add support for encrypted disk images
 * libmodi_handle.c address TODO to replace narrow_string_snprintf and wide_string_snprintf
 * improve signature check for sparse bundles
+* set data_stream segments direclty for bands_data_handle (like block_chunks_data_handle) for optimized handling of sparse data
 
 msvscpp build:
 * add libbz2 support

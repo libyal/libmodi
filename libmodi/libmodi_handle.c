@@ -2473,10 +2473,18 @@ int libmodi_internal_handle_open_read(
      libbfio_handle_t *file_io_handle,
      libcerror_error_t **error )
 {
-	static char *function = "libmodi_internal_handle_open_read";
-	size64_t file_size    = 0;
-	int result            = 0;
-	int segment_index     = 0;
+	static char *function      = "libmodi_internal_handle_open_read";
+	size64_t element_size      = 0;
+	size64_t file_size         = 0;
+	size64_t mapped_size       = 0;
+	off64_t element_offset     = 0;
+	off64_t mapped_offset      = 0;
+	uint32_t element_flags     = 0;
+	int block_chunk_index      = 0;
+	int element_file_index     = 0;
+	int number_of_block_chunks = 0;
+	int result                 = 0;
+	int segment_index          = 0;
 
 	if( internal_handle == NULL )
 	{
@@ -2669,23 +2677,87 @@ int libmodi_internal_handle_open_read(
 
 		goto on_error;
 	}
-	if( libfdata_stream_append_segment(
-	     internal_handle->data_stream,
-	     &segment_index,
-	     0,
-	     0,
-	     internal_handle->io_handle->media_size,
-	     0,
-	     error ) != 1 )
+	if( internal_handle->block_chunks_data_handle != NULL )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
-		 "%s: unable to append segment to data stream.",
-		 function );
+		if( libfdata_list_get_number_of_elements(
+		     internal_handle->block_chunks_data_handle->block_chunks_list,
+		     &number_of_block_chunks,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve number of block chunks.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
+		for( block_chunk_index = 0;
+		     block_chunk_index < number_of_block_chunks;
+		     block_chunk_index++ )
+		{
+			if( libfdata_list_get_element_by_index_with_mapped_size(
+			     internal_handle->block_chunks_data_handle->block_chunks_list,
+			     block_chunk_index,
+			     &element_file_index,
+			     &element_offset,
+			     &element_size,
+			     &element_flags,
+			     &mapped_size,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+				 "%s: unable to retrieve block chunk: %d.",
+				 function,
+				 block_chunk_index );
+
+				goto on_error;
+			}
+			if( libfdata_stream_append_segment(
+			     internal_handle->data_stream,
+			     &segment_index,
+			     0,
+			     mapped_offset,
+			     mapped_size,
+			     element_flags,
+			     error ) != 1 )
+			{
+				libcerror_error_set(
+				 error,
+				 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+				 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+				 "%s: unable to append segment to data stream.",
+				 function );
+
+				goto on_error;
+			}
+			mapped_offset += mapped_size;
+		}
+	}
+	else
+	{
+		if( libfdata_stream_append_segment(
+		     internal_handle->data_stream,
+		     &segment_index,
+		     0,
+		     0,
+		     internal_handle->io_handle->media_size,
+		     0,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_APPEND_FAILED,
+			 "%s: unable to append segment to data stream.",
+			 function );
+
+			goto on_error;
+		}
 	}
 	return( 1 );
 
