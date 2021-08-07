@@ -361,6 +361,16 @@ void pymodi_handle_free(
 
 		return;
 	}
+	if( ( pymodi_handle->file_io_handle != NULL )
+	 || ( pymodi_handle->file_io_pool != NULL ) )
+	{
+		if( pymodi_handle_close(
+		     pymodi_handle,
+		     NULL ) == NULL )
+		{
+			return;
+		}
+	}
 	if( pymodi_handle->handle != NULL )
 	{
 		Py_BEGIN_ALLOW_THREADS
