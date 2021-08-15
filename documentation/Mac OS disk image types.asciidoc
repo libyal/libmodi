@@ -50,10 +50,11 @@ in the section entitled "GNU Free Documentation License".
 | 0.0.3 | J.B. Metz | October 2016 | Textual changes and additional information about formats.
 | 0.0.4 | J.B. Metz | November 2016 | Textual changes and additional information about formats.
 | 0.0.5 | J.B. Metz | January 2017 | Additional information about UDIF data format.
-| 0.0.7 | J.B. Metz | December 2018 | Changes to formatting and addtional informatio about formats.
+| 0.0.7 | J.B. Metz | December 2018 | Changes to formatting and addtional information about formats.
 | 0.0.8 | J.B. Metz | January 2019 | Additional information about formats.
 | 0.0.9 | J.B. Metz | December 2019 | Additional information about UDIF format.
 | 0.0.10 | J.B. Metz | March 2021 | Additional information.
+| 0.0.11 | J.B. Metz | August 2021 | Changes to UDIF formats.
 |===
 
 :numbered:
@@ -74,8 +75,8 @@ UDSB | .sparsebundle | Sparse bundle disk image
 UDSP | .sparseimage | Sparse disk image
 | UDBZ | .dmg | bzip2 compressed Universal Disk Image Format (UDIF) image
 | UDCO | .dmg | Apple Data Compression (ADC) compressed Universal Disk Image Format (UDIF) image
-| UDIF | .dmg | Read-only uncompressed Universal Disk Image Format (UDIF) image
-| UDRO | .dmg | Read-write uncompressed Universal Disk Image Format (UDIF) image
+| UDIF | .dmg | Read-write uncompressed Universal Disk Image Format (UDIF) image
+| UDRO | .dmg | Read-only uncompressed Universal Disk Image Format (UDIF) image
 | UDxx | .dmg | Uncompressed Universal Disk Image Format (UDIF) image
 | UDZO | .dmg | zlib/DEFLATE compressed Universal Disk Image Format (UDIF) image
 | ULFO | .dmg | LZFSE compressed Universal Disk Image Format (UDIF) image
