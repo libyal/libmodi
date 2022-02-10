@@ -1,7 +1,7 @@
 /*
  * The file header definition of the Mac OS sparse disk image format
  *
- * Copyright (C) 2012-2021, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
