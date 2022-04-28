@@ -41,7 +41,6 @@ DPKG_FILES = \
 	dpkg/rules \
 	dpkg/libmodi.install \
 	dpkg/libmodi-dev.install \
-	dpkg/libmodi-python.install \
 	dpkg/libmodi-python3.install \
 	dpkg/libmodi-tools.install \
 	dpkg/source/format
