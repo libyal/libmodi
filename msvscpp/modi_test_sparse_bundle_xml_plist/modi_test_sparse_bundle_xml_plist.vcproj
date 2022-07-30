@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_sparse_bundle_xml_plist"
-	ProjectGUID="{F4E9DE18-F09D-4106-8200-3395F36359EA}"
+	ProjectGUID="{41044EDF-DA3F-4435-8385-376F5D1B368C}"
 	RootNamespace="modi_test_sparse_bundle_xml_plist"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

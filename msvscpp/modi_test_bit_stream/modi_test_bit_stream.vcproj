@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_notify"
-	ProjectGUID="{5C594002-92C0-4285-AC9B-F9E8F3146C5D}"
-	RootNamespace="modi_test_notify"
+	Name="modi_test_bit_stream"
+	ProjectGUID="{8673A0B2-7669-4A37-94E2-2C49B6770296}"
+	RootNamespace="modi_test_bit_stream"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,7 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_notify.c"
+				RelativePath="..\..\tests\modi_test_bit_stream.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_memory.c"
 				>
 			</File>
 		</Filter>
@@ -195,6 +199,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_memory.h"
 				>
 			</File>
 			<File

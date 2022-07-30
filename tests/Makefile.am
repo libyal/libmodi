@@ -52,6 +52,7 @@ EXTRA_DIST = \
 
 check_PROGRAMS = \
 	modi_test_bands_data_handle \
+	modi_test_bit_stream \
 	modi_test_data_block \
 	modi_test_deflate \
 	modi_test_error \
@@ -79,6 +80,18 @@ modi_test_bands_data_handle_SOURCES = \
 	modi_test_unused.h
 
 modi_test_bands_data_handle_LDADD = \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_bit_stream_SOURCES = \
+	modi_test_bit_stream.c \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h
+
+modi_test_bit_stream_LDADD = \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 

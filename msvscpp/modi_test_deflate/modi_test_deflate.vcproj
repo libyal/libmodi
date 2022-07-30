@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_deflate"
-	ProjectGUID="{1F39FC31-589D-40F4-AF9C-DE659911B7C6}"
+	ProjectGUID="{C942012A-BC0C-4BE2-8315-2E789CEDB000}"
 	RootNamespace="modi_test_deflate"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

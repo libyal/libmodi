@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libfguid"
-	ProjectGUID="{B8A0F522-AB25-4D77-823B-CF6541B98131}"
+	ProjectGUID="{F2A48E4E-2D85-4CB2-AC08-4A10FDDBDE79}"
 	RootNamespace="libfguid"
 	TargetFrameworkVersion="131072"
 	>

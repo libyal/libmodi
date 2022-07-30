@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libmodi"
-	ProjectGUID="{1660EB10-5241-431C-B3A2-607341435A83}"
+	ProjectGUID="{114E6386-3BE9-4B49-9C8A-B50C1E5CB340}"
 	RootNamespace="libmodi"
 	TargetFrameworkVersion="131072"
 	>
@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_bit_stream.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_block_chunks_data_handle.c"
 				>
 			</File>
@@ -265,6 +269,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_bands_data_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_bit_stream.h"
 				>
 			</File>
 			<File

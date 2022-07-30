@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libbfio"
-	ProjectGUID="{4B3B6824-5C4C-45A1-AAA2-FDD030F42397}"
+	ProjectGUID="{3397B13A-D428-46D2-8C2E-12DCEDB91EA1}"
 	RootNamespace="libbfio"
 	TargetFrameworkVersion="131072"
 	>

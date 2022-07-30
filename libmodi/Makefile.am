@@ -33,6 +33,7 @@ libmodi_la_SOURCES = \
 	libmodi.c \
 	libmodi_adc.c libmodi_adc.h \
 	libmodi_bands_data_handle.c libmodi_bands_data_handle.h \
+	libmodi_bit_stream.c libmodi_bit_stream.h \
 	libmodi_block_chunks_data_handle.c libmodi_block_chunks_data_handle.h \
 	libmodi_codepage.h \
 	libmodi_compression.c libmodi_compression.h \

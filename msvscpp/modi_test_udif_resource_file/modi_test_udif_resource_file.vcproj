@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_udif_resource_file"
-	ProjectGUID="{B574F664-C995-4CD3-81AD-48157E8822EF}"
+	ProjectGUID="{149528BE-4C45-4C5A-9485-D1259DE618C6}"
 	RootNamespace="modi_test_udif_resource_file"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

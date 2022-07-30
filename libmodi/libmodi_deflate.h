@@ -25,6 +25,7 @@
 #include <common.h>
 #include <types.h>
 
+#include "libmodi_bit_stream.h"
 #include "libmodi_libcerror.h"
 
 #if defined( __cplusplus )
@@ -39,31 +40,6 @@ enum LIBMODI_DEFLATE_BLOCK_TYPES
 	LIBMODI_DEFLATE_BLOCK_TYPE_HUFFMAN_FIXED	= 0x01,
 	LIBMODI_DEFLATE_BLOCK_TYPE_HUFFMAN_DYNAMIC	= 0x02,
 	LIBMODI_DEFLATE_BLOCK_TYPE_RESERVED		= 0x03
-};
-
-typedef struct libmodi_deflate_bit_stream libmodi_deflate_bit_stream_t;
-
-struct libmodi_deflate_bit_stream
-{
-	/* The byte stream
-	 */
-	const uint8_t *byte_stream;
-
-	/* The byte stream size
-	 */
-	size_t byte_stream_size;
-
-	/* The byte stream offset
-	 */
-	size_t byte_stream_offset;
-
-	/* The bit buffer
-	 */
-	uint32_t bit_buffer;
-
-	/* The number of bits remaining in the bit buffer
-	 */
-	uint8_t bit_buffer_size;
 };
 
 typedef struct libmodi_deflate_huffman_table libmodi_deflate_huffman_table_t;
@@ -88,12 +64,6 @@ struct libmodi_deflate_huffman_table
 	int number_of_codes;
 };
 
-int libmodi_deflate_bit_stream_get_value(
-     libmodi_deflate_bit_stream_t *bit_stream,
-     uint8_t number_of_bits,
-     uint32_t *value_32bit,
-     libcerror_error_t **error );
-
 int libmodi_deflate_huffman_table_construct(
      libmodi_deflate_huffman_table_t *table,
      const uint16_t *code_sizes_array,
@@ -101,13 +71,13 @@ int libmodi_deflate_huffman_table_construct(
      libcerror_error_t **error );
 
 int libmodi_deflate_bit_stream_get_huffman_encoded_value(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      libmodi_deflate_huffman_table_t *table,
      uint32_t *value_32bit,
      libcerror_error_t **error );
 
 int libmodi_deflate_initialize_dynamic_huffman_tables(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      libmodi_deflate_huffman_table_t *literals_table,
      libmodi_deflate_huffman_table_t *distances_table,
      libcerror_error_t **error );
@@ -118,7 +88,7 @@ int libmodi_deflate_initialize_fixed_huffman_tables(
      libcerror_error_t **error );
 
 int libmodi_deflate_decode_huffman(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      libmodi_deflate_huffman_table_t *literals_table,
      libmodi_deflate_huffman_table_t *distances_table,
      uint8_t *uncompressed_data,
@@ -140,7 +110,7 @@ int libmodi_deflate_read_data_header(
      libcerror_error_t **error );
 
 int libmodi_deflate_read_block(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      uint8_t *uncompressed_data,
      size_t uncompressed_data_size,
      size_t *uncompressed_data_offset,

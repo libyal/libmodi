@@ -24,6 +24,7 @@
 #include <memory.h>
 #include <types.h>
 
+#include "libmodi_bit_stream.h"
 #include "libmodi_deflate.h"
 #include "libmodi_libcerror.h"
 
@@ -31,97 +32,6 @@ libmodi_deflate_huffman_table_t libmodi_deflate_fixed_huffman_distances_table;
 libmodi_deflate_huffman_table_t libmodi_deflate_fixed_huffman_literals_table;
 
 int libmodi_deflate_fixed_huffman_tables_initialized = 0;
-
-/* Retrieves a value from the bit stream
- * Returns 1 on success or -1 on error
- */
-int libmodi_deflate_bit_stream_get_value(
-     libmodi_deflate_bit_stream_t *bit_stream,
-     uint8_t number_of_bits,
-     uint32_t *value_32bit,
-     libcerror_error_t **error )
-{
-	static char *function     = "libmodi_deflate_bit_stream_get_value";
-	uint32_t safe_value_32bit = 0;
-
-	if( bit_stream == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid bit stream.",
-		 function );
-
-		return( -1 );
-	}
-	if( number_of_bits > (uint8_t) 32 )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_VALUE_EXCEEDS_MAXIMUM,
-		 "%s: invalid number of bits value exceeds maximum.",
-		 function );
-
-		return( -1 );
-	}
-	if( value_32bit == NULL )
-	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-		 LIBCERROR_ARGUMENT_ERROR_INVALID_VALUE,
-		 "%s: invalid 32-bit value.",
-		 function );
-
-		return( -1 );
-	}
-	if( number_of_bits == 0 )
-	{
-		*value_32bit = 0;
-
-		return( 1 );
-	}
-	while( bit_stream->bit_buffer_size < number_of_bits )
-	{
-		if( bit_stream->byte_stream_offset >= bit_stream->byte_stream_size )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_ARGUMENTS,
-			 LIBCERROR_ARGUMENT_ERROR_VALUE_TOO_SMALL,
-			 "%s: invalid byte stream value to small.",
-			 function );
-
-			return( -1 );
-		}
-		safe_value_32bit   = bit_stream->byte_stream[ bit_stream->byte_stream_offset++ ];
-		safe_value_32bit <<= bit_stream->bit_buffer_size;
-
-		bit_stream->bit_buffer      |= safe_value_32bit;
-		bit_stream->bit_buffer_size += 8;
-	}
-	safe_value_32bit = bit_stream->bit_buffer;
-
-	if( number_of_bits < 32 )
-	{
-		/* On VS 2008 32-bit "~( 0xfffffffUL << 32 )" does not behave as expected
-		 */
-		safe_value_32bit &= ~( 0xffffffffUL << number_of_bits );
-
-		bit_stream->bit_buffer     >>= number_of_bits;
-		bit_stream->bit_buffer_size -= number_of_bits;
-	}
-	else
-	{
-		bit_stream->bit_buffer      = 0;
-		bit_stream->bit_buffer_size = 0;
-	}
-	*value_32bit = safe_value_32bit;
-
-	return( 1 );
-}
 
 /* Constructs the Huffman table
  * Returns 1 on success, 0 if the table is empty or -1 on error
@@ -329,7 +239,7 @@ int libmodi_deflate_huffman_table_construct(
  * Returns 1 on success or -1 on error
  */
 int libmodi_deflate_bit_stream_get_huffman_encoded_value(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      libmodi_deflate_huffman_table_t *table,
      uint32_t *value_32bit,
      libcerror_error_t **error )
@@ -449,7 +359,7 @@ int libmodi_deflate_bit_stream_get_huffman_encoded_value(
  * Returns 1 on success or -1 on error
  */
 int libmodi_deflate_initialize_dynamic_huffman_tables(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      libmodi_deflate_huffman_table_t *literals_table,
      libmodi_deflate_huffman_table_t *distances_table,
      libcerror_error_t **error )
@@ -472,7 +382,7 @@ int libmodi_deflate_initialize_dynamic_huffman_tables(
 	uint32_t symbol                   = 0;
 	uint32_t times_to_repeat          = 0;
 
-	if( libmodi_deflate_bit_stream_get_value(
+	if( libmodi_bit_stream_get_value(
 	     bit_stream,
 	     14,
 	     &number_of_code_sizes,
@@ -524,7 +434,7 @@ int libmodi_deflate_initialize_dynamic_huffman_tables(
 	     code_size_index < number_of_code_sizes;
 	     code_size_index++ )
 	{
-		if( libmodi_deflate_bit_stream_get_value(
+		if( libmodi_bit_stream_get_value(
 		     bit_stream,
 		     3,
 		     &code_size,
@@ -608,7 +518,7 @@ int libmodi_deflate_initialize_dynamic_huffman_tables(
 			}
 			code_size = (uint32_t) code_size_array[ code_size_index - 1 ];
 
-			if( libmodi_deflate_bit_stream_get_value(
+			if( libmodi_bit_stream_get_value(
 			     bit_stream,
 			     2,
 			     &times_to_repeat,
@@ -627,7 +537,7 @@ int libmodi_deflate_initialize_dynamic_huffman_tables(
 		}
 		else if( symbol == 17 )
 		{
-			if( libmodi_deflate_bit_stream_get_value(
+			if( libmodi_bit_stream_get_value(
 			     bit_stream,
 			     3,
 			     &times_to_repeat,
@@ -646,7 +556,7 @@ int libmodi_deflate_initialize_dynamic_huffman_tables(
 		}
 		else if( symbol == 18 )
 		{
-			if( libmodi_deflate_bit_stream_get_value(
+			if( libmodi_bit_stream_get_value(
 			     bit_stream,
 			     7,
 			     &times_to_repeat,
@@ -811,7 +721,7 @@ int libmodi_deflate_initialize_fixed_huffman_tables(
  * Returns 1 on success or -1 on error
  */
 int libmodi_deflate_decode_huffman(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      libmodi_deflate_huffman_table_t *literals_table,
      libmodi_deflate_huffman_table_t *distances_table,
      uint8_t *uncompressed_data,
@@ -918,7 +828,7 @@ int libmodi_deflate_decode_huffman(
 
 			number_of_extra_bits = literal_codes_number_of_extra_bits[ code_value ];
 
-			if( libmodi_deflate_bit_stream_get_value(
+			if( libmodi_bit_stream_get_value(
 			     bit_stream,
 			     (uint8_t) number_of_extra_bits,
 			     &extra_bits,
@@ -952,7 +862,7 @@ int libmodi_deflate_decode_huffman(
 			}
 			number_of_extra_bits = distance_codes_number_of_extra_bits[ code_value ];
 
-			if( libmodi_deflate_bit_stream_get_value(
+			if( libmodi_bit_stream_get_value(
 			     bit_stream,
 			     (uint8_t) number_of_extra_bits,
 			     &extra_bits,
@@ -1396,7 +1306,7 @@ int libmodi_deflate_read_data_header(
  * Returns 1 on success or -1 on error
  */
 int libmodi_deflate_read_block(
-     libmodi_deflate_bit_stream_t *bit_stream,
+     libmodi_bit_stream_t *bit_stream,
      uint8_t *uncompressed_data,
      size_t uncompressed_data_size,
      size_t *uncompressed_data_offset,
@@ -1491,7 +1401,7 @@ int libmodi_deflate_read_block(
 	}
 /* TODO find optimized solution to read bit stream from bytes */
 
-	if( libmodi_deflate_bit_stream_get_value(
+	if( libmodi_bit_stream_get_value(
 	     bit_stream,
 	     3,
 	     &value_32bit,
@@ -1519,7 +1429,7 @@ int libmodi_deflate_read_block(
 
 			if( skip_bits > 0 )
 			{
-				if( libmodi_deflate_bit_stream_get_value(
+				if( libmodi_bit_stream_get_value(
 				     bit_stream,
 				     skip_bits,
 				     &value_32bit,
@@ -1535,7 +1445,7 @@ int libmodi_deflate_read_block(
 					return( -1 );
 				}
 			}
-			if( libmodi_deflate_bit_stream_get_value(
+			if( libmodi_bit_stream_get_value(
 			     bit_stream,
 			     32,
 			     &block_size,
@@ -1699,12 +1609,12 @@ int libmodi_deflate_decompress(
      size_t *uncompressed_data_size,
      libcerror_error_t **error )
 {
-	libmodi_deflate_bit_stream_t bit_stream;
-
-	static char *function           = "libmodi_deflate_decompress";
-	size_t compressed_data_offset   = 0;
-	size_t uncompressed_data_offset = 0;
-	uint8_t last_block_flag         = 0;
+	libmodi_bit_stream_t *bit_stream   = NULL;
+	static char *function              = "libmodi_deflate_decompress";
+	size_t compressed_data_offset      = 0;
+	size_t safe_uncompressed_data_size = 0;
+	size_t uncompressed_data_offset    = 0;
+	uint8_t last_block_flag            = 0;
 
 	if( compressed_data == NULL )
 	{
@@ -1761,6 +1671,8 @@ int libmodi_deflate_decompress(
 
 		return( -1 );
 	}
+	safe_uncompressed_data_size = *uncompressed_data_size;
+
 	if( compressed_data_offset >= compressed_data_size )
 	{
 		libcerror_error_set(
@@ -1772,18 +1684,29 @@ int libmodi_deflate_decompress(
 
 		return( -1 );
 	}
-	bit_stream.byte_stream        = compressed_data;
-	bit_stream.byte_stream_size   = compressed_data_size;
-	bit_stream.byte_stream_offset = compressed_data_offset;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
+	if( libmodi_bit_stream_initialize(
+	     &bit_stream,
+	     compressed_data,
+	     compressed_data_size,
+	     compressed_data_offset,
+	     BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create bit-stream.",
+		 function );
 
-	while( bit_stream.byte_stream_offset < bit_stream.byte_stream_size )
+		goto on_error;
+	}
+	while( bit_stream->byte_stream_offset < bit_stream->byte_stream_size )
 	{
 		if( libmodi_deflate_read_block(
-		     &bit_stream,
+		     bit_stream,
 		     uncompressed_data,
-		     *uncompressed_data_size,
+		     safe_uncompressed_data_size,
 		     &uncompressed_data_offset,
 		     &last_block_flag,
 		     error ) != 1 )
@@ -1795,16 +1718,38 @@ int libmodi_deflate_decompress(
 			 "%s: unable to read block of compressed data.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( last_block_flag != 0 )
 		{
 			break;
 		}
 	}
+	if( libmodi_bit_stream_free(
+	     &bit_stream,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free bit-stream.",
+		 function );
+
+		goto on_error;
+	}
 	*uncompressed_data_size = uncompressed_data_offset;
 
 	return( 1 );
+
+on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
+	return( -1 );
 }
 
 /* Decompresses data using zlib compression
@@ -1817,14 +1762,14 @@ int libmodi_deflate_decompress_zlib(
      size_t *uncompressed_data_size,
      libcerror_error_t **error )
 {
-	libmodi_deflate_bit_stream_t bit_stream;
-
-	static char *function           = "libmodi_deflate_decompress_zlib";
-	size_t compressed_data_offset   = 0;
-	size_t uncompressed_data_offset = 0;
-	uint32_t calculated_checksum    = 0;
-	uint32_t stored_checksum        = 0;
-	uint8_t last_block_flag         = 0;
+	libmodi_bit_stream_t *bit_stream   = NULL;
+	static char *function              = "libmodi_deflate_decompress_zlib";
+	size_t compressed_data_offset      = 0;
+	size_t safe_uncompressed_data_size = 0;
+	size_t uncompressed_data_offset    = 0;
+	uint32_t calculated_checksum       = 0;
+	uint32_t stored_checksum           = 0;
+	uint8_t last_block_flag            = 0;
 
 	if( compressed_data == NULL )
 	{
@@ -1894,8 +1839,10 @@ int libmodi_deflate_decompress_zlib(
 		 "%s: unable to read data header.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
+	safe_uncompressed_data_size = *uncompressed_data_size;
+
 	if( compressed_data_offset >= compressed_data_size )
 	{
 		libcerror_error_set(
@@ -1905,20 +1852,31 @@ int libmodi_deflate_decompress_zlib(
 		 "%s: invalid compressed data value too small.",
 		 function );
 
-		return( -1 );
+		goto on_error;
 	}
-	bit_stream.byte_stream        = compressed_data;
-	bit_stream.byte_stream_size   = compressed_data_size;
-	bit_stream.byte_stream_offset = compressed_data_offset;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
+	if( libmodi_bit_stream_initialize(
+	     &bit_stream,
+	     compressed_data,
+	     compressed_data_size,
+	     compressed_data_offset,
+	     BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
+		 "%s: unable to create bit-stream.",
+		 function );
 
-	while( bit_stream.byte_stream_offset < bit_stream.byte_stream_size )
+		goto on_error;
+	}
+	while( bit_stream->byte_stream_offset < bit_stream->byte_stream_size )
 	{
 		if( libmodi_deflate_read_block(
-		     &bit_stream,
+		     bit_stream,
 		     uncompressed_data,
-		     *uncompressed_data_size,
+		     safe_uncompressed_data_size,
 		     &uncompressed_data_offset,
 		     &last_block_flag,
 		     error ) != 1 )
@@ -1930,22 +1888,22 @@ int libmodi_deflate_decompress_zlib(
 			 "%s: unable to read block of compressed data.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( last_block_flag != 0 )
 		{
 			break;
 		}
 	}
-	if( ( bit_stream.byte_stream_size - bit_stream.byte_stream_offset ) >= 4 )
+	if( ( bit_stream->byte_stream_size - bit_stream->byte_stream_offset ) >= 4 )
 	{
-		while( bit_stream.bit_buffer_size >= 8 )
+		while( bit_stream->bit_buffer_size >= 8 )
 		{
-			bit_stream.byte_stream_offset -= 1;
-			bit_stream.bit_buffer_size    -= 8;
+			bit_stream->byte_stream_offset -= 1;
+			bit_stream->bit_buffer_size    -= 8;
 		}
 		byte_stream_copy_to_uint32_big_endian(
-		 &( bit_stream.byte_stream[ bit_stream.byte_stream_offset ] ),
+		 &( bit_stream->byte_stream[ bit_stream->byte_stream_offset ] ),
 		 stored_checksum );
 
 		if( libmodi_deflate_calculate_adler32(
@@ -1962,7 +1920,7 @@ int libmodi_deflate_decompress_zlib(
 			 "%s: unable to calculate checksum.",
 			 function );
 
-			return( -1 );
+			goto on_error;
 		}
 		if( stored_checksum != calculated_checksum )
 		{
@@ -1975,11 +1933,33 @@ int libmodi_deflate_decompress_zlib(
 			 stored_checksum,
 			 calculated_checksum );
 
-			return( -1 );
+			goto on_error;
 		}
+	}
+	if( libmodi_bit_stream_free(
+	     &bit_stream,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
+		 "%s: unable to free bit-stream.",
+		 function );
+
+		goto on_error;
 	}
 	*uncompressed_data_size = uncompressed_data_offset;
 
 	return( 1 );
+
+on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
+	return( -1 );
 }
 

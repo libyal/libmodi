@@ -34,6 +34,7 @@
 #include "modi_test_macros.h"
 #include "modi_test_unused.h"
 
+#include "../libmodi/libmodi_bit_stream.h"
 #include "../libmodi/libmodi_deflate.h"
 
 /* Define to make modi_test_deflate generate verbose output
@@ -689,274 +690,6 @@ uint8_t modi_test_deflate_uncompressed_byte_stream[ 7640 ] = {
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
-/* Tests the libmodi_deflate_bit_stream_get_value function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_deflate_bit_stream_get_value(
-     void )
-{
-	libmodi_deflate_bit_stream_t bit_stream;
-
-	libcerror_error_t *error = NULL;
-	void *memset_result      = NULL;
-	uint32_t value_32bit     = 0;
-	int result               = 0;
-
-	/* Initialize test
-	 */
-	memset_result = memory_set(
-	                 &bit_stream,
-	                 0,
-	                 sizeof( libmodi_deflate_bit_stream_t ) );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
-
-	/* Test regular cases
-	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 0;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          0,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "value_32bit",
-	 value_32bit,
-	 (uint32_t) 0x00000000UL );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	MODI_TEST_ASSERT_EQUAL_SIZE(
-	 "bit_stream.byte_stream_offset",
-	 bit_stream.byte_stream_offset,
-	 (size_t) 0 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "bit_stream.bit_buffer",
-	 bit_stream.bit_buffer,
-	 (uint32_t) 0x00000000UL );
-
-	MODI_TEST_ASSERT_EQUAL_UINT8(
-	 "bit_stream.bit_buffer_size",
-	 bit_stream.bit_buffer_size,
-	 (uint8_t) 0 );
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          4,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "value_32bit",
-	 value_32bit,
-	 (uint32_t) 0x00000008UL );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	MODI_TEST_ASSERT_EQUAL_SIZE(
-	 "bit_stream.byte_stream_offset",
-	 bit_stream.byte_stream_offset,
-	 (size_t) 1 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "bit_stream.bit_buffer",
-	 bit_stream.bit_buffer,
-	 (uint32_t) 0x00000007UL );
-
-	MODI_TEST_ASSERT_EQUAL_UINT8(
-	 "bit_stream.bit_buffer_size",
-	 bit_stream.bit_buffer_size,
-	 (uint8_t) 4 );
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          12,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "value_32bit",
-	 value_32bit,
-	 (uint32_t) 0x00000da7UL );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	MODI_TEST_ASSERT_EQUAL_SIZE(
-	 "bit_stream.byte_stream_offset",
-	 bit_stream.byte_stream_offset,
-	 (size_t) 2 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "bit_stream.bit_buffer",
-	 bit_stream.bit_buffer,
-	 (uint32_t) 0x00000000UL );
-
-	MODI_TEST_ASSERT_EQUAL_UINT8(
-	 "bit_stream.bit_buffer_size",
-	 bit_stream.bit_buffer_size,
-	 (uint8_t) 0 );
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          32,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "value_32bit",
-	 value_32bit,
-	 (uint32_t) 0x8f6d59bdUL );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	MODI_TEST_ASSERT_EQUAL_SIZE(
-	 "bit_stream.byte_stream_offset",
-	 bit_stream.byte_stream_offset,
-	 (size_t) 6 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "bit_stream.bit_buffer",
-	 bit_stream.bit_buffer,
-	 (uint32_t) 0x00000000UL );
-
-	MODI_TEST_ASSERT_EQUAL_UINT8(
-	 "bit_stream.bit_buffer_size",
-	 bit_stream.bit_buffer_size,
-	 (uint8_t) 0 );
-
-	/* Test error cases
-	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 0;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          NULL,
-	          32,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          64,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          32,
-	          NULL,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	bit_stream.byte_stream_offset = 2627;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
-	          32,
-	          &value_32bit,
-	          &error );
-
-	bit_stream.byte_stream_offset = 0;
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
 /* Tests the libmodi_deflate_huffman_table_construct function
  * Returns 1 if successful or 0 if not
  */
@@ -1142,25 +875,37 @@ on_error:
 int modi_test_deflate_bit_stream_get_huffman_encoded_value(
      void )
 {
-	libmodi_deflate_bit_stream_t bit_stream;
 	libmodi_deflate_huffman_table_t distances_table;
 	libmodi_deflate_huffman_table_t literals_table;
 
-	libcerror_error_t *error = NULL;
-	void *memset_result      = NULL;
-	uint32_t value_32bit     = 0;
-	int result               = 0;
+	libmodi_bit_stream_t *bit_stream = NULL;
+	libcerror_error_t *error         = NULL;
+	void *memset_result              = NULL;
+	uint32_t value_32bit             = 0;
+	int result                       = 0;
 
 	/* Initialize test
 	 */
-	memset_result = memory_set(
-	                 &bit_stream,
-	                 0,
-	                 sizeof( libmodi_deflate_bit_stream_t ) );
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	memset_result = memory_set(
 	                 &distances_table,
@@ -1196,16 +941,10 @@ int modi_test_deflate_bit_stream_get_huffman_encoded_value(
 
 	/* Test regular cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
 	value_32bit = 0;
 
 	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &value_32bit,
 	          &error );
@@ -1224,14 +963,50 @@ int modi_test_deflate_bit_stream_get_huffman_encoded_value(
 	 "error",
 	 error );
 
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
 	value_32bit = 0;
 
 	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
@@ -1253,7 +1028,7 @@ int modi_test_deflate_bit_stream_get_huffman_encoded_value(
 	 &error );
 
 	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          &bit_stream,
+	          bit_stream,
 	          NULL,
 	          &value_32bit,
 	          &error );
@@ -1271,7 +1046,7 @@ int modi_test_deflate_bit_stream_get_huffman_encoded_value(
 	 &error );
 
 	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          NULL,
 	          &error );
@@ -1288,16 +1063,16 @@ int modi_test_deflate_bit_stream_get_huffman_encoded_value(
 	libcerror_error_free(
 	 &error );
 
-	bit_stream.byte_stream_offset = 2627;
-	bit_stream.bit_buffer_size    = 0;
+	bit_stream->byte_stream_offset = 2627;
+	bit_stream->bit_buffer_size    = 0;
 
 	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &value_32bit,
 	          &error );
 
-	bit_stream.byte_stream_offset = 2;
+	bit_stream->byte_stream_offset = 2;
 
 	MODI_TEST_ASSERT_EQUAL_INT(
 	 "result",
@@ -1310,10 +1085,35 @@ int modi_test_deflate_bit_stream_get_huffman_encoded_value(
 
 	libcerror_error_free(
 	 &error );
+
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	return( 1 );
 
 on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
 	if( error != NULL )
 	{
 		libcerror_error_free(
@@ -1328,30 +1128,42 @@ on_error:
 int modi_test_deflate_initialize_dynamic_huffman_tables(
      void )
 {
-	libmodi_deflate_bit_stream_t bit_stream;
 	libmodi_deflate_huffman_table_t distances_table;
 	libmodi_deflate_huffman_table_t literals_table;
 
-	libcerror_error_t *error        = NULL;
-	void *memset_result             = NULL;
-	uint32_t value_32bit            = 0;
-	int result                      = 0;
+	libmodi_bit_stream_t *bit_stream = NULL;
+	libcerror_error_t *error         = NULL;
+	void *memset_result              = NULL;
+	uint32_t value_32bit             = 0;
+	int result                       = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_memset_fail_tests = 6;
-	int test_number                 = 0;
+	int number_of_memset_fail_tests  = 6;
+	int test_number                  = 0;
 #endif
 
 	/* Initialize test
 	 */
-	memset_result = memory_set(
-	                 &bit_stream,
-	                 0,
-	                 sizeof( libmodi_deflate_bit_stream_t ) );
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	memset_result = memory_set(
 	                 &distances_table,
@@ -1373,14 +1185,8 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 
 	/* Test regular cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
+	result = libmodi_bit_stream_get_value(
+	          bit_stream,
 	          3,
 	          &value_32bit,
 	          &error );
@@ -1400,7 +1206,7 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 error );
 
 	result = libmodi_deflate_initialize_dynamic_huffman_tables(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          &error );
@@ -1409,6 +1215,48 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 "result",
 	 result,
 	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bit_stream",
+	 bit_stream );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1416,14 +1264,8 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 
 	/* Test error cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
+	result = libmodi_bit_stream_get_value(
+	          bit_stream,
 	          3,
 	          &value_32bit,
 	          &error );
@@ -1461,7 +1303,7 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 &error );
 
 	result = libmodi_deflate_initialize_dynamic_huffman_tables(
-	          &bit_stream,
+	          bit_stream,
 	          NULL,
 	          &distances_table,
 	          &error );
@@ -1479,7 +1321,7 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 &error );
 
 	result = libmodi_deflate_initialize_dynamic_huffman_tables(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          NULL,
 	          &error );
@@ -1507,7 +1349,7 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 		modi_test_memset_attempts_before_fail = test_number;
 
 		result = libmodi_deflate_initialize_dynamic_huffman_tables(
-		          &bit_stream,
+		          bit_stream,
 		          &literals_table,
 		          &distances_table,
 		          &error );
@@ -1533,9 +1375,34 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	}
 #endif /* defined( HAVE_MODI_TEST_MEMORY ) */
 
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
 	if( error != NULL )
 	{
 		libcerror_error_free(
@@ -1689,26 +1556,38 @@ int modi_test_deflate_decode_huffman(
 {
 	uint8_t uncompressed_data[ 8192 ];
 
-	libmodi_deflate_bit_stream_t bit_stream;
 	libmodi_deflate_huffman_table_t distances_table;
 	libmodi_deflate_huffman_table_t literals_table;
 
-	libcerror_error_t *error        = NULL;
-	void *memset_result             = NULL;
-	size_t uncompressed_data_offset = 0;
-	uint32_t value_32bit            = 0;
-	int result                      = 0;
+	libmodi_bit_stream_t *bit_stream = NULL;
+	libcerror_error_t *error         = NULL;
+	void *memset_result              = NULL;
+	size_t uncompressed_data_offset  = 0;
+	uint32_t value_32bit             = 0;
+	int result                       = 0;
 
 	/* Initialize test
 	 */
-	memset_result = memory_set(
-	                 &bit_stream,
-	                 0,
-	                 sizeof( libmodi_deflate_bit_stream_t ) );
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	memset_result = memory_set(
 	                 &distances_table,
@@ -1730,14 +1609,8 @@ int modi_test_deflate_decode_huffman(
 
 	/* Test regular cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
+	result = libmodi_bit_stream_get_value(
+	          bit_stream,
 	          3,
 	          &value_32bit,
 	          &error );
@@ -1757,7 +1630,7 @@ int modi_test_deflate_decode_huffman(
 	 error );
 
 	result = libmodi_deflate_initialize_dynamic_huffman_tables(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          &error );
@@ -1772,7 +1645,7 @@ int modi_test_deflate_decode_huffman(
 	 error );
 
 	result = libmodi_deflate_decode_huffman(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          uncompressed_data,
@@ -1784,6 +1657,48 @@ int modi_test_deflate_decode_huffman(
 	 "result",
 	 result,
 	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bit_stream",
+	 bit_stream );
 
 	MODI_TEST_ASSERT_IS_NULL(
 	 "error",
@@ -1791,14 +1706,8 @@ int modi_test_deflate_decode_huffman(
 
 	/* Test error cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_value(
-	          &bit_stream,
+	result = libmodi_bit_stream_get_value(
+	          bit_stream,
 	          3,
 	          &value_32bit,
 	          &error );
@@ -1818,7 +1727,7 @@ int modi_test_deflate_decode_huffman(
 	 error );
 
 	result = libmodi_deflate_initialize_dynamic_huffman_tables(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          &error );
@@ -1854,7 +1763,7 @@ int modi_test_deflate_decode_huffman(
 	 &error );
 
 	result = libmodi_deflate_decode_huffman(
-	          &bit_stream,
+	          bit_stream,
 	          NULL,
 	          &distances_table,
 	          uncompressed_data,
@@ -1875,7 +1784,7 @@ int modi_test_deflate_decode_huffman(
 	 &error );
 
 	result = libmodi_deflate_decode_huffman(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          NULL,
 	          uncompressed_data,
@@ -1896,7 +1805,7 @@ int modi_test_deflate_decode_huffman(
 	 &error );
 
 	result = libmodi_deflate_decode_huffman(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          NULL,
@@ -1917,7 +1826,7 @@ int modi_test_deflate_decode_huffman(
 	 &error );
 
 	result = libmodi_deflate_decode_huffman(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          uncompressed_data,
@@ -1938,7 +1847,7 @@ int modi_test_deflate_decode_huffman(
 	 &error );
 
 	result = libmodi_deflate_decode_huffman(
-	          &bit_stream,
+	          bit_stream,
 	          &literals_table,
 	          &distances_table,
 	          uncompressed_data,
@@ -1958,9 +1867,34 @@ int modi_test_deflate_decode_huffman(
 	libcerror_error_free(
 	 &error );
 
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
 	if( error != NULL )
 	{
 		libcerror_error_free(
@@ -2204,36 +2138,40 @@ int modi_test_deflate_read_block(
 {
 	uint8_t uncompressed_data[ 8192 ];
 
-	libmodi_deflate_bit_stream_t bit_stream;
-
-	libcerror_error_t *error        = NULL;
-	void *memset_result             = NULL;
-	size_t uncompressed_data_offset = 0;
-	size_t uncompressed_data_size   = 7640;
-	uint8_t last_block_flag         = 0;
-	int result                      = 0;
+	libmodi_bit_stream_t *bit_stream = NULL;
+	libcerror_error_t *error         = NULL;
+	size_t uncompressed_data_offset  = 0;
+	size_t uncompressed_data_size    = 7640;
+	uint8_t last_block_flag          = 0;
+	int result                       = 0;
 
 	/* Initialize test
 	 */
-	memset_result = memory_set(
-	                 &bit_stream,
-	                 0,
-	                 sizeof( libmodi_deflate_bit_stream_t ) );
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
 	result = libmodi_deflate_read_block(
-	          &bit_stream,
+	          bit_stream,
 	          uncompressed_data,
 	          uncompressed_data_size,
 	          &uncompressed_data_offset,
@@ -2256,14 +2194,50 @@ int modi_test_deflate_read_block(
 
 /* TODO: test uncompressed data too small */
 
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	/* Test error cases
 	 */
-	bit_stream.byte_stream        = modi_test_deflate_compressed_byte_stream;
-	bit_stream.byte_stream_size   = 2627;
-	bit_stream.byte_stream_offset = 2;
-	bit_stream.bit_buffer         = 0;
-	bit_stream.bit_buffer_size    = 0;
-
 	result = libmodi_deflate_read_block(
 	          NULL,
 	          uncompressed_data,
@@ -2285,7 +2259,7 @@ int modi_test_deflate_read_block(
 	 &error );
 
 	result = libmodi_deflate_read_block(
-	          &bit_stream,
+	          bit_stream,
 	          NULL,
 	          uncompressed_data_size,
 	          &uncompressed_data_offset,
@@ -2305,7 +2279,7 @@ int modi_test_deflate_read_block(
 	 &error );
 
 	result = libmodi_deflate_read_block(
-	          &bit_stream,
+	          bit_stream,
 	          uncompressed_data,
 	          (size_t) SSIZE_MAX + 1,
 	          &uncompressed_data_offset,
@@ -2325,7 +2299,7 @@ int modi_test_deflate_read_block(
 	 &error );
 
 	result = libmodi_deflate_read_block(
-	          &bit_stream,
+	          bit_stream,
 	          uncompressed_data,
 	          uncompressed_data_size,
 	          NULL,
@@ -2345,7 +2319,7 @@ int modi_test_deflate_read_block(
 	 &error );
 
 	result = libmodi_deflate_read_block(
-	          &bit_stream,
+	          bit_stream,
 	          uncompressed_data,
 	          uncompressed_data_size,
 	          &uncompressed_data_offset,
@@ -2364,9 +2338,34 @@ int modi_test_deflate_read_block(
 	libcerror_error_free(
 	 &error );
 
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
 	if( error != NULL )
 	{
 		libcerror_error_free(
@@ -2653,10 +2652,6 @@ int main(
 #endif
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
-
-	MODI_TEST_RUN(
-	 "libmodi_deflate_bit_stream_get_value",
-	 modi_test_deflate_bit_stream_get_value );
 
 	MODI_TEST_RUN(
 	 "libmodi_deflate_huffman_table_construct",
