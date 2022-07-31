@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_udif_resource_file"
-	ProjectGUID="{313F5A7E-A2F7-4075-8D02-E8AB06A0CC4E}"
-	RootNamespace="modi_test_udif_resource_file"
+	Name="modi_test_huffman_tree"
+	ProjectGUID="{471F54FA-86C8-41A0-A9F0-3E433FE0D5AA}"
+	RootNamespace="modi_test_huffman_tree"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,15 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_functions.c"
+				RelativePath="..\..\tests\modi_test_huffman_tree.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_udif_resource_file.c"
 				>
 			</File>
 		</Filter>
@@ -193,14 +189,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\tests\modi_test_functions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_libbfio.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_libcerror.h"
 				>

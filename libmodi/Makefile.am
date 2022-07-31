@@ -44,6 +44,7 @@ libmodi_la_SOURCES = \
 	libmodi_error.c libmodi_error.h \
 	libmodi_extern.h \
 	libmodi_handle.c libmodi_handle.h \
+	libmodi_huffman_tree.c libmodi_huffman_tree.h \
 	libmodi_i18n.c libmodi_i18n.h \
 	libmodi_io_handle.c libmodi_io_handle.h \
 	libmodi_libbfio.h \

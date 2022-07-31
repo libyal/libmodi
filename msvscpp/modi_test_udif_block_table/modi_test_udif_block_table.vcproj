@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_udif_block_table"
-	ProjectGUID="{CD7A1C90-06F8-4951-8B21-1E601779659C}"
+	ProjectGUID="{358AE9AC-4FA6-48D6-8598-D7DF17AB530E}"
 	RootNamespace="modi_test_udif_block_table"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

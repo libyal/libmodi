@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_bands_data_handle"
-	ProjectGUID="{0E6770BF-8E72-47CE-8725-66D93607883F}"
+	ProjectGUID="{80CA8F3A-3878-461F-97C8-44224EE3C61B}"
 	RootNamespace="modi_test_bands_data_handle"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

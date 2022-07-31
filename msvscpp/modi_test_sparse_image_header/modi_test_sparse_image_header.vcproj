@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_sparse_image_header"
-	ProjectGUID="{CC6E9E00-5E55-4BEB-867C-BB6A2B966E77}"
+	ProjectGUID="{2CE2C507-0AC3-4794-9B92-BA31E6903854}"
 	RootNamespace="modi_test_sparse_image_header"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

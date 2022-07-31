@@ -135,6 +135,7 @@ stamp-h[1-9]
 /tests/modi_test_deflate
 /tests/modi_test_error
 /tests/modi_test_handle
+/tests/modi_test_huffman_tree
 /tests/modi_test_io_handle
 /tests/modi_test_notify
 /tests/modi_test_sparse_bundle_xml_plist

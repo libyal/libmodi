@@ -51,7 +51,7 @@ int modi_test_bit_stream_initialize(
 	int result                       = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_malloc_fail_tests  = 2;
+	int number_of_malloc_fail_tests  = 1;
 	int number_of_memset_fail_tests  = 1;
 	int test_number                  = 0;
 #endif
@@ -63,7 +63,7 @@ int modi_test_bit_stream_initialize(
 	          modi_test_bit_stream_data,
 	          16,
 	          0,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -103,7 +103,7 @@ int modi_test_bit_stream_initialize(
 	          modi_test_bit_stream_data,
 	          16,
 	          0,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -125,7 +125,7 @@ int modi_test_bit_stream_initialize(
 	          modi_test_bit_stream_data,
 	          16,
 	          0,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	bit_stream = NULL;
@@ -147,7 +147,7 @@ int modi_test_bit_stream_initialize(
 	          NULL,
 	          16,
 	          0,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -167,7 +167,7 @@ int modi_test_bit_stream_initialize(
 	          modi_test_bit_stream_data,
 	          (size_t) SSIZE_MAX + 1,
 	          0,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -187,7 +187,7 @@ int modi_test_bit_stream_initialize(
 	          modi_test_bit_stream_data,
 	          16,
 	          (size_t) SSIZE_MAX + 1,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -237,7 +237,7 @@ int modi_test_bit_stream_initialize(
 		          modi_test_bit_stream_data,
 		          16,
 		          0,
-		          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+		          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 		          &error );
 
 		if( modi_test_malloc_attempts_before_fail != -1 )
@@ -283,7 +283,7 @@ int modi_test_bit_stream_initialize(
 		          modi_test_bit_stream_data,
 		          16,
 		          0,
-		          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+		          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 		          &error );
 
 		if( modi_test_memset_attempts_before_fail != -1 )
@@ -391,7 +391,7 @@ int modi_test_bit_stream_get_value(
 	          modi_test_bit_stream_data,
 	          16,
 	          0,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(

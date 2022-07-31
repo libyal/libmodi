@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libmodi"
-	ProjectGUID="{114E6386-3BE9-4B49-9C8A-B50C1E5CB340}"
+	ProjectGUID="{B4E7F5BB-07EB-475A-9C78-E7527D2BB8BA}"
 	RootNamespace="libmodi"
 	TargetFrameworkVersion="131072"
 	>
@@ -214,6 +214,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_huffman_tree.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_i18n.c"
 				>
 			</File>
@@ -313,6 +317,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_huffman_tree.h"
 				>
 			</File>
 			<File

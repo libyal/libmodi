@@ -57,6 +57,7 @@ check_PROGRAMS = \
 	modi_test_deflate \
 	modi_test_error \
 	modi_test_handle \
+	modi_test_huffman_tree \
 	modi_test_io_handle \
 	modi_test_notify \
 	modi_test_sparse_bundle_xml_plist \
@@ -169,6 +170,18 @@ modi_test_handle_LDADD = \
 	@LIBCTHREADS_LIBADD@ \
 	@LIBCERROR_LIBADD@ \
 	@PTHREAD_LIBADD@
+
+modi_test_huffman_tree_SOURCES = \
+	modi_test_huffman_tree.c \
+	modi_test_libcerror.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
+	modi_test_unused.h
+
+modi_test_huffman_tree_LDADD = \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
 
 modi_test_io_handle_SOURCES = \
 	modi_test_io_handle.c \

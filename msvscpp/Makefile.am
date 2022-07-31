@@ -25,6 +25,7 @@ MSVSCPP_FILES = \
 	modi_test_deflate/modi_test_deflate.vcproj \
 	modi_test_error/modi_test_error.vcproj \
 	modi_test_handle/modi_test_handle.vcproj \
+	modi_test_huffman_tree/modi_test_huffman_tree.vcproj \
 	modi_test_io_handle/modi_test_io_handle.vcproj \
 	modi_test_notify/modi_test_notify.vcproj \
 	modi_test_sparse_bundle_xml_plist/modi_test_sparse_bundle_xml_plist.vcproj \

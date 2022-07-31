@@ -23,8 +23,8 @@
 #include <memory.h>
 #include <types.h>
 
-#include "libmodi_libcerror.h"
 #include "libmodi_bit_stream.h"
+#include "libmodi_libcerror.h"
 
 /* Creates a bit stream
  * Make sure the value bit_stream is referencing, is set to NULL
@@ -95,8 +95,8 @@ int libmodi_bit_stream_initialize(
 
 		return( -1 );
 	}
-	if( ( storage_type != BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT )
-	 && ( storage_type != BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK ) )
+	if( ( storage_type != LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT )
+	 && ( storage_type != LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK ) )
 	{
 		libcerror_error_set(
 		 error,
@@ -227,14 +227,14 @@ int libmodi_bit_stream_read(
 		{
 			break;
 		}
-		if( bit_stream->storage_type == BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT )
+		if( bit_stream->storage_type == LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT )
 		{
 			bit_stream->bit_buffer      |= (uint32_t) bit_stream->byte_stream[ bit_stream->byte_stream_offset ] << bit_stream->bit_buffer_size;
 			bit_stream->bit_buffer_size += 8;
 
 			bit_stream->byte_stream_offset += 1;
 		}
-		else if( bit_stream->storage_type == BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK )
+		else if( bit_stream->storage_type == LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK )
 		{
 			bit_stream->bit_buffer     <<= 8;
 			bit_stream->bit_buffer      |= bit_stream->byte_stream[ bit_stream->byte_stream_offset ];
@@ -320,7 +320,7 @@ int libmodi_bit_stream_get_value(
 
 	if( number_of_bits < 32 )
 	{
-		if( bit_stream->storage_type == BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT )
+		if( bit_stream->storage_type == LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT )
 		{
 			/* On VS 2008 32-bit "~( 0xfffffffUL << 32 )" does not behave as expected
 			 */
@@ -329,7 +329,7 @@ int libmodi_bit_stream_get_value(
 			bit_stream->bit_buffer     >>= number_of_bits;
 			bit_stream->bit_buffer_size -= number_of_bits;
 		}
-		else if( bit_stream->storage_type == BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK )
+		else if( bit_stream->storage_type == LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK )
 		{
 			safe_value_32bit >>= bit_stream->bit_buffer_size - number_of_bits;
 

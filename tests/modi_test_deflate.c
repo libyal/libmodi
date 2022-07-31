@@ -36,6 +36,7 @@
 
 #include "../libmodi/libmodi_bit_stream.h"
 #include "../libmodi/libmodi_deflate.h"
+#include "../libmodi/libmodi_huffman_tree.h"
 
 /* Define to make modi_test_deflate generate verbose output
 #define MODI_TEST_DEFLATE
@@ -690,456 +691,22 @@ uint8_t modi_test_deflate_uncompressed_byte_stream[ 7640 ] = {
 
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
-/* Tests the libmodi_deflate_huffman_table_construct function
+/* Tests the libmodi_deflate_build_dynamic_huffman_trees function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_deflate_huffman_table_construct(
+int modi_test_deflate_build_dynamic_huffman_trees(
      void )
 {
-	uint16_t code_size_array[ 318 ];
-
-	libmodi_deflate_huffman_table_t table;
-
-	libcerror_error_t *error        = NULL;
-	void *memset_result             = NULL;
-	uint16_t symbol                 = 0;
-	int result                      = 0;
+	libmodi_bit_stream_t *bit_stream       = NULL;
+	libmodi_huffman_tree_t *distances_tree = NULL;
+	libmodi_huffman_tree_t *literals_tree  = NULL;
+	libcerror_error_t *error               = NULL;
+	uint32_t value_32bit                   = 0;
+	int result                             = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_memset_fail_tests = 2;
-	int test_number                 = 0;
-#endif
-
-	/* Initialize test
-	 */
-	memset_result = memory_set(
-	                 &table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
-
-	for( symbol = 0;
-	     symbol < 318;
-	     symbol++ )
-	{
-		if( symbol < 144 )
-		{
-			code_size_array[ symbol ] = 8;
-		}
-		else if( symbol < 256 )
-		{
-			code_size_array[ symbol ] = 9;
-		}
-		else if( symbol < 280 )
-		{
-			code_size_array[ symbol ] = 7;
-		}
-		else if( symbol < 288 )
-		{
-			code_size_array[ symbol ] = 8;
-		}
-		else
-		{
-			code_size_array[ symbol ] = 5;
-		}
-	}
-	/* Test regular cases
-	 */
-	result = libmodi_deflate_huffman_table_construct(
-	          &table,
-	          code_size_array,
-	          288,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	result = libmodi_deflate_huffman_table_construct(
-	          NULL,
-	          code_size_array,
-	          288,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_huffman_table_construct(
-	          &table,
-	          NULL,
-	          288,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_huffman_table_construct(
-	          &table,
-	          code_size_array,
-	          -1,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-#if defined( HAVE_MODI_TEST_MEMORY )
-
-	for( test_number = 0;
-	     test_number < number_of_memset_fail_tests;
-	     test_number++ )
-	{
-		/* Test libmodi_write_io_handle_initialize with memset failing
-		 */
-		modi_test_memset_attempts_before_fail = test_number;
-
-		result = libmodi_deflate_huffman_table_construct(
-		          &table,
-		          code_size_array,
-		          288,
-		          &error );
-
-		if( modi_test_memset_attempts_before_fail != -1 )
-		{
-			modi_test_memset_attempts_before_fail = -1;
-		}
-		else
-		{
-			MODI_TEST_ASSERT_EQUAL_INT(
-			 "result",
-			 result,
-			 -1 );
-
-			MODI_TEST_ASSERT_IS_NOT_NULL(
-			 "error",
-			 error );
-
-			libcerror_error_free(
-			 &error );
-		}
-	}
-#endif /* defined( HAVE_MODI_TEST_MEMORY ) */
-
-	/* TODO test errornous data */
-
-	return( 1 );
-
-on_error:
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libmodi_deflate_bit_stream_get_huffman_encoded_value function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_deflate_bit_stream_get_huffman_encoded_value(
-     void )
-{
-	libmodi_deflate_huffman_table_t distances_table;
-	libmodi_deflate_huffman_table_t literals_table;
-
-	libmodi_bit_stream_t *bit_stream = NULL;
-	libcerror_error_t *error         = NULL;
-	void *memset_result              = NULL;
-	uint32_t value_32bit             = 0;
-	int result                       = 0;
-
-	/* Initialize test
-	 */
-	result = libmodi_bit_stream_initialize(
-	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
-	          2627,
-	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "bit_stream",
-	 bit_stream );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	memset_result = memory_set(
-	                 &distances_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
-
-	memset_result = memory_set(
-	                 &literals_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
-
-	result = libmodi_deflate_initialize_fixed_huffman_tables(
-	          &literals_table,
-	          &distances_table,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test regular cases
-	 */
-	value_32bit = 0;
-
-	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          bit_stream,
-	          &literals_table,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_EQUAL_UINT32(
-	 "value_32bit",
-	 value_32bit,
-	 (uint32_t) 141 );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Clean up
-	 */
-	result = libmodi_bit_stream_free(
-	          &bit_stream,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "bit_stream",
-	 bit_stream );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Initialize test
-	 */
-	result = libmodi_bit_stream_initialize(
-	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
-	          2627,
-	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "bit_stream",
-	 bit_stream );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	/* Test error cases
-	 */
-	value_32bit = 0;
-
-	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          NULL,
-	          &literals_table,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          bit_stream,
-	          NULL,
-	          &value_32bit,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          bit_stream,
-	          &literals_table,
-	          NULL,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	bit_stream->byte_stream_offset = 2627;
-	bit_stream->bit_buffer_size    = 0;
-
-	result = libmodi_deflate_bit_stream_get_huffman_encoded_value(
-	          bit_stream,
-	          &literals_table,
-	          &value_32bit,
-	          &error );
-
-	bit_stream->byte_stream_offset = 2;
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	/* Clean up
-	 */
-	result = libmodi_bit_stream_free(
-	          &bit_stream,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 1 );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "bit_stream",
-	 bit_stream );
-
-	MODI_TEST_ASSERT_IS_NULL(
-	 "error",
-	 error );
-
-	return( 1 );
-
-on_error:
-	if( bit_stream != NULL )
-	{
-		libmodi_bit_stream_free(
-		 &bit_stream,
-		 NULL );
-	}
-	if( error != NULL )
-	{
-		libcerror_error_free(
-		 &error );
-	}
-	return( 0 );
-}
-
-/* Tests the libmodi_deflate_initialize_dynamic_huffman_tables function
- * Returns 1 if successful or 0 if not
- */
-int modi_test_deflate_initialize_dynamic_huffman_tables(
-     void )
-{
-	libmodi_deflate_huffman_table_t distances_table;
-	libmodi_deflate_huffman_table_t literals_table;
-
-	libmodi_bit_stream_t *bit_stream = NULL;
-	libcerror_error_t *error         = NULL;
-	void *memset_result              = NULL;
-	uint32_t value_32bit             = 0;
-	int result                       = 0;
-
-#if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_memset_fail_tests  = 6;
-	int test_number                  = 0;
+	int number_of_memset_fail_tests        = 6;
+	int test_number                        = 0;
 #endif
 
 	/* Initialize test
@@ -1149,7 +716,7 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	          modi_test_deflate_compressed_byte_stream,
 	          2627,
 	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1165,23 +732,43 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 "error",
 	 error );
 
-	memset_result = memory_set(
-	                 &distances_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
+	result = libmodi_huffman_tree_initialize(
+	          &literals_tree,
+	          288,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "literals_tree",
+	 literals_tree );
 
-	memset_result = memory_set(
-	                 &literals_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_initialize(
+	          &distances_tree,
+	          30,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "distances_tree",
+	 distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -1205,10 +792,10 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 "error",
 	 error );
 
-	result = libmodi_deflate_initialize_dynamic_huffman_tables(
+	result = libmodi_deflate_build_dynamic_huffman_trees(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1246,7 +833,7 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	          modi_test_deflate_compressed_byte_stream,
 	          2627,
 	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1284,10 +871,10 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	 "error",
 	 error );
 
-	result = libmodi_deflate_initialize_dynamic_huffman_tables(
+	result = libmodi_deflate_build_dynamic_huffman_trees(
 	          NULL,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1302,10 +889,10 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_deflate_initialize_dynamic_huffman_tables(
+	result = libmodi_deflate_build_dynamic_huffman_trees(
 	          bit_stream,
 	          NULL,
-	          &distances_table,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1320,9 +907,9 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_deflate_initialize_dynamic_huffman_tables(
+	result = libmodi_deflate_build_dynamic_huffman_trees(
 	          bit_stream,
-	          &literals_table,
+	          literals_tree,
 	          NULL,
 	          &error );
 
@@ -1348,10 +935,10 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 		 */
 		modi_test_memset_attempts_before_fail = test_number;
 
-		result = libmodi_deflate_initialize_dynamic_huffman_tables(
+		result = libmodi_deflate_build_dynamic_huffman_trees(
 		          bit_stream,
-		          &literals_table,
-		          &distances_table,
+		          literals_tree,
+		          distances_tree,
 		          &error );
 
 		if( modi_test_memset_attempts_before_fail != -1 )
@@ -1377,6 +964,40 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 
 	/* Clean up
 	 */
+	result = libmodi_huffman_tree_free(
+	          &distances_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "distances_tree",
+	 distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_free(
+	          &literals_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "literals_tree",
+	 literals_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libmodi_bit_stream_free(
 	          &bit_stream,
 	          &error );
@@ -1397,6 +1018,18 @@ int modi_test_deflate_initialize_dynamic_huffman_tables(
 	return( 1 );
 
 on_error:
+	if( distances_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &distances_tree,
+		 NULL );
+	}
+	if( literals_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &literals_tree,
+		 NULL );
+	}
 	if( bit_stream != NULL )
 	{
 		libmodi_bit_stream_free(
@@ -1411,49 +1044,67 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmodi_deflate_initialize_fixed_huffman_tables function
+/* Tests the libmodi_deflate_build_fixed_huffman_trees function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_deflate_initialize_fixed_huffman_tables(
+int modi_test_deflate_build_fixed_huffman_trees(
      void )
 {
-	libmodi_deflate_huffman_table_t distances_table;
-	libmodi_deflate_huffman_table_t literals_table;
-
-	libcerror_error_t *error        = NULL;
-	void *memset_result             = NULL;
-	int result                      = 0;
+	libmodi_huffman_tree_t *distances_tree = NULL;
+	libmodi_huffman_tree_t *literals_tree  = NULL;
+	libcerror_error_t *error               = NULL;
+	int result                             = 0;
 
 #if defined( HAVE_MODI_TEST_MEMORY )
-	int number_of_memset_fail_tests = 4;
-	int test_number                 = 0;
+	int number_of_memset_fail_tests        = 4;
+	int test_number                        = 0;
 #endif
 
 	/* Initialize test
 	 */
-	memset_result = memory_set(
-	                 &distances_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
+	result = libmodi_huffman_tree_initialize(
+	          &literals_tree,
+	          288,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "literals_tree",
+	 literals_tree );
 
-	memset_result = memory_set(
-	                 &literals_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_initialize(
+	          &distances_tree,
+	          30,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "distances_tree",
+	 distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
-	result = libmodi_deflate_initialize_fixed_huffman_tables(
-	          &literals_table,
-	          &distances_table,
+	result = libmodi_deflate_build_fixed_huffman_trees(
+	          literals_tree,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1467,9 +1118,9 @@ int modi_test_deflate_initialize_fixed_huffman_tables(
 
 	/* Test error cases
 	 */
-	result = libmodi_deflate_initialize_fixed_huffman_tables(
+	result = libmodi_deflate_build_fixed_huffman_trees(
 	          NULL,
-	          &distances_table,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1484,8 +1135,8 @@ int modi_test_deflate_initialize_fixed_huffman_tables(
 	libcerror_error_free(
 	 &error );
 
-	result = libmodi_deflate_initialize_fixed_huffman_tables(
-	          &literals_table,
+	result = libmodi_deflate_build_fixed_huffman_trees(
+	          literals_tree,
 	          NULL,
 	          &error );
 
@@ -1511,9 +1162,9 @@ int modi_test_deflate_initialize_fixed_huffman_tables(
 		 */
 		modi_test_memset_attempts_before_fail = test_number;
 
-		result = libmodi_deflate_initialize_fixed_huffman_tables(
-		          &literals_table,
-		          &distances_table,
+		result = libmodi_deflate_build_fixed_huffman_trees(
+		          literals_tree,
+		          distances_tree,
 		          &error );
 
 		if( modi_test_memset_attempts_before_fail != -1 )
@@ -1537,9 +1188,57 @@ int modi_test_deflate_initialize_fixed_huffman_tables(
 	}
 #endif /* defined( HAVE_MODI_TEST_MEMORY ) */
 
+	/* Clean up
+	 */
+	result = libmodi_huffman_tree_free(
+	          &distances_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "distances_tree",
+	 distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_free(
+	          &literals_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "literals_tree",
+	 literals_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	return( 1 );
 
 on_error:
+	if( distances_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &distances_tree,
+		 NULL );
+	}
+	if( literals_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &literals_tree,
+		 NULL );
+	}
 	if( error != NULL )
 	{
 		libcerror_error_free(
@@ -1556,15 +1255,13 @@ int modi_test_deflate_decode_huffman(
 {
 	uint8_t uncompressed_data[ 8192 ];
 
-	libmodi_deflate_huffman_table_t distances_table;
-	libmodi_deflate_huffman_table_t literals_table;
-
-	libmodi_bit_stream_t *bit_stream = NULL;
-	libcerror_error_t *error         = NULL;
-	void *memset_result              = NULL;
-	size_t uncompressed_data_offset  = 0;
-	uint32_t value_32bit             = 0;
-	int result                       = 0;
+	libmodi_bit_stream_t *bit_stream       = NULL;
+	libmodi_huffman_tree_t *distances_tree = NULL;
+	libmodi_huffman_tree_t *literals_tree  = NULL;
+	libcerror_error_t *error               = NULL;
+	size_t uncompressed_data_offset        = 0;
+	uint32_t value_32bit                   = 0;
+	int result                             = 0;
 
 	/* Initialize test
 	 */
@@ -1573,7 +1270,7 @@ int modi_test_deflate_decode_huffman(
 	          modi_test_deflate_compressed_byte_stream,
 	          2627,
 	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1589,23 +1286,43 @@ int modi_test_deflate_decode_huffman(
 	 "error",
 	 error );
 
-	memset_result = memory_set(
-	                 &distances_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
+	result = libmodi_huffman_tree_initialize(
+	          &literals_tree,
+	          288,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "literals_tree",
+	 literals_tree );
 
-	memset_result = memory_set(
-	                 &literals_table,
-	                 0,
-	                 sizeof( libmodi_deflate_huffman_table_t ) );
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_initialize(
+	          &distances_tree,
+	          30,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
 
 	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "memset_result",
-	 memset_result );
+	 "distances_tree",
+	 distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
 
 	/* Test regular cases
 	 */
@@ -1629,10 +1346,10 @@ int modi_test_deflate_decode_huffman(
 	 "error",
 	 error );
 
-	result = libmodi_deflate_initialize_dynamic_huffman_tables(
+	result = libmodi_deflate_build_dynamic_huffman_trees(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1646,8 +1363,8 @@ int modi_test_deflate_decode_huffman(
 
 	result = libmodi_deflate_decode_huffman(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          uncompressed_data,
 	          8192,
 	          &uncompressed_data_offset,
@@ -1688,7 +1405,7 @@ int modi_test_deflate_decode_huffman(
 	          modi_test_deflate_compressed_byte_stream,
 	          2627,
 	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1726,10 +1443,10 @@ int modi_test_deflate_decode_huffman(
 	 "error",
 	 error );
 
-	result = libmodi_deflate_initialize_dynamic_huffman_tables(
+	result = libmodi_deflate_build_dynamic_huffman_trees(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -1743,8 +1460,8 @@ int modi_test_deflate_decode_huffman(
 
 	result = libmodi_deflate_decode_huffman(
 	          NULL,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          uncompressed_data,
 	          8192,
 	          &uncompressed_data_offset,
@@ -1765,7 +1482,7 @@ int modi_test_deflate_decode_huffman(
 	result = libmodi_deflate_decode_huffman(
 	          bit_stream,
 	          NULL,
-	          &distances_table,
+	          distances_tree,
 	          uncompressed_data,
 	          8192,
 	          &uncompressed_data_offset,
@@ -1785,7 +1502,7 @@ int modi_test_deflate_decode_huffman(
 
 	result = libmodi_deflate_decode_huffman(
 	          bit_stream,
-	          &literals_table,
+	          literals_tree,
 	          NULL,
 	          uncompressed_data,
 	          8192,
@@ -1806,8 +1523,8 @@ int modi_test_deflate_decode_huffman(
 
 	result = libmodi_deflate_decode_huffman(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          NULL,
 	          8192,
 	          &uncompressed_data_offset,
@@ -1827,8 +1544,8 @@ int modi_test_deflate_decode_huffman(
 
 	result = libmodi_deflate_decode_huffman(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          uncompressed_data,
 	          (size_t) SSIZE_MAX + 1,
 	          &uncompressed_data_offset,
@@ -1848,8 +1565,8 @@ int modi_test_deflate_decode_huffman(
 
 	result = libmodi_deflate_decode_huffman(
 	          bit_stream,
-	          &literals_table,
-	          &distances_table,
+	          literals_tree,
+	          distances_tree,
 	          uncompressed_data,
 	          8192,
 	          NULL,
@@ -1869,6 +1586,40 @@ int modi_test_deflate_decode_huffman(
 
 	/* Clean up
 	 */
+	result = libmodi_huffman_tree_free(
+	          &distances_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "distances_tree",
+	 distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_free(
+	          &literals_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "literals_tree",
+	 literals_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libmodi_bit_stream_free(
 	          &bit_stream,
 	          &error );
@@ -1889,6 +1640,18 @@ int modi_test_deflate_decode_huffman(
 	return( 1 );
 
 on_error:
+	if( distances_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &distances_tree,
+		 NULL );
+	}
+	if( literals_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &literals_tree,
+		 NULL );
+	}
 	if( bit_stream != NULL )
 	{
 		libmodi_bit_stream_free(
@@ -2130,18 +1893,15 @@ on_error:
 	return( 0 );
 }
 
-/* Tests the libmodi_deflate_read_block function
+/* Tests the deflate_read_block_header function
  * Returns 1 if successful or 0 if not
  */
-int modi_test_deflate_read_block(
+int modi_test_deflate_read_block_header(
      void )
 {
-	uint8_t uncompressed_data[ 8192 ];
-
 	libmodi_bit_stream_t *bit_stream = NULL;
 	libcerror_error_t *error         = NULL;
-	size_t uncompressed_data_offset  = 0;
-	size_t uncompressed_data_size    = 7640;
+	uint8_t block_type               = 0;
 	uint8_t last_block_flag          = 0;
 	int result                       = 0;
 
@@ -2152,7 +1912,7 @@ int modi_test_deflate_read_block(
 	          modi_test_deflate_compressed_byte_stream,
 	          2627,
 	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -2170,12 +1930,273 @@ int modi_test_deflate_read_block(
 
 	/* Test regular cases
 	 */
+	result = libmodi_deflate_read_block_header(
+	          bit_stream,
+	          &block_type,
+	          &last_block_flag,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Initialize test
+	 */
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test error cases
+	 */
+	result = libmodi_deflate_read_block_header(
+	          NULL,
+	          &block_type,
+	          &last_block_flag,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_deflate_read_block_header(
+	          bit_stream,
+	          NULL,
+	          &last_block_flag,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	result = libmodi_deflate_read_block_header(
+	          bit_stream,
+	          &block_type,
+	          NULL,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 -1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "error",
+	 error );
+
+	libcerror_error_free(
+	 &error );
+
+	/* Clean up
+	 */
+	result = libmodi_bit_stream_free(
+	          &bit_stream,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	return( 1 );
+
+on_error:
+	if( bit_stream != NULL )
+	{
+		libmodi_bit_stream_free(
+		 &bit_stream,
+		 NULL );
+	}
+	if( error != NULL )
+	{
+		libcerror_error_free(
+		 &error );
+	}
+	return( 0 );
+}
+
+/* Tests the libmodi_deflate_read_block function
+ * Returns 1 if successful or 0 if not
+ */
+int modi_test_deflate_read_block(
+     void )
+{
+	uint8_t uncompressed_data[ 8192 ];
+
+	libmodi_bit_stream_t *bit_stream             = NULL;
+	libmodi_huffman_tree_t *fixed_distances_tree = NULL;
+	libmodi_huffman_tree_t *fixed_literals_tree  = NULL;
+	libcerror_error_t *error                     = NULL;
+	size_t uncompressed_data_offset              = 0;
+	size_t uncompressed_data_size                = 7640;
+	uint8_t block_type                           = 0;
+	uint8_t last_block_flag                      = 0;
+	int result                                   = 0;
+
+	/* Initialize test
+	 */
+	result = libmodi_bit_stream_initialize(
+	          &bit_stream,
+	          modi_test_deflate_compressed_byte_stream,
+	          2627,
+	          2,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "bit_stream",
+	 bit_stream );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_initialize(
+	          &fixed_literals_tree,
+	          288,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "fixed_literals_tree",
+	 fixed_literals_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_initialize(
+	          &fixed_distances_tree,
+	          30,
+	          15,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NOT_NULL(
+	 "fixed_distances_tree",
+	 fixed_distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_deflate_build_fixed_huffman_trees(
+	          fixed_literals_tree,
+	          fixed_distances_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_deflate_read_block_header(
+	          bit_stream,
+	          &block_type,
+	          &last_block_flag,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	/* Test regular cases
+	 */
 	result = libmodi_deflate_read_block(
 	          bit_stream,
+	          block_type,
+	          fixed_literals_tree,
+	          fixed_distances_tree,
 	          uncompressed_data,
 	          uncompressed_data_size,
 	          &uncompressed_data_offset,
-	          &last_block_flag,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -2220,7 +2241,7 @@ int modi_test_deflate_read_block(
 	          modi_test_deflate_compressed_byte_stream,
 	          2627,
 	          2,
-	          BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
+	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -2240,10 +2261,12 @@ int modi_test_deflate_read_block(
 	 */
 	result = libmodi_deflate_read_block(
 	          NULL,
+	          block_type,
+	          fixed_literals_tree,
+	          fixed_distances_tree,
 	          uncompressed_data,
 	          uncompressed_data_size,
 	          &uncompressed_data_offset,
-	          &last_block_flag,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -2260,10 +2283,12 @@ int modi_test_deflate_read_block(
 
 	result = libmodi_deflate_read_block(
 	          bit_stream,
+	          block_type,
+	          fixed_literals_tree,
+	          fixed_distances_tree,
 	          NULL,
 	          uncompressed_data_size,
 	          &uncompressed_data_offset,
-	          &last_block_flag,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -2280,10 +2305,12 @@ int modi_test_deflate_read_block(
 
 	result = libmodi_deflate_read_block(
 	          bit_stream,
+	          block_type,
+	          fixed_literals_tree,
+	          fixed_distances_tree,
 	          uncompressed_data,
 	          (size_t) SSIZE_MAX + 1,
 	          &uncompressed_data_offset,
-	          &last_block_flag,
 	          &error );
 
 	MODI_TEST_ASSERT_EQUAL_INT(
@@ -2300,29 +2327,11 @@ int modi_test_deflate_read_block(
 
 	result = libmodi_deflate_read_block(
 	          bit_stream,
+	          block_type,
+	          fixed_literals_tree,
+	          fixed_distances_tree,
 	          uncompressed_data,
 	          uncompressed_data_size,
-	          NULL,
-	          &last_block_flag,
-	          &error );
-
-	MODI_TEST_ASSERT_EQUAL_INT(
-	 "result",
-	 result,
-	 -1 );
-
-	MODI_TEST_ASSERT_IS_NOT_NULL(
-	 "error",
-	 error );
-
-	libcerror_error_free(
-	 &error );
-
-	result = libmodi_deflate_read_block(
-	          bit_stream,
-	          uncompressed_data,
-	          uncompressed_data_size,
-	          &uncompressed_data_offset,
 	          NULL,
 	          &error );
 
@@ -2340,6 +2349,40 @@ int modi_test_deflate_read_block(
 
 	/* Clean up
 	 */
+	result = libmodi_huffman_tree_free(
+	          &fixed_distances_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "fixed_distances_tree",
+	 fixed_distances_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
+	result = libmodi_huffman_tree_free(
+	          &fixed_literals_tree,
+	          &error );
+
+	MODI_TEST_ASSERT_EQUAL_INT(
+	 "result",
+	 result,
+	 1 );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "fixed_literals_tree",
+	 fixed_literals_tree );
+
+	MODI_TEST_ASSERT_IS_NULL(
+	 "error",
+	 error );
+
 	result = libmodi_bit_stream_free(
 	          &bit_stream,
 	          &error );
@@ -2360,6 +2403,18 @@ int modi_test_deflate_read_block(
 	return( 1 );
 
 on_error:
+	if( fixed_distances_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &fixed_distances_tree,
+		 NULL );
+	}
+	if( fixed_literals_tree != NULL )
+	{
+		libmodi_huffman_tree_free(
+		 &fixed_literals_tree,
+		 NULL );
+	}
 	if( bit_stream != NULL )
 	{
 		libmodi_bit_stream_free(
@@ -2654,20 +2709,12 @@ int main(
 #if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 	MODI_TEST_RUN(
-	 "libmodi_deflate_huffman_table_construct",
-	 modi_test_deflate_huffman_table_construct );
+	 "libmodi_deflate_build_dynamic_huffman_trees",
+	 modi_test_deflate_build_dynamic_huffman_trees );
 
 	MODI_TEST_RUN(
-	 "libmodi_deflate_bit_stream_get_huffman_encoded_value",
-	 modi_test_deflate_bit_stream_get_huffman_encoded_value );
-
-	MODI_TEST_RUN(
-	 "libmodi_deflate_initialize_dynamic_huffman_tables",
-	 modi_test_deflate_initialize_dynamic_huffman_tables );
-
-	MODI_TEST_RUN(
-	 "libmodi_deflate_initialize_fixed_huffman_tables",
-	 modi_test_deflate_initialize_fixed_huffman_tables );
+	 "libmodi_deflate_build_fixed_huffman_trees",
+	 modi_test_deflate_build_fixed_huffman_trees );
 
 	MODI_TEST_RUN(
 	 "libmodi_deflate_decode_huffman",
@@ -2697,7 +2744,11 @@ int main(
 
 	return( EXIT_SUCCESS );
 
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
+
 on_error:
 	return( EXIT_FAILURE );
+
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 }
 

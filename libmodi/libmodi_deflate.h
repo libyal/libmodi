@@ -26,6 +26,7 @@
 #include <types.h>
 
 #include "libmodi_bit_stream.h"
+#include "libmodi_huffman_tree.h"
 #include "libmodi_libcerror.h"
 
 #if defined( __cplusplus )
@@ -42,55 +43,21 @@ enum LIBMODI_DEFLATE_BLOCK_TYPES
 	LIBMODI_DEFLATE_BLOCK_TYPE_RESERVED		= 0x03
 };
 
-typedef struct libmodi_deflate_huffman_table libmodi_deflate_huffman_table_t;
-
-struct libmodi_deflate_huffman_table
-{
-	/* The maximum number of bits representable by the Huffman table
-	 */
-	uint8_t maximum_number_of_bits;
-
-/* TODO create initialize function that sets the size of codes array? */
-	/* The codes array
-	 */
-	int codes_array[ 288 ];
-
-	/* The code counts array
-	 */
-	int code_counts_array[ 16 ];
-
-	/* The number of codes
-	 */
-	int number_of_codes;
-};
-
-int libmodi_deflate_huffman_table_construct(
-     libmodi_deflate_huffman_table_t *table,
-     const uint16_t *code_sizes_array,
-     int number_of_code_sizes,
-     libcerror_error_t **error );
-
-int libmodi_deflate_bit_stream_get_huffman_encoded_value(
+int libmodi_deflate_build_dynamic_huffman_trees(
      libmodi_bit_stream_t *bit_stream,
-     libmodi_deflate_huffman_table_t *table,
-     uint32_t *value_32bit,
+     libmodi_huffman_tree_t *literals_tree,
+     libmodi_huffman_tree_t *distances_tree,
      libcerror_error_t **error );
 
-int libmodi_deflate_initialize_dynamic_huffman_tables(
-     libmodi_bit_stream_t *bit_stream,
-     libmodi_deflate_huffman_table_t *literals_table,
-     libmodi_deflate_huffman_table_t *distances_table,
-     libcerror_error_t **error );
-
-int libmodi_deflate_initialize_fixed_huffman_tables(
-     libmodi_deflate_huffman_table_t *literals_table,
-     libmodi_deflate_huffman_table_t *distances_table,
+int libmodi_deflate_build_fixed_huffman_trees(
+     libmodi_huffman_tree_t *literals_tree,
+     libmodi_huffman_tree_t *distances_tree,
      libcerror_error_t **error );
 
 int libmodi_deflate_decode_huffman(
      libmodi_bit_stream_t *bit_stream,
-     libmodi_deflate_huffman_table_t *literals_table,
-     libmodi_deflate_huffman_table_t *distances_table,
+     libmodi_huffman_tree_t *literals_tree,
+     libmodi_huffman_tree_t *distances_tree,
      uint8_t *uncompressed_data,
      size_t uncompressed_data_size,
      size_t *uncompressed_data_offset,
@@ -98,8 +65,8 @@ int libmodi_deflate_decode_huffman(
 
 int libmodi_deflate_calculate_adler32(
      uint32_t *checksum_value,
-     const uint8_t *buffer,
-     size_t size,
+     const uint8_t *data,
+     size_t data_size,
      uint32_t initial_value,
      libcerror_error_t **error );
 
@@ -109,12 +76,20 @@ int libmodi_deflate_read_data_header(
      size_t *compressed_data_offset,
      libcerror_error_t **error );
 
+int libmodi_deflate_read_block_header(
+     libmodi_bit_stream_t *bit_stream,
+     uint8_t *block_type,
+     uint8_t *last_block_flag,
+     libcerror_error_t **error );
+
 int libmodi_deflate_read_block(
      libmodi_bit_stream_t *bit_stream,
+     uint8_t block_type,
+     libmodi_huffman_tree_t *fixed_huffman_literals_tree,
+     libmodi_huffman_tree_t *fixed_huffman_distances_tree,
      uint8_t *uncompressed_data,
      size_t uncompressed_data_size,
      size_t *uncompressed_data_offset,
-     uint8_t *last_block_flag,
      libcerror_error_t **error );
 
 int libmodi_deflate_decompress(
