@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_bit_stream"
-	ProjectGUID="{8D08F484-C937-481A-ACA9-50A1B7D1A79B}"
+	ProjectGUID="{EA249D9A-FF46-4034-A383-F9B47013ADA8}"
 	RootNamespace="modi_test_bit_stream"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

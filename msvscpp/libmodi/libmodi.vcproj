@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libmodi"
-	ProjectGUID="{D322384C-AC27-45CF-A175-86A90131F301}"
+	ProjectGUID="{2D50C0C4-8AA8-49E2-8DD1-FC6ABFCD181B}"
 	RootNamespace="libmodi"
 	TargetFrameworkVersion="131072"
 	>
@@ -230,6 +230,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_lzfse.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_lzvn.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_notify.c"
 				>
 			</File>
@@ -393,6 +401,14 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_libuna.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_lzfse.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_lzvn.h"
 				>
 			</File>
 			<File

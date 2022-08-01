@@ -46,6 +46,7 @@
 #include "libmodi_deflate.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
+#include "libmodi_lzfse.h"
 
 /* Decompresses data using the compression method
  * Returns 1 on success or -1 on error
@@ -328,7 +329,7 @@ int libmodi_decompress_data(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_COMPRESSION,
 			 LIBCERROR_COMPRESSION_ERROR_DECOMPRESS_FAILED,
-			 "%s: unable to decompress zlib+DEFLATE compressed data.",
+			 "%s: unable to decompress zlib/DEFLATE compressed data.",
 			 function );
 
 			goto on_error;
@@ -337,14 +338,22 @@ int libmodi_decompress_data(
 	}
 	else if( compression_method == LIBMODI_COMPRESSION_METHOD_LZFSE )
 	{
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: missing support for LZFSE compression.",
-		 function );
+		if( libmodi_lzfse_decompress(
+		     compressed_data,
+		     compressed_data_size,
+		     uncompressed_data,
+		     uncompressed_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_COMPRESSION,
+			 LIBCERROR_COMPRESSION_ERROR_DECOMPRESS_FAILED,
+			 "%s: unable to decompress LZFSE/LZVN compressed data.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
 	}
 	else if( compression_method == LIBMODI_COMPRESSION_METHOD_LZMA )
 	{

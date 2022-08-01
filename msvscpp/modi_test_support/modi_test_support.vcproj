@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_support"
-	ProjectGUID="{CA24B426-0CA3-4664-BE73-4AAA674F9868}"
+	ProjectGUID="{F94C03BF-2FC0-4059-BC22-4258420EC00A}"
 	RootNamespace="modi_test_support"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

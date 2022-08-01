@@ -62,6 +62,8 @@ libmodi_la_SOURCES = \
 	libmodi_libfplist.h \
 	libmodi_libfvalue.h \
 	libmodi_libuna.h \
+	libmodi_lzfse.c libmodi_lzfse.h \
+	libmodi_lzvn.c libmodi_lzvn.h \
 	libmodi_notify.c libmodi_notify.h \
 	libmodi_sparse_bundle_xml_plist.c libmodi_sparse_bundle_xml_plist.h \
 	libmodi_sparse_image_header.c libmodi_sparse_image_header.h \

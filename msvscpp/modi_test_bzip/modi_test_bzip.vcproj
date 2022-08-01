@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_bzip"
-	ProjectGUID="{21FA4B26-B159-412A-A393-2D31DBD0EA49}"
+	ProjectGUID="{2747CA12-BB92-46AD-8753-50FFC9A1CEDE}"
 	RootNamespace="modi_test_bzip"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

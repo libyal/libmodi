@@ -13,6 +13,7 @@ Supported Mac OS image formats:
   * uncompressed
   * ADC compressed
   * bzip2 compressed
+  * LZFSE/LZVN compressed
   * LZMA compressed
   * zlib/DEFLATE compressed
 
@@ -23,12 +24,11 @@ Unsupported Mac OS image formats:
 * New Disk Image Format (NDIF)
 * Universal Disk Image Format (UDIF) image
   * multi-segment
-  * LZFSE compressed
 
 Work in progress:
 
-* Finish library
-* Finish Python bindings
+* bzip2 fallback implementation
+* LZFSE/LZVN compressed
 
 For more information see:
 

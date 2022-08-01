@@ -262,6 +262,7 @@ Building:
    libfplist support:                         $ac_cv_libfplist
    BZIP2 compression support:                 $ac_cv_bzip2_decompress
    DEFLATE compression support:               $ac_cv_uncompress
+   LZFSE/LZVN compression support:            local
    LZMA compression support:                  $ac_cv_lzma
    libhmac support:                           $ac_cv_libhmac
    SHA256 support:                            $ac_cv_libhmac_sha256

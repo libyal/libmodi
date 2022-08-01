@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_udif_resource_file"
-	ProjectGUID="{F1F4E781-AD35-4458-9C42-E051D031C35D}"
-	RootNamespace="modi_test_udif_resource_file"
+	Name="modi_test_lzfse"
+	ProjectGUID="{DFB7CACE-EE17-4B8F-A2A9-23945E41EDE9}"
+	RootNamespace="modi_test_lzfse"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,15 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_functions.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_udif_resource_file.c"
+				RelativePath="..\..\tests\modi_test_lzfse.c"
 				>
 			</File>
 		</Filter>
@@ -194,15 +186,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_functions.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_libbfio.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\tests\modi_test_libcerror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_libcnotify.h"
 				>
 			</File>
 			<File
@@ -211,10 +199,6 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_macros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_memory.h"
 				>
 			</File>
 			<File

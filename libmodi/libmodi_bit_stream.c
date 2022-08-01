@@ -327,9 +327,8 @@ int libmodi_bit_stream_get_value(
 		}
 		else if( bit_stream->storage_type == LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK )
 		{
-			safe_value_32bit >>= bit_stream->bit_buffer_size - number_of_bits;
-
 			bit_stream->bit_buffer_size -= number_of_bits;
+			safe_value_32bit           >>= bit_stream->bit_buffer_size;
 			remaining_bit_buffer_size    = 32 - bit_stream->bit_buffer_size;
 			bit_stream->bit_buffer      &= 0xffffffffUL >> remaining_bit_buffer_size;
 		}

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modi_test_huffman_tree"
-	ProjectGUID="{480A2FAB-9E20-4F54-A53B-188375873B87}"
+	ProjectGUID="{CABBCF7D-E00E-4E13-8EB0-274A5DF6B47D}"
 	RootNamespace="modi_test_huffman_tree"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

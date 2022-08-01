@@ -42,7 +42,7 @@
 #define MODI_TEST_DEFLATE
  */
 
-uint8_t modi_test_deflate_compressed_byte_stream[ 2627 ] = {
+uint8_t modi_test_deflate_compressed_data[ 2627 ] = {
 	0x78, 0xda, 0xbd, 0x59, 0x6d, 0x8f, 0xdb, 0xb8, 0x11, 0xfe, 0x7c, 0xfa, 0x15, 0xc4, 0x7e, 0xb9,
 	0x5d, 0xc0, 0x75, 0x5e, 0x7b, 0x45, 0x0f, 0x45, 0x81, 0xed, 0xde, 0x26, 0xdd, 0x62, 0x2f, 0x0d,
 	0xb2, 0x97, 0x16, 0xfd, 0x48, 0x4b, 0xb4, 0xcd, 0x46, 0x12, 0x5d, 0x52, 0x5a, 0xc7, 0xfd, 0xf5,
@@ -209,7 +209,7 @@ uint8_t modi_test_deflate_compressed_byte_stream[ 2627 ] = {
 	0x7d, 0x8a, 0x87, 0xf9, 0x9d, 0x74, 0x33, 0x0e, 0x79, 0xc5, 0xf8, 0x73, 0xcd, 0xff, 0x00, 0x30,
 	0x4a, 0x56, 0xa4 };
 
-uint8_t modi_test_deflate_uncompressed_byte_stream[ 7640 ] = {
+uint8_t modi_test_deflate_uncompressed_data[ 7640 ] = {
 	0x09, 0x09, 0x20, 0x20, 0x20, 0x47, 0x4e, 0x55, 0x20, 0x4c, 0x45, 0x53, 0x53, 0x45, 0x52, 0x20,
 	0x47, 0x45, 0x4e, 0x45, 0x52, 0x41, 0x4c, 0x20, 0x50, 0x55, 0x42, 0x4c, 0x49, 0x43, 0x20, 0x4c,
 	0x49, 0x43, 0x45, 0x4e, 0x53, 0x45, 0x0a, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
@@ -713,7 +713,7 @@ int modi_test_deflate_build_dynamic_huffman_trees(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -830,7 +830,7 @@ int modi_test_deflate_build_dynamic_huffman_trees(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -1267,7 +1267,7 @@ int modi_test_deflate_decode_huffman(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -1402,7 +1402,7 @@ int modi_test_deflate_decode_huffman(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -1680,7 +1680,7 @@ int modi_test_deflate_calculate_adler32(
 	 */
 	result = libmodi_deflate_calculate_adler32(
 	          &checksum,
-	          modi_test_deflate_uncompressed_byte_stream,
+	          modi_test_deflate_uncompressed_data,
 	          7640,
 	          1,
 	          &error );
@@ -1703,7 +1703,7 @@ int modi_test_deflate_calculate_adler32(
 	 */
 	result = libmodi_deflate_calculate_adler32(
 	          NULL,
-	          modi_test_deflate_uncompressed_byte_stream,
+	          modi_test_deflate_uncompressed_data,
 	          7640,
 	          1,
 	          &error );
@@ -1741,7 +1741,7 @@ int modi_test_deflate_calculate_adler32(
 
 	result = libmodi_deflate_calculate_adler32(
 	          &checksum,
-	          modi_test_deflate_uncompressed_byte_stream,
+	          modi_test_deflate_uncompressed_data,
 	          (size_t) SSIZE_MAX + 1,
 	          1,
 	          &error );
@@ -1784,7 +1784,7 @@ int modi_test_deflate_read_data_header(
 	uncompressed_data_offset = 0;
 
 	result = libmodi_deflate_read_data_header(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          &uncompressed_data_offset,
 	          &error );
@@ -1826,7 +1826,7 @@ int modi_test_deflate_read_data_header(
 	 &error );
 
 	result = libmodi_deflate_read_data_header(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          (size_t) SSIZE_MAX + 1,
 	          &uncompressed_data_offset,
 	          &error );
@@ -1844,7 +1844,7 @@ int modi_test_deflate_read_data_header(
 	 &error );
 
 	result = libmodi_deflate_read_data_header(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          NULL,
 	          &error );
@@ -1862,7 +1862,7 @@ int modi_test_deflate_read_data_header(
 	 &error );
 
 	result = libmodi_deflate_read_data_header(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          1,
 	          &uncompressed_data_offset,
 	          &error );
@@ -1909,7 +1909,7 @@ int modi_test_deflate_read_block_header(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -1968,7 +1968,7 @@ int modi_test_deflate_read_block_header(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -2101,7 +2101,7 @@ int modi_test_deflate_read_block(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -2238,7 +2238,7 @@ int modi_test_deflate_read_block(
 	 */
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          2,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_BACK_TO_FRONT,
@@ -2444,7 +2444,7 @@ int modi_test_deflate_decompress(
 	/* Test regular cases
 	 */
 	result = libmodi_deflate_decompress(
-	          &( modi_test_deflate_compressed_byte_stream[ 2 ] ),
+	          &( modi_test_deflate_compressed_data[ 2 ] ),
 	          2627 - 6,
 	          uncompressed_data,
 	          &uncompressed_data_size,
@@ -2488,7 +2488,7 @@ int modi_test_deflate_decompress(
 	 &error );
 
 	result = libmodi_deflate_decompress(
-	          &( modi_test_deflate_compressed_byte_stream[ 2 ] ),
+	          &( modi_test_deflate_compressed_data[ 2 ] ),
 	          (size_t) SSIZE_MAX + 1,
 	          uncompressed_data,
 	          &uncompressed_data_size,
@@ -2507,7 +2507,7 @@ int modi_test_deflate_decompress(
 	 &error );
 
 	result = libmodi_deflate_decompress(
-	          &( modi_test_deflate_compressed_byte_stream[ 2 ] ),
+	          &( modi_test_deflate_compressed_data[ 2 ] ),
 	          2627 - 6,
 	          NULL,
 	          &uncompressed_data_size,
@@ -2526,7 +2526,7 @@ int modi_test_deflate_decompress(
 	 &error );
 
 	result = libmodi_deflate_decompress(
-	          &( modi_test_deflate_compressed_byte_stream[ 2 ] ),
+	          &( modi_test_deflate_compressed_data[ 2 ] ),
 	          2627 - 6,
 	          uncompressed_data,
 	          NULL,
@@ -2570,7 +2570,7 @@ int modi_test_deflate_decompress_zlib(
 	/* Test regular cases
 	 */
 	result = libmodi_deflate_decompress_zlib(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          uncompressed_data,
 	          &uncompressed_data_size,
@@ -2614,7 +2614,7 @@ int modi_test_deflate_decompress_zlib(
 	 &error );
 
 	result = libmodi_deflate_decompress_zlib(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          (size_t) SSIZE_MAX + 1,
 	          uncompressed_data,
 	          &uncompressed_data_size,
@@ -2633,7 +2633,7 @@ int modi_test_deflate_decompress_zlib(
 	 &error );
 
 	result = libmodi_deflate_decompress_zlib(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          NULL,
 	          &uncompressed_data_size,
@@ -2652,7 +2652,7 @@ int modi_test_deflate_decompress_zlib(
 	 &error );
 
 	result = libmodi_deflate_decompress_zlib(
-	          modi_test_deflate_compressed_byte_stream,
+	          modi_test_deflate_compressed_data,
 	          2627,
 	          uncompressed_data,
 	          NULL,

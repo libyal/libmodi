@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="pymodi"
-	ProjectGUID="{A7AFEDC1-D586-4FD4-8EDC-174888602605}"
+	ProjectGUID="{EC0AC559-2927-42F0-8CAE-96480EEEA626}"
 	RootNamespace="pymodi"
 	TargetFrameworkVersion="131072"
 	>
