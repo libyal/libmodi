@@ -191,9 +191,8 @@ int libmodi_bit_stream_read(
      uint8_t number_of_bits,
      libcerror_error_t **error )
 {
-	static char *function          = "libmodi_bit_stream_read";
-	uint8_t minimum_number_of_bits = 0;
-	int result                     = 0;
+	static char *function = "libmodi_bit_stream_read";
+	int result            = 0;
 
 	if( bit_stream == NULL )
 	{
@@ -218,12 +217,9 @@ int libmodi_bit_stream_read(
 
 		return( -1 );
 	}
-	minimum_number_of_bits = 8;
-
 	while( bit_stream->bit_buffer_size < number_of_bits )
 	{
-		if( ( bit_stream->byte_stream_offset >= bit_stream->byte_stream_size )
-		 || ( ( minimum_number_of_bits >> 3 ) > ( bit_stream->byte_stream_size - bit_stream->byte_stream_offset ) ) )
+		if( bit_stream->byte_stream_offset >= bit_stream->byte_stream_size )
 		{
 			break;
 		}

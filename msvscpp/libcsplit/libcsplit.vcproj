@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libcsplit"
-	ProjectGUID="{61A35623-8AAD-47BF-BA28-2F155741B92A}"
+	ProjectGUID="{D14D7C35-1C00-40FD-BDA3-EB3B575AB8FE}"
 	RootNamespace="libcsplit"
 	TargetFrameworkVersion="131072"
 	>

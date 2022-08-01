@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="modi_test_udif_block_table_entry"
-	ProjectGUID="{37C4C85B-B040-40B1-91D8-D73672DA662E}"
-	RootNamespace="modi_test_udif_block_table_entry"
+	Name="modi_test_adc"
+	ProjectGUID="{038D6A73-3215-43F8-8494-78023597AE08}"
+	RootNamespace="modi_test_adc"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -176,11 +176,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\tests\modi_test_memory.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_udif_block_table_entry.c"
+				RelativePath="..\..\tests\modi_test_adc.c"
 				>
 			</File>
 		</Filter>
@@ -194,15 +190,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\tests\modi_test_libcnotify.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\tests\modi_test_libmodi.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_macros.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\tests\modi_test_memory.h"
 				>
 			</File>
 			<File

@@ -40,6 +40,7 @@
 #endif
 
 #include "libmodi_adc.h"
+#include "libmodi_bzip.h"
 #include "libmodi_compression.h"
 #include "libmodi_definitions.h"
 #include "libmodi_deflate.h"
@@ -218,14 +219,22 @@ int libmodi_decompress_data(
 		}
 		*uncompressed_data_size = (size_t) bzip2_uncompressed_data_size;
 #else
-		libcerror_error_set(
-		 error,
-		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
-		 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-		 "%s: missing support for bzip2 compression.",
-		 function );
+		if( libmodi_bzip_decompress(
+		     compressed_data,
+		     compressed_data_size,
+		     uncompressed_data,
+		     uncompressed_data_size,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_COMPRESSION,
+			 LIBCERROR_COMPRESSION_ERROR_DECOMPRESS_FAILED,
+			 "%s: unable to decompress BZIP2 compressed data.",
+			 function );
 
-		goto on_error;
+			goto on_error;
+		}
 #endif /* defined( HAVE_BZLIB ) || defined( BZ_DLL ) */
 	}
 	else if( compression_method == LIBMODI_COMPRESSION_METHOD_DEFLATE )

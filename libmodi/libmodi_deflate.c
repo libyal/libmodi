@@ -1279,7 +1279,7 @@ int libmodi_deflate_read_block(
 			bit_stream->byte_stream_offset += block_size;
 			safe_uncompressed_data_offset  += block_size;
 
-			/* Flush the bit-stream buffer
+			/* Flush the bit stream buffer
 			 */
 			bit_stream->bit_buffer      = 0;
 			bit_stream->bit_buffer_size = 0;
@@ -1530,7 +1530,7 @@ int libmodi_deflate_decompress(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bit-stream.",
+		 "%s: unable to create bit stream.",
 		 function );
 
 		goto on_error;
@@ -1667,7 +1667,7 @@ int libmodi_deflate_decompress(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free bit-stream.",
+		 "%s: unable to free bit stream.",
 		 function );
 
 		goto on_error;
@@ -1815,7 +1815,7 @@ int libmodi_deflate_decompress_zlib(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_INITIALIZE_FAILED,
-		 "%s: unable to create bit-stream.",
+		 "%s: unable to create bit stream.",
 		 function );
 
 		goto on_error;
@@ -1993,7 +1993,7 @@ int libmodi_deflate_decompress_zlib(
 		 error,
 		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 		 LIBCERROR_RUNTIME_ERROR_FINALIZE_FAILED,
-		 "%s: unable to free bit-stream.",
+		 "%s: unable to free bit stream.",
 		 function );
 
 		goto on_error;

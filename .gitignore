@@ -129,8 +129,10 @@ stamp-h[1-9]
 /moditools/modimount
 /tests/*.exe
 /tests/input
+/tests/modi_test_adc
 /tests/modi_test_bands_data_handle
 /tests/modi_test_bit_stream
+/tests/modi_test_bzip
 /tests/modi_test_data_block
 /tests/modi_test_deflate
 /tests/modi_test_error

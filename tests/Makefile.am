@@ -51,8 +51,10 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
+	modi_test_adc \
 	modi_test_bands_data_handle \
 	modi_test_bit_stream \
+	modi_test_bzip \
 	modi_test_data_block \
 	modi_test_deflate \
 	modi_test_error \
@@ -71,6 +73,19 @@ check_PROGRAMS = \
 	modi_test_udif_block_table_entry \
 	modi_test_udif_resource_file \
 	modi_test_udif_xml_plist
+
+modi_test_adc_SOURCES = \
+	modi_test_adc.c \
+	modi_test_libcerror.h \
+	modi_test_libcnotify.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_unused.h
+
+modi_test_adc_LDADD = \
+	@LIBCNOTIFY_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
 
 modi_test_bands_data_handle_SOURCES = \
 	modi_test_bands_data_handle.c \
@@ -115,6 +130,19 @@ modi_test_data_block_LDADD = \
 	@LIBCNOTIFY_LIBADD@ \
 	@LIBCLOCALE_LIBADD@ \
 	@LIBCDATA_LIBADD@ \
+	../libmodi/libmodi.la \
+	@LIBCERROR_LIBADD@
+
+modi_test_bzip_SOURCES = \
+	modi_test_bzip.c \
+	modi_test_libcerror.h \
+	modi_test_libcnotify.h \
+	modi_test_libmodi.h \
+	modi_test_macros.h \
+	modi_test_unused.h
+
+modi_test_bzip_LDADD = \
+	@LIBCNOTIFY_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 

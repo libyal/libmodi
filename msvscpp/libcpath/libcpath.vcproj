@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libcpath"
-	ProjectGUID="{4B0002A7-0AB5-49FE-9F23-D2695C929180}"
+	ProjectGUID="{1AB63D0F-06E9-4918-969D-8E918FA0B4E5}"
 	RootNamespace="libcpath"
 	TargetFrameworkVersion="131072"
 	>

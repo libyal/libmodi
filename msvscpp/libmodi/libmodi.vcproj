@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libmodi"
-	ProjectGUID="{B4E7F5BB-07EB-475A-9C78-E7527D2BB8BA}"
+	ProjectGUID="{D322384C-AC27-45CF-A175-86A90131F301}"
 	RootNamespace="libmodi"
 	TargetFrameworkVersion="131072"
 	>
@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libmodi\libmodi_bzip.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libmodi\libmodi_compression.c"
 				>
 			</File>
@@ -281,6 +285,10 @@
 			</File>
 			<File
 				RelativePath="..\..\libmodi\libmodi_block_chunks_data_handle.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libmodi\libmodi_bzip.h"
 				>
 			</File>
 			<File

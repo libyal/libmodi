@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libcdirectory"
-	ProjectGUID="{212CEA6F-9951-4036-8848-CD8467B4D84A}"
+	ProjectGUID="{61CB2C72-A347-4842-A1F0-9B379A54DDEC}"
 	RootNamespace="libcdirectory"
 	TargetFrameworkVersion="131072"
 	>

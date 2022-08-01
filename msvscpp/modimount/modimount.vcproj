@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modimount"
-	ProjectGUID="{EAAA2B69-4416-4D5B-BEBE-6F696D05C831}"
+	ProjectGUID="{08E2EE0D-5B09-4DE0-B368-5DE04AEA4E3A}"
 	RootNamespace="modimount"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"

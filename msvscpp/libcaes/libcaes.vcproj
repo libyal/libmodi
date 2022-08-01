@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="libcaes"
-	ProjectGUID="{8409C040-5262-4457-AE9D-5B3D00061CE4}"
+	ProjectGUID="{1C31806A-9512-40AA-AA81-4409007D4992}"
 	RootNamespace="libcaes"
 	TargetFrameworkVersion="131072"
 	>

@@ -1,8 +1,8 @@
-AC_PREREQ([2.69])
+AC_PREREQ([2.71])
 
 AC_INIT(
  [libmodi],
- [20220731],
+ [20220801],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -260,7 +260,7 @@ Building:
    libfguid support:                          $ac_cv_libfguid
    libfvalue support:                         $ac_cv_libfvalue
    libfplist support:                         $ac_cv_libfplist
-   BZIP2 compression support:                 $ac_cv_bzip2
+   BZIP2 compression support:                 $ac_cv_bzip2_decompress
    DEFLATE compression support:               $ac_cv_uncompress
    LZMA compression support:                  $ac_cv_lzma
    libhmac support:                           $ac_cv_libhmac

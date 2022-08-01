@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="modiinfo"
-	ProjectGUID="{B1BD65BA-90EB-4608-9C34-1D0CB90ACBD5}"
+	ProjectGUID="{23F10F21-56EC-47AD-AB17-24096A931D35}"
 	RootNamespace="modiinfo"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
