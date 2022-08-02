@@ -1082,7 +1082,7 @@ uint8_t modi_test_lzfse_uncompressed_data[ 16384 ] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 /* Tests the libmodi_lzfse_bit_stream_initialize function
  * Returns 1 if successful or 0 if not
@@ -2897,7 +2897,7 @@ on_error:
 	return( 0 );
 }
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 /* The main program
  */
@@ -2922,7 +2922,7 @@ int main(
 	 NULL );
 #endif
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 	MODI_TEST_RUN(
 	 "libmodi_lzfse_bit_stream_initialize",
@@ -2974,15 +2974,15 @@ int main(
 	 "libmodi_lzfse_decompress",
 	 modi_test_lzfse_decompress );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 
 	return( EXIT_SUCCESS );
 
-#if defined( __GNUC__ )
+#if defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT )
 
 on_error:
 	return( EXIT_FAILURE );
 
-#endif /* defined( __GNUC__ ) */
+#endif /* defined( __GNUC__ ) && !defined( LIBMODI_DLL_IMPORT ) */
 }
 
