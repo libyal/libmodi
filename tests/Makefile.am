@@ -18,6 +18,7 @@ AM_CPPFLAGS = \
 	@LIBFDATA_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
+	@LIBFMOS_CPPFLAGS@ \
 	@LIBFPLIST_CPPFLAGS@ \
 	@LIBCRYPTO_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
@@ -51,7 +52,6 @@ EXTRA_DIST = \
 	$(check_SCRIPTS)
 
 check_PROGRAMS = \
-	modi_test_adc \
 	modi_test_bands_data_handle \
 	modi_test_bit_stream \
 	modi_test_bzip \
@@ -61,8 +61,6 @@ check_PROGRAMS = \
 	modi_test_handle \
 	modi_test_huffman_tree \
 	modi_test_io_handle \
-	modi_test_lzfse \
-	modi_test_lzvn \
 	modi_test_notify \
 	modi_test_sparse_bundle_xml_plist \
 	modi_test_sparse_image_header \
@@ -75,19 +73,6 @@ check_PROGRAMS = \
 	modi_test_udif_block_table_entry \
 	modi_test_udif_resource_file \
 	modi_test_udif_xml_plist
-
-modi_test_adc_SOURCES = \
-	modi_test_adc.c \
-	modi_test_libcerror.h \
-	modi_test_libcnotify.h \
-	modi_test_libmodi.h \
-	modi_test_macros.h \
-	modi_test_unused.h
-
-modi_test_adc_LDADD = \
-	@LIBCNOTIFY_LIBADD@ \
-	../libmodi/libmodi.la \
-	@LIBCERROR_LIBADD@
 
 modi_test_bands_data_handle_SOURCES = \
 	modi_test_bands_data_handle.c \
@@ -222,32 +207,6 @@ modi_test_io_handle_SOURCES = \
 	modi_test_unused.h
 
 modi_test_io_handle_LDADD = \
-	../libmodi/libmodi.la \
-	@LIBCERROR_LIBADD@
-
-modi_test_lzfse_SOURCES = \
-	modi_test_lzfse.c \
-	modi_test_libcerror.h \
-	modi_test_libcnotify.h \
-	modi_test_libmodi.h \
-	modi_test_macros.h \
-	modi_test_unused.h
-
-modi_test_lzfse_LDADD = \
-	@LIBCNOTIFY_LIBADD@ \
-	../libmodi/libmodi.la \
-	@LIBCERROR_LIBADD@
-
-modi_test_lzvn_SOURCES = \
-	modi_test_lzvn.c \
-	modi_test_libcerror.h \
-	modi_test_libcnotify.h \
-	modi_test_libmodi.h \
-	modi_test_macros.h \
-	modi_test_unused.h
-
-modi_test_lzvn_LDADD = \
-	@LIBCNOTIFY_LIBADD@ \
 	../libmodi/libmodi.la \
 	@LIBCERROR_LIBADD@
 

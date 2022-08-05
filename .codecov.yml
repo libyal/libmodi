@@ -21,6 +21,7 @@ coverage:
     - "libfcache/*"
     - "libfdata/*"
     - "libfguid/*"
+    - "libfmos/*"
     - "libfplist/*"
     - "libfvalue/*"
     - "libhmac/*"

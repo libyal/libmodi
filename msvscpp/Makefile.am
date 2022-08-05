@@ -14,12 +14,12 @@ MSVSCPP_FILES = \
 	libfcache/libfcache.vcproj \
 	libfdata/libfdata.vcproj \
 	libfguid/libfguid.vcproj \
+	libfmos/libfmos.vcproj \
 	libfplist/libfplist.vcproj \
 	libfvalue/libfvalue.vcproj \
 	libhmac/libhmac.vcproj \
 	libmodi/libmodi.vcproj \
 	libuna/libuna.vcproj \
-	modi_test_adc/modi_test_adc.vcproj \
 	modi_test_bands_data_handle/modi_test_bands_data_handle.vcproj \
 	modi_test_bit_stream/modi_test_bit_stream.vcproj \
 	modi_test_bzip/modi_test_bzip.vcproj \
@@ -29,8 +29,6 @@ MSVSCPP_FILES = \
 	modi_test_handle/modi_test_handle.vcproj \
 	modi_test_huffman_tree/modi_test_huffman_tree.vcproj \
 	modi_test_io_handle/modi_test_io_handle.vcproj \
-	modi_test_lzfse/modi_test_lzfse.vcproj \
-	modi_test_lzvn/modi_test_lzvn.vcproj \
 	modi_test_notify/modi_test_notify.vcproj \
 	modi_test_sparse_bundle_xml_plist/modi_test_sparse_bundle_xml_plist.vcproj \
 	modi_test_sparse_image_header/modi_test_sparse_image_header.vcproj \

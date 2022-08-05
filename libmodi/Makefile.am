@@ -17,6 +17,7 @@ AM_CPPFLAGS = \
 	@LIBFDATA_CPPFLAGS@ \
 	@LIBFGUID_CPPFLAGS@ \
 	@LIBFVALUE_CPPFLAGS@ \
+	@LIBFMOS_CPPFLAGS@ \
 	@LIBFPLIST_CPPFLAGS@ \
 	@LIBCRYPTO_CPPFLAGS@ \
 	@LIBHMAC_CPPFLAGS@ \
@@ -31,7 +32,6 @@ lib_LTLIBRARIES = libmodi.la
 
 libmodi_la_SOURCES = \
 	libmodi.c \
-	libmodi_adc.c libmodi_adc.h \
 	libmodi_bands_data_handle.c libmodi_bands_data_handle.h \
 	libmodi_bit_stream.c libmodi_bit_stream.h \
 	libmodi_block_chunks_data_handle.c libmodi_block_chunks_data_handle.h \
@@ -59,11 +59,10 @@ libmodi_la_SOURCES = \
 	libmodi_libcthreads.h \
 	libmodi_libfcache.h \
 	libmodi_libfdata.h \
+	libmodi_libfmos.h \
 	libmodi_libfplist.h \
 	libmodi_libfvalue.h \
 	libmodi_libuna.h \
-	libmodi_lzfse.c libmodi_lzfse.h \
-	libmodi_lzvn.c libmodi_lzvn.h \
 	libmodi_notify.c libmodi_notify.h \
 	libmodi_sparse_bundle_xml_plist.c libmodi_sparse_bundle_xml_plist.h \
 	libmodi_sparse_image_header.c libmodi_sparse_image_header.h \
@@ -95,6 +94,7 @@ libmodi_la_LIBADD = \
 	@LIBFDATA_LIBADD@ \
 	@LIBFGUID_LIBADD@ \
 	@LIBFVALUE_LIBADD@ \
+	@LIBFMOS_LIBADD@ \
 	@LIBFPLIST_LIBADD@ \
 	@LIBHMAC_LIBADD@ \
 	@LIBCAES_LIBADD@ \

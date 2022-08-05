@@ -129,7 +129,6 @@ stamp-h[1-9]
 /moditools/modimount
 /tests/*.exe
 /tests/input
-/tests/modi_test_adc
 /tests/modi_test_bands_data_handle
 /tests/modi_test_bit_stream
 /tests/modi_test_bzip
@@ -139,8 +138,6 @@ stamp-h[1-9]
 /tests/modi_test_handle
 /tests/modi_test_huffman_tree
 /tests/modi_test_io_handle
-/tests/modi_test_lzfse
-/tests/modi_test_lzvn
 /tests/modi_test_notify
 /tests/modi_test_sparse_bundle_xml_plist
 /tests/modi_test_sparse_image_header
@@ -170,6 +167,7 @@ stamp-h[1-9]
 /libfcache
 /libfdata
 /libfguid
+/libfmos
 /libfplist
 /libfvalue
 /libhmac

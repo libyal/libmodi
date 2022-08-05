@@ -28,6 +28,7 @@
 #include "libmodi_deflate.h"
 #include "libmodi_huffman_tree.h"
 #include "libmodi_libcerror.h"
+#include "libmodi_libcnotify.h"
 
 /* Initializes the dynamic Huffman trees
  * Returns 1 on success or -1 on error

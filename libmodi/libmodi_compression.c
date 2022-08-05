@@ -39,14 +39,13 @@
 #include <zlib.h>
 #endif
 
-#include "libmodi_adc.h"
 #include "libmodi_bzip.h"
 #include "libmodi_compression.h"
 #include "libmodi_definitions.h"
 #include "libmodi_deflate.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
-#include "libmodi_lzfse.h"
+#include "libmodi_libfmos.h"
 
 /* Decompresses data using the compression method
  * Returns 1 on success or -1 on error
@@ -120,7 +119,7 @@ int libmodi_decompress_data(
 	}
 	if( compression_method == LIBMODI_COMPRESSION_METHOD_ADC )
 	{
-		if( libmodi_adc_decompress(
+		if( libfmos_adc_decompress(
 		     compressed_data,
 		     compressed_data_size,
 		     uncompressed_data,
@@ -338,7 +337,7 @@ int libmodi_decompress_data(
 	}
 	else if( compression_method == LIBMODI_COMPRESSION_METHOD_LZFSE )
 	{
-		if( libmodi_lzfse_decompress(
+		if( libfmos_lzfse_decompress(
 		     compressed_data,
 		     compressed_data_size,
 		     uncompressed_data,

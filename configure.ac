@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libmodi],
- [20220802],
+ [20220805],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -111,6 +111,9 @@ AX_LIBFGUID_CHECK_ENABLE
 dnl Check if libfvalue or required headers and functions are available
 AX_LIBFVALUE_CHECK_ENABLE
 
+dnl Check for enabling libfmos for file Mac OS type support
+AX_LIBFMOS_CHECK_ENABLE
+
 dnl Check if libfplist or required headers and functions are available
 AX_LIBFPLIST_CHECK_ENABLE
 
@@ -168,7 +171,7 @@ CFLAGS="$CFLAGS -Wall";
 
 dnl Check if requires and build requires should be set in spec file
 AS_IF(
- [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcdirectory" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfplist" = xyes || test "x$ac_cv_zlib" != xno || test "x$ac_cv_libhmac" = xyes || test "x$ac_cv_libcaes" = xyes || test "x$ac_cv_libcrypto" != xno],
+ [test "x$ac_cv_libcerror" = xyes || test "x$ac_cv_libcthreads" = xyes || test "x$ac_cv_libcdata" = xyes || test "x$ac_cv_libclocale" = xyes || test "x$ac_cv_libcnotify" = xyes || test "x$ac_cv_libcsplit" = xyes || test "x$ac_cv_libuna" = xyes || test "x$ac_cv_libcdirectory" = xyes || test "x$ac_cv_libcfile" = xyes || test "x$ac_cv_libcpath" = xyes || test "x$ac_cv_libbfio" = xyes || test "x$ac_cv_libfcache" = xyes || test "x$ac_cv_libfdata" = xyes || test "x$ac_cv_libfguid" = xyes || test "x$ac_cv_libfvalue" = xyes || test "x$ac_cv_libfmos" = xyes | test "x$ac_cv_libfplist" = xyes || test "x$ac_cv_zlib" != xno || test "x$ac_cv_libhmac" = xyes || test "x$ac_cv_libcaes" = xyes || test "x$ac_cv_libcrypto" != xno],
  [AC_SUBST(
   [libmodi_spec_requires],
   [Requires:])
@@ -210,6 +213,7 @@ AC_CONFIG_FILES([libfcache/Makefile])
 AC_CONFIG_FILES([libfdata/Makefile])
 AC_CONFIG_FILES([libfguid/Makefile])
 AC_CONFIG_FILES([libfvalue/Makefile])
+AC_CONFIG_FILES([libfmos/Makefile])
 AC_CONFIG_FILES([libfplist/Makefile])
 AC_CONFIG_FILES([libhmac/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
@@ -260,9 +264,10 @@ Building:
    libfguid support:                          $ac_cv_libfguid
    libfvalue support:                         $ac_cv_libfvalue
    libfplist support:                         $ac_cv_libfplist
+   ADC compression support:                   $ac_cv_libfmos
    BZIP2 compression support:                 $ac_cv_bzip2_decompress
    DEFLATE compression support:               $ac_cv_uncompress
-   LZFSE/LZVN compression support:            local
+   LZFSE/LZVN compression support:            $ac_cv_libfmos
    LZMA compression support:                  $ac_cv_lzma
    libhmac support:                           $ac_cv_libhmac
    SHA256 support:                            $ac_cv_libhmac_sha256
