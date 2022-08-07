@@ -81,11 +81,6 @@ int libmodi_bit_stream_free(
      libmodi_bit_stream_t **bit_stream,
      libcerror_error_t **error );
 
-int libmodi_bit_stream_read(
-     libmodi_bit_stream_t *bit_stream,
-     uint8_t number_of_bits,
-     libcerror_error_t **error );
-
 int libmodi_bit_stream_get_value(
      libmodi_bit_stream_t *bit_stream,
      uint8_t number_of_bits,

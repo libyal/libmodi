@@ -99,7 +99,7 @@ UDSP | .sparseimage | Sparse disk image
 New Disk Image Format (NDIF)
 ....
 
-=== Test version
+=== Test versions
 
 The following version of programs were used to test the information within this
 document:

@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libmodi],
- [20220805],
+ [20220807],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -111,7 +111,7 @@ AX_LIBFGUID_CHECK_ENABLE
 dnl Check if libfvalue or required headers and functions are available
 AX_LIBFVALUE_CHECK_ENABLE
 
-dnl Check for enabling libfmos for file Mac OS type support
+dnl Check if libfmos or required headers and functions are available
 AX_LIBFMOS_CHECK_ENABLE
 
 dnl Check if libfplist or required headers and functions are available
@@ -262,6 +262,7 @@ Building:
    libfcache support:                         $ac_cv_libfcache
    libfdata support:                          $ac_cv_libfdata
    libfguid support:                          $ac_cv_libfguid
+   libfmos support:                           $ac_cv_libfmos
    libfvalue support:                         $ac_cv_libfvalue
    libfplist support:                         $ac_cv_libfplist
    ADC compression support:                   $ac_cv_libfmos

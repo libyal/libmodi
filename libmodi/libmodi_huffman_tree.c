@@ -461,7 +461,6 @@ int libmodi_huffman_tree_get_symbol_from_bit_stream(
 	uint32_t value_32bit   = 0;
 	uint16_t safe_symbol   = 0;
 	uint8_t bit_index      = 0;
-	uint8_t number_of_bits = 0;
 	int code_size_count    = 0;
 	int first_huffman_code = 0;
 	int first_index        = 0;
@@ -501,44 +500,12 @@ int libmodi_huffman_tree_get_symbol_from_bit_stream(
 
 		return( -1 );
 	}
-	/* Try to fill the bit buffer with the maximum number of bits
-	 */
-	while( bit_stream->bit_buffer_size < huffman_tree->maximum_code_size )
-	{
-		result = libmodi_bit_stream_read(
-		          bit_stream,
-		          huffman_tree->maximum_code_size,
-		          error );
+/* TODO get maximum_code_size of bits into local bit buffer */
 
-		if( result == -1 )
-		{
-			libcerror_error_set(
-			 error,
-			 LIBCERROR_ERROR_DOMAIN_IO,
-			 LIBCERROR_IO_ERROR_READ_FAILED,
-			 "%s: unable to read bits.",
-			 function );
-
-			return( -1 );
-		}
-		else if( result == 0 )
-		{
-			break;
-		}
-	}
-	if( huffman_tree->maximum_code_size < bit_stream->bit_buffer_size )
-	{
-		number_of_bits = huffman_tree->maximum_code_size;
-	}
-	else
-	{
-		number_of_bits = bit_stream->bit_buffer_size;
-	}
 	for( bit_index = 1;
-	     bit_index <= number_of_bits;
+	     bit_index <= huffman_tree->maximum_code_size;
 	     bit_index++ )
 	{
-/* TODO get maximum_code_size of bits into local bit buffer */
 		if( libmodi_bit_stream_get_value(
 		     bit_stream,
 		     1,

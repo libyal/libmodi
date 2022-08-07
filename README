@@ -28,7 +28,7 @@ Unsupported Mac OS image formats:
 Work in progress:
 
 * bzip2 fallback implementation
-* LZFSE/LZVN compressed
+* lzma fallback implementation
 
 For more information see:
 

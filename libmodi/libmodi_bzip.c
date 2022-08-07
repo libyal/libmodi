@@ -1,7 +1,7 @@
 /*
  * BZip (un)compression functions
  *
- * Copyright (C) 2008-2022, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2022, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -28,8 +28,6 @@
 #include "libmodi_huffman_tree.h"
 #include "libmodi_libcerror.h"
 #include "libmodi_libcnotify.h"
-
-#define BLOCK_DATA_SIZE 8192
 
 /* Table of the CRC-32 of all 8-bit messages.
  */
@@ -474,7 +472,7 @@ int libmodi_bzip_read_stream_header(
 		 compressed_data[ safe_compressed_data_offset + 1 ] );
 
 		libcnotify_printf(
-		 "%s: format version\t\t\t\t: 0x%02" PRIx8 "\n",
+		 "%s: format version\t\t\t: 0x%02" PRIx8 "\n",
 		 function,
 		 compressed_data[ safe_compressed_data_offset + 2 ] );
 
@@ -530,7 +528,7 @@ int libmodi_bzip_read_signature(
 	}
 	if( libmodi_bit_stream_get_value(
 	     bit_stream,
-	     32,
+	     24,
 	     &value_32bit,
 	     error ) != 1 )
 	{
@@ -547,7 +545,7 @@ int libmodi_bzip_read_signature(
 
 	if( libmodi_bit_stream_get_value(
 	     bit_stream,
-	     16,
+	     24,
 	     &value_32bit,
 	     error ) != 1 )
 	{
@@ -560,7 +558,7 @@ int libmodi_bzip_read_signature(
 
 		return( -1 );
 	}
-	safe_signature <<= 16;
+	safe_signature <<= 24;
 	safe_signature  |= value_32bit;
 
 	*signature = safe_signature;
@@ -611,7 +609,7 @@ int libmodi_bzip_read_block_header(
 	}
 	if( libmodi_bit_stream_get_value(
 	     bit_stream,
-	     25,
+	     1,
 	     &value_32bit,
 	     error ) != 1 )
 	{
@@ -624,10 +622,23 @@ int libmodi_bzip_read_block_header(
 
 		return( -1 );
 	}
-	safe_origin_pointer = value_32bit & 0x00ffffffUL;
-	value_32bit       >>= 24;
-	is_randomized       = (uint8_t) ( value_32bit & 0x00000001UL );
+	is_randomized = (uint8_t) ( value_32bit & 0x00000001UL );
 
+	if( libmodi_bit_stream_get_value(
+	     bit_stream,
+	     24,
+	     &safe_origin_pointer,
+	     error ) != 1 )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+		 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+		 "%s: unable to retrieve value from bit stream.",
+		 function );
+
+		return( -1 );
+	}
 #if defined( HAVE_DEBUG_OUTPUT )
 	if( libcnotify_verbose != 0 )
 	{
@@ -775,7 +786,7 @@ int libmodi_bzip_read_symbol_stack(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: level 2 value: %" PRIu8 "\t\t\t\t: 0x%04" PRIx32 "\n",
+				 "%s: level 2 value: % 2" PRIu8 "\t\t\t: 0x%04" PRIx32 "\n",
 				 function,
 				 level1_bit_index,
 				 level2_value );
@@ -795,7 +806,7 @@ int libmodi_bzip_read_symbol_stack(
 					if( libcnotify_verbose != 0 )
 					{
 						libcnotify_printf(
-						 "%s: symbol value: %" PRIu16 "\t\t\t\t: 0x%02" PRIx8 "\n",
+						 "%s: symbol value: % 2" PRIu16 "\t\t\t: 0x%02" PRIx8 "\n",
 						 function,
 						 symbol_index,
 						 symbol_value );
@@ -1033,7 +1044,7 @@ int libmodi_bzip_read_huffman_tree(
 		if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: symbol: % 3" PRIu16 " code size\t\t\t\t: %" PRIu8 "\n",
+			 "%s: symbol: % 3" PRIu16 " code size\t\t\t: %" PRIu8 "\n",
 			 function,
 			 symbol_index,
 			 code_size );
@@ -1185,6 +1196,14 @@ on_error:
 		 &huffman_tree,
 		 NULL );
 	}
+	for( tree_index = 0;
+	     tree_index < number_of_trees;
+	     tree_index++ )
+	{
+		libmodi_huffman_tree_free(
+		 &( huffman_trees[ tree_index ] ),
+		 NULL );
+	}
 	return( -1 );
 }
 
@@ -1328,7 +1347,7 @@ int libmodi_bzip_read_block_data(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: 0-byte run-length\t\t\t\t\t: %" PRIu64 "\n",
+				 "%s: 0-byte run-length\t\t\t: %" PRIu64 "\n",
 				 function,
 				 run_length );
 			}
@@ -1379,7 +1398,7 @@ int libmodi_bzip_read_block_data(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: symbol\t\t\t\t\t\t: %" PRIu16 " (run-length)\n",
+				 "%s: symbol\t\t\t\t\t: %" PRIu16 " (run-length)\n",
 				 function,
 				 symbol );
 			}
@@ -1404,7 +1423,7 @@ int libmodi_bzip_read_block_data(
 			if( libcnotify_verbose != 0 )
 			{
 				libcnotify_printf(
-				 "%s: symbol\t\t\t\t\t\t: %" PRIu16 " (MTF: %" PRIu8 ")\n",
+				 "%s: symbol\t\t\t\t\t: %" PRIu16 " (MTF: %" PRIu8 ")\n",
 				 function,
 				 symbol,
 				 stack_value );
@@ -1427,7 +1446,7 @@ int libmodi_bzip_read_block_data(
 		else if( libcnotify_verbose != 0 )
 		{
 			libcnotify_printf(
-			 "%s: symbol\t\t\t\t\t\t: %" PRIu16 "\n",
+			 "%s: symbol\t\t\t\t\t: %" PRIu16 "\n",
 			 function,
 			 symbol );
 		}
@@ -1552,17 +1571,18 @@ int libmodi_bzip_decompress(
      size_t *uncompressed_data_size,
      libcerror_error_t **error )
 {
-	uint8_t block_data[ BLOCK_DATA_SIZE ];
 	uint8_t symbol_stack[ 256 ];
 	uint8_t selectors[ ( 1 << 15 ) + 1 ];
-	size_t permutations[ BLOCK_DATA_SIZE ];
 
 	libmodi_huffman_tree_t *huffman_trees[ 7 ] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 	libmodi_bit_stream_t *bit_stream           = NULL;
+	size_t *permutations                       = NULL;
+	uint8_t *block_data                        = NULL;
 	static char *function                      = "libmodi_bzip_decompress";
 	size_t block_data_size                     = 0;
 	size_t compressed_data_offset              = 0;
+	size_t safe_block_data_size                = 0;
 	size_t safe_uncompressed_data_size         = 0;
 	size_t uncompressed_data_offset            = 0;
 	uint64_t signature                         = 0;
@@ -1641,7 +1661,37 @@ int libmodi_bzip_decompress(
 		 "%s: invalid compressed data value too small.",
 		 function );
 
-		return( -1 );
+		goto on_error;
+	}
+	block_data_size = 100000;
+
+	block_data = (uint8_t *) memory_allocate(
+	                          sizeof( uint8_t ) * block_data_size );
+
+	if( block_data == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create block data.",
+		 function );
+
+		goto on_error;
+	}
+	permutations = (size_t *) memory_allocate(
+	                           sizeof( size_t ) * block_data_size );
+
+	if( permutations == NULL )
+	{
+		libcerror_error_set(
+		 error,
+		 LIBCERROR_ERROR_DOMAIN_MEMORY,
+		 LIBCERROR_MEMORY_ERROR_INSUFFICIENT,
+		 "%s: unable to create permutations.",
+		 function );
+
+		goto on_error;
 	}
 	if( libmodi_bit_stream_initialize(
 	     &bit_stream,
@@ -1676,21 +1726,21 @@ int libmodi_bzip_decompress(
 
 			goto on_error;
 		}
-		if( ( signature != 0x177245385090UL )
-		 && ( signature != 0x314159265359UL ) )
+		if( signature == 0x177245385090UL )
+		{
+			break;
+		}
+		if( signature != 0x314159265359UL )
 		{
 			libcerror_error_set(
 			 error,
 			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
 			 LIBCERROR_RUNTIME_ERROR_UNSUPPORTED_VALUE,
-			 "%s: unsupported signature.",
-			 function );
+			 "%s: unsupported signature: 0x%" PRIx64 ".",
+			 function,
+			 signature );
 
-			return( -1 );
-		}
-		if( signature == 0x177245385090UL )
-		{
-			break;
+			goto on_error;
 		}
 		if( libmodi_bzip_read_block_header(
 		     bit_stream,
@@ -1738,7 +1788,24 @@ int libmodi_bzip_decompress(
 		}
 		if( libmodi_bit_stream_get_value(
 		     bit_stream,
-		     18,
+		     3,
+		     &value_32bit,
+		     error ) != 1 )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_RUNTIME,
+			 LIBCERROR_RUNTIME_ERROR_GET_FAILED,
+			 "%s: unable to retrieve value from bit stream.",
+			 function );
+
+			goto on_error;
+		}
+		number_of_trees = (uint8_t) ( value_32bit & 0x00000007UL );
+
+		if( libmodi_bit_stream_get_value(
+		     bit_stream,
+		     15,
 		     &value_32bit,
 		     error ) != 1 )
 		{
@@ -1752,8 +1819,6 @@ int libmodi_bzip_decompress(
 			goto on_error;
 		}
 		number_of_selectors = (uint16_t) ( value_32bit & 0x00007fffUL );
-		value_32bit       >>= 15;
-		number_of_trees     = (uint8_t) ( value_32bit & 0x00000007UL );
 
 #if defined( HAVE_DEBUG_OUTPUT )
 		if( libcnotify_verbose != 0 )
@@ -1804,7 +1869,7 @@ int libmodi_bzip_decompress(
 
 			goto on_error;
 		}
-		block_data_size = BLOCK_DATA_SIZE;
+		safe_block_data_size = block_data_size;
 
 		if( libmodi_bzip_read_block_data(
 		     bit_stream,
@@ -1815,7 +1880,7 @@ int libmodi_bzip_decompress(
 		     symbol_stack,
 		     number_of_symbols,
 		     block_data,
-		     &block_data_size,
+		     &safe_block_data_size,
 		     error ) != 1 )
 		{
 			libcerror_error_set(
@@ -1830,11 +1895,10 @@ int libmodi_bzip_decompress(
 #if defined( HAVE_DEBUG_OUTPUT )
 		block_data_offset = uncompressed_data_offset;
 #endif
-
 		if( memory_set(
 		     permutations,
 		     0,
-		     sizeof( size_t ) * BLOCK_DATA_SIZE ) == NULL )
+		     sizeof( size_t ) * block_data_size ) == NULL )
 		{
 			libcerror_error_set(
 			 error,
@@ -1849,7 +1913,7 @@ int libmodi_bzip_decompress(
 		 */
 		if( libmodi_bzip_reverse_burrows_wheeler_transform(
 		     block_data,
-		     block_data_size,
+		     safe_block_data_size,
 		     permutations,
 		     origin_pointer,
 		     uncompressed_data,
@@ -1926,6 +1990,16 @@ int libmodi_bzip_decompress(
 
 		goto on_error;
 	}
+	memory_free(
+	 permutations );
+
+	permutations = NULL;
+
+	memory_free(
+	 block_data );
+
+	block_data = NULL;
+
 	if( libmodi_bzip_calculate_crc32(
 	     &calculated_checksum,
 	     uncompressed_data,
@@ -1974,11 +2048,29 @@ int libmodi_bzip_decompress(
 	return( 1 );
 
 on_error:
+	for( tree_index = 0;
+	     tree_index < number_of_trees;
+	     tree_index++ )
+	{
+		libmodi_huffman_tree_free(
+		 &( huffman_trees[ tree_index ] ),
+		 NULL );
+	}
 	if( bit_stream != NULL )
 	{
 		libmodi_bit_stream_free(
 		 &bit_stream,
 		 NULL );
+	}
+	if( permutations != NULL )
+	{
+		memory_free(
+		 permutations );
+	}
+	if( block_data != NULL )
+	{
+		memory_free(
+		 block_data );
 	}
 	return( -1 );
 }
