@@ -139,6 +139,7 @@ modi_test_deflate_SOURCES = \
 	modi_test_libcnotify.h \
 	modi_test_libmodi.h \
 	modi_test_macros.h \
+	modi_test_memory.c modi_test_memory.h \
 	modi_test_unused.h
 
 modi_test_deflate_LDADD = \

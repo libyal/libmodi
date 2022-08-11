@@ -179,6 +179,10 @@
 				RelativePath="..\..\tests\modi_test_deflate.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_memory.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -199,6 +203,10 @@
 			</File>
 			<File
 				RelativePath="..\..\tests\modi_test_macros.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\tests\modi_test_memory.h"
 				>
 			</File>
 			<File
