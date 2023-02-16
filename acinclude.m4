@@ -1,6 +1,6 @@
 dnl Checks for required headers and functions
 dnl
-dnl Version: 20200713
+dnl Version: 20230216
 
 dnl Function to detect if libmodi dependencies are available
 AC_DEFUN([AX_LIBMODI_CHECK_LOCAL],
@@ -22,9 +22,7 @@ AC_DEFUN([AX_MODITOOLS_CHECK_LOCAL],
   ])
 
   dnl Headers included in moditools/modimount.c
-  AC_CHECK_HEADERS([errno.h])
-
-  AC_HEADER_TIME
+  AC_CHECK_HEADERS([errno.h sys/time.h])
 
   dnl Functions included in moditools/mount_file_system.c and moditools/mount_file_entry.c
   AS_IF(
