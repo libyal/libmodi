@@ -1,6 +1,6 @@
 dnl Checks for required headers and functions
 dnl
-dnl Version: 20230216
+dnl Version: 20200713
 
 dnl Function to detect if libmodi dependencies are available
 AC_DEFUN([AX_LIBMODI_CHECK_LOCAL],
