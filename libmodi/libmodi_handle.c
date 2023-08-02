@@ -1197,9 +1197,9 @@ int libmodi_handle_open_file_io_handle(
 {
 	libmodi_internal_handle_t *internal_handle = NULL;
 	static char *function                      = "libmodi_handle_open_file_io_handle";
+	uint8_t file_io_handle_opened_in_library   = 0;
 	int bfio_access_flags                      = 0;
 	int file_io_handle_is_open                 = 0;
-	int file_io_handle_opened_in_library       = 0;
 
 	if( handle == NULL )
 	{
@@ -1315,7 +1315,7 @@ int libmodi_handle_open_file_io_handle(
 	}
 #endif
 	internal_handle->file_io_handle                   = file_io_handle;
-	internal_handle->file_io_handle_opened_in_library = (uint8_t) file_io_handle_opened_in_library;
+	internal_handle->file_io_handle_opened_in_library = file_io_handle_opened_in_library;
 	internal_handle->access_flags                     = access_flags;
 
 #if defined( HAVE_LIBMODI_MULTI_THREAD_SUPPORT )
