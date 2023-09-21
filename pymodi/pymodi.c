@@ -95,7 +95,6 @@ PyObject *pymodi_get_version(
            PyObject *self PYMODI_ATTRIBUTE_UNUSED,
            PyObject *arguments PYMODI_ATTRIBUTE_UNUSED )
 {
-	const char *errors           = NULL;
 	const char *version_string   = NULL;
 	size_t version_string_length = 0;
 
@@ -118,7 +117,7 @@ PyObject *pymodi_get_version(
 	return( PyUnicode_DecodeUTF8(
 	         version_string,
 	         (Py_ssize_t) version_string_length,
-	         errors ) );
+	         NULL ) );
 }
 
 /* Checks if a file has a Mac OS disk image file signature
@@ -178,8 +177,14 @@ PyObject *pymodi_check_file_signature(
 		PyErr_Clear();
 
 #if defined( HAVE_WIDE_SYSTEM_CHARACTER )
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
+		filename_wide = (wchar_t *) PyUnicode_AsWideCharString(
+		                             string_object,
+		                             NULL );
+#else
 		filename_wide = (wchar_t *) PyUnicode_AsUnicode(
 		                             string_object );
+#endif
 		Py_BEGIN_ALLOW_THREADS
 
 		result = libmodi_check_file_signature_wide(
@@ -187,6 +192,11 @@ PyObject *pymodi_check_file_signature(
 		          &error );
 
 		Py_END_ALLOW_THREADS
+
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 3
+		PyMem_Free(
+		 filename_wide );
+#endif
 #else
 		utf8_string_object = PyUnicode_AsUTF8String(
 		                      string_object );
