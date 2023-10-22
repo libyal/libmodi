@@ -19,9 +19,9 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libmodi.h
-	/bin/rm -f libmodi/definitions.h
-	/bin/rm -f libmodi/features.h
-	/bin/rm -f libmodi/types.h
-	/bin/rm -f Makefile
+	-rm -f libmodi.h
+	-rm -f libmodi/definitions.h
+	-rm -f libmodi/features.h
+	-rm -f libmodi/types.h
+	-rm -f Makefile
 

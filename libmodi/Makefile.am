@@ -116,11 +116,13 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 distclean: clean
-	/bin/rm -f libmodi_definitions.h
-	/bin/rm -f libmodi.rc
-	/bin/rm -f Makefile
+	-rm -f libmodi_definitions.h
+	-rm -f libmodi.rc
+	-rm -f Makefile
 
-splint:
+sources-local: $(BUILT_SOURCES)
+
+splint-local:
 	@echo "Running splint on libmodi ..."
 	-splint -preproc -redef $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(libmodi_la_SOURCES)
 
