@@ -37,7 +37,7 @@ class SupportFunctionsTests(unittest.TestCase):
 
   def test_check_file_signature(self):
     """Tests the check_file_signature function."""
-    test_source = unittest.source
+    test_source = getattr(unittest, "source", None)
     if not test_source:
       raise unittest.SkipTest("missing source")
 
@@ -46,7 +46,7 @@ class SupportFunctionsTests(unittest.TestCase):
 
   def test_check_file_signature_file_object(self):
     """Tests the check_file_signature_file_object function."""
-    test_source = unittest.source
+    test_source = getattr(unittest, "source", None)
     if not test_source:
       raise unittest.SkipTest("missing source")
 
@@ -56,11 +56,11 @@ class SupportFunctionsTests(unittest.TestCase):
 
   def test_open(self):
     """Tests the open function."""
-    test_source = unittest.source
+    test_source = getattr(unittest, "source", None)
     if not test_source:
       raise unittest.SkipTest("missing source")
 
-    modi_handle = pylnk.open(test_source)
+    modi_handle = pymodi.open(test_source)
     self.assertIsNotNone(modi_handle)
 
     modi_handle.close()
@@ -73,7 +73,7 @@ class SupportFunctionsTests(unittest.TestCase):
 
   def test_open_file_object(self):
     """Tests the open_file_object function."""
-    test_source = unittest.source
+    test_source = getattr(unittest, "source", None)
     if not test_source:
       raise unittest.SkipTest("missing source")
 
@@ -81,7 +81,7 @@ class SupportFunctionsTests(unittest.TestCase):
       raise unittest.SkipTest("source not a regular file")
 
     with open(test_source, "rb") as file_object:
-      modi_handle = pylnk.open_file_object(file_object)
+      modi_handle = pymodi.open_file_object(file_object)
       self.assertIsNotNone(modi_handle)
 
       modi_handle.close()
