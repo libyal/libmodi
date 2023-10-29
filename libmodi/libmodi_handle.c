@@ -2570,7 +2570,8 @@ int libmodi_internal_handle_open_read(
 			goto on_error;
 		}
 	}
-	if( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
+	if( ( internal_handle->io_handle->image_type == LIBMODI_IMAGE_TYPE_UNKNOWN )
+	 && ( file_size < MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 	{
 		if( libmodi_internal_handle_open_read_sparse_bundle(
 		     internal_handle,

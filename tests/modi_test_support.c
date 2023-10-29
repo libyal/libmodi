@@ -331,10 +331,12 @@ int modi_test_check_file_signature_wide(
 		          wide_source,
 		          &error );
 
-		MODI_TEST_ASSERT_EQUAL_INT(
+		/* Note that libmodi_check_file_signature_wide will return 0 for a "raw" modi file
+		 */
+		MODI_TEST_ASSERT_NOT_EQUAL_INT(
 		 "result",
 		 result,
-		 1 );
+		 -1 );
 
 		MODI_TEST_ASSERT_IS_NULL(
 		 "error",
