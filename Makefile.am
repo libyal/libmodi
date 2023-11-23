@@ -25,8 +25,6 @@ SUBDIRS = \
 	libmodi \
 	moditools \
 	pymodi \
-	pymodi-python2 \
-	pymodi-python3 \
 	po \
 	manuals \
 	tests \

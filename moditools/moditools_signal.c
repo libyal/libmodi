@@ -40,7 +40,7 @@ void (*moditools_signal_signal_handler)( moditools_signal_t ) = NULL;
 /* Signal handler for Ctrl+C or Ctrl+Break signals
  */
 BOOL WINAPI moditools_signal_handler(
-             unsigned long signal )
+             moditools_signal_t signal )
 {
 	static char *function = "moditools_signal_handler";
 
@@ -112,7 +112,7 @@ int moditools_signal_attach(
 	moditools_signal_signal_handler = signal_handler;
 
 	if( SetConsoleCtrlHandler(
-	     moditools_signal_handler,
+	     (PHANDLER_ROUTINE) moditools_signal_handler,
 	     TRUE ) == 0 )
 	{
 		libcerror_error_set(
@@ -179,7 +179,7 @@ int moditools_signal_detach(
 	static char *function = "moditools_signal_detach";
 
 	if( SetConsoleCtrlHandler(
-	     moditools_signal_handler,
+	     (PHANDLER_ROUTINE) moditools_signal_handler,
 	     FALSE ) == 0 )
 	{
 		libcerror_error_set(

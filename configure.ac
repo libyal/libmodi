@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
  [libmodi],
- [20231023],
+ [20231123],
  [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
@@ -142,7 +142,7 @@ dnl Check if libmodi Python bindings (pymodi) required headers and functions are
 AX_PYTHON_CHECK_ENABLE
 
 AS_IF(
-  [test "x${ac_cv_enable_python}" != xno || test "x${ac_cv_enable_python2}" != xno || test "x${ac_cv_enable_python3}" != xno],
+  [test "x${ac_cv_enable_python}" != xno],
   [dnl Headers included in pymodi/pymodi_error.c
   AC_CHECK_HEADERS([stdarg.h varargs.h])
 
@@ -220,8 +220,6 @@ AC_CONFIG_FILES([libhmac/Makefile])
 AC_CONFIG_FILES([libcaes/Makefile])
 AC_CONFIG_FILES([libmodi/Makefile])
 AC_CONFIG_FILES([pymodi/Makefile])
-AC_CONFIG_FILES([pymodi-python2/Makefile])
-AC_CONFIG_FILES([pymodi-python3/Makefile])
 AC_CONFIG_FILES([moditools/Makefile])
 AC_CONFIG_FILES([po/Makefile.in])
 AC_CONFIG_FILES([po/Makevars])
