@@ -6,9 +6,7 @@ EXTRA_DIST = \
 	libmodi.3 \
 	modiinfo.1
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f Makefile
 

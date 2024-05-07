@@ -1,7 +1,7 @@
 AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/common \
+	-I../include -I$(top_srcdir)/include \
+	-I../common -I$(top_srcdir)/common \
 	@LIBCERROR_CPPFLAGS@ \
 	@LIBCTHREADS_CPPFLAGS@ \
 	@LIBCDATA_CPPFLAGS@ \
@@ -112,13 +112,11 @@ EXTRA_DIST = \
 	libmodi.rc \
 	libmodi.rc.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libmodi_definitions.h \
+	libmodi.rc \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libmodi_definitions.h
-	-rm -f libmodi.rc
-	-rm -f Makefile
 
 sources-local: $(BUILT_SOURCES)
 

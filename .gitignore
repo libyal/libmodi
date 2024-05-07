@@ -154,6 +154,7 @@ stamp-h[1-9]
 /tests/modi_test_udif_block_table_entry
 /tests/modi_test_udif_resource_file
 /tests/modi_test_udif_xml_plist
+/tests/notify_stream.log
 /tests/tmp*
 
 # Local library dependencies specific files

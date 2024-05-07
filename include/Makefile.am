@@ -15,13 +15,11 @@ EXTRA_DIST = \
 	libmodi/features.h.in \
 	libmodi/types.h.in
 
-MAINTAINERCLEANFILES = \
+DISTCLEANFILES = \
+	libmodi.h \
+	libmodi/definitions.h \
+	libmodi/features.h \
+	libmodi/types.h \
+	Makefile \
 	Makefile.in
-
-distclean: clean
-	-rm -f libmodi.h
-	-rm -f libmodi/definitions.h
-	-rm -f libmodi/features.h
-	-rm -f libmodi/types.h
-	-rm -f Makefile
 
