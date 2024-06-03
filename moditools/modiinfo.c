@@ -1,5 +1,5 @@
 /*
- * Shows information obtained from a Mac OS disk image
+ * Shows information obtained from a Mac OS disk image.
  *
  * Copyright (C) 2012-2024, Joachim Metz <joachim.metz@gmail.com>
  *
@@ -52,7 +52,7 @@
 info_handle_t *modiinfo_info_handle = NULL;
 int modiinfo_abort                  = 0;
 
-/* Prints the executable usage information
+/* Prints usage information
  */
 void usage_fprint(
       FILE *stream )
@@ -79,7 +79,7 @@ void modiinfo_signal_handler(
       moditools_signal_t signal MODITOOLS_ATTRIBUTE_UNUSED )
 {
 	libcerror_error_t *error = NULL;
-	static char *function   = "modiinfo_signal_handler";
+	static char *function    = "modiinfo_signal_handler";
 
 	MODITOOLS_UNREFERENCED_PARAMETER( signal )
 
@@ -138,7 +138,7 @@ int main( int argc, char * const argv[] )
 	 1 );
 
 	if( libclocale_initialize(
-             "moditools",
+	     "moditools",
 	     &error ) != 1 )
 	{
 		fprintf(
@@ -147,9 +147,9 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-        if( moditools_output_initialize(
-             _IONBF,
-             &error ) != 1 )
+	if( moditools_output_initialize(
+	     _IONBF,
+	     &error ) != 1 )
 	{
 		fprintf(
 		 stderr,
