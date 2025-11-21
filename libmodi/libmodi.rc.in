@@ -24,7 +24,7 @@ BEGIN
       VALUE "FileDescription",		"Library to access Mac OS disk image formats\0"
       VALUE "FileVersion",		"@VERSION@" "\0"
       VALUE "InternalName",		"libmodi.dll\0"
-      VALUE "LegalCopyright",		"(C) 2012-2024, Joachim Metz <joachim.metz@gmail.com>\0"
+      VALUE "LegalCopyright",		"(C) 2012-2025, Joachim Metz <joachim.metz@gmail.com>\0"
       VALUE "OriginalFilename",		"libmodi.dll\0"
       VALUE "ProductName",		"libmodi\0"
       VALUE "ProductVersion",		"@VERSION@" "\0"

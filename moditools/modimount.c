@@ -1,7 +1,7 @@
 /*
- * Mounts a Mac OS disk image file
+ * Mounts a Mac OS disk image file.
  *
- * Copyright (C) 2012-2024, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2025, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -148,13 +148,13 @@ int main( int argc, char * const argv[] )
 	/* Need to set this to 1 even if there no arguments, otherwise this causes
 	 * fuse: empty argv passed to fuse_session_new()
 	 */
-	char *fuse_argv[ 2 ]                                 = { program, NULL };
-	struct fuse_args modimount_fuse_arguments            = FUSE_ARGS_INIT(1, fuse_argv);
+	char *fuse_argv[ 2 ]                        = { program, NULL };
+	struct fuse_args modimount_fuse_arguments   = FUSE_ARGS_INIT(1, fuse_argv);
 #else
-	struct fuse_args modimount_fuse_arguments            = FUSE_ARGS_INIT(0, NULL);
-	struct fuse_chan *modimount_fuse_channel             = NULL;
+	struct fuse_args modimount_fuse_arguments   = FUSE_ARGS_INIT(0, NULL);
+	struct fuse_chan *modimount_fuse_channel    = NULL;
 #endif
-	struct fuse *modimount_fuse_handle                   = NULL;
+	struct fuse *modimount_fuse_handle          = NULL;
 
 #elif defined( HAVE_LIBDOKAN )
 	DOKAN_OPERATIONS modimount_dokan_operations;
@@ -311,6 +311,11 @@ int main( int argc, char * const argv[] )
 #if defined( HAVE_LIBFUSE ) || defined( HAVE_LIBFUSE3 ) || defined( HAVE_LIBOSXFUSE )
 	if( option_extended_options != NULL )
 	{
+#if defined( HAVE_LIBFUSE3 )
+		// fuse_opt_add_arg: Assertion `!args->argv || args->allocated' failed.
+		modimount_fuse_arguments.argc = 0;
+		modimount_fuse_arguments.argv = NULL;
+#endif
 		/* This argument is required but ignored
 		 */
 		if( fuse_opt_add_arg(

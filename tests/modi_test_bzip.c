@@ -1,7 +1,7 @@
 /*
  * BZip decompression testing program
  *
- * Copyright (C) 2012-2024, Joachim Metz <joachim.metz@gmail.com>
+ * Copyright (C) 2012-2025, Joachim Metz <joachim.metz@gmail.com>
  *
  * Refer to AUTHORS for acknowledgements.
  *
@@ -41,7 +41,7 @@
 #define MODI_TEST_BZIP_VERBOSE
  */
 
-uint8_t modi_test_bzip_compressed_data1[ 125 ] = {
+uint8_t modi_test_bzip_compressed_data1[ 117 ] = {
 	0x42, 0x5a, 0x68, 0x31, 0x31, 0x41, 0x59, 0x26, 0x53, 0x59, 0x5a, 0x55, 0xc4, 0x1e, 0x00,
        	0x00, 0x0c, 0x5f, 0x80, 0x20, 0x00, 0x40, 0x84, 0x00, 0x00, 0x80, 0x20, 0x40, 0x00, 0x2f,
        	0x6c, 0xdc, 0x80, 0x20, 0x00, 0x48, 0x4a, 0x9a, 0x4c, 0xd5, 0x53, 0xfc, 0x69, 0xa5, 0x53,
@@ -341,7 +341,7 @@ int modi_test_bzip_read_stream_header(
 
 	result = libmodi_bzip_read_stream_header(
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          &compressed_data_offset,
 	          &compression_level,
 	          &error );
@@ -366,7 +366,7 @@ int modi_test_bzip_read_stream_header(
 
 	result = libmodi_bzip_read_stream_header(
 	          NULL,
-	          125,
+	          117,
 	          &compressed_data_offset,
 	          &compression_level,
 	          &error );
@@ -404,7 +404,7 @@ int modi_test_bzip_read_stream_header(
 
 	result = libmodi_bzip_read_stream_header(
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          NULL,
 	          &compression_level,
 	          &error );
@@ -423,7 +423,7 @@ int modi_test_bzip_read_stream_header(
 
 	result = libmodi_bzip_read_stream_header(
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          &compressed_data_offset,
 	          NULL,
 	          &error );
@@ -462,7 +462,7 @@ int modi_test_bzip_read_signature(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -568,7 +568,7 @@ int modi_test_bzip_read_block_header(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -703,7 +703,7 @@ int modi_test_bzip_read_symbol_stack(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -880,7 +880,7 @@ int modi_test_bzip_read_selectors(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -1101,7 +1101,7 @@ int modi_test_bzip_read_huffman_tree(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -1369,7 +1369,7 @@ int modi_test_bzip_read_huffman_trees(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -1637,7 +1637,7 @@ int modi_test_bzip_read_block_data(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          4,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -1927,7 +1927,7 @@ int modi_test_bzip_read_stream_footer(
 	result = libmodi_bit_stream_initialize(
 	          &bit_stream,
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          107,
 	          LIBMODI_BIT_STREAM_STORAGE_TYPE_BYTE_FRONT_TO_BACK,
 	          &error );
@@ -2055,7 +2055,7 @@ int modi_test_bzip_decompress(
 
 	result = libmodi_bzip_decompress(
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          uncompressed_data,
 	          &uncompressed_data_size,
 	          &error );
@@ -2125,7 +2125,7 @@ int modi_test_bzip_decompress(
 
 	result = libmodi_bzip_decompress(
 	          NULL,
-	          125,
+	          117,
 	          uncompressed_data,
 	          &uncompressed_data_size,
 	          &error );
@@ -2163,7 +2163,7 @@ int modi_test_bzip_decompress(
 
 	result = libmodi_bzip_decompress(
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          NULL,
 	          &uncompressed_data_size,
 	          &error );
@@ -2182,7 +2182,7 @@ int modi_test_bzip_decompress(
 
 	result = libmodi_bzip_decompress(
 	          modi_test_bzip_compressed_data1,
-	          125,
+	          117,
 	          uncompressed_data,
 	          NULL,
 	          &error );
