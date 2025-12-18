@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libmodi],
-  [20251208],
+  [20251218],
   [joachim.metz@gmail.com])
 
 AC_CONFIG_SRCDIR(
