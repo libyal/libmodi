@@ -3,7 +3,7 @@ libmodi is a library to access the Mac OS disk image format.
 Project information:
 
 * Status: experimental
-* Licence: LGPLv3+
+* Licence: LGPL-3.0-or-later
 
 Supported Mac OS image formats:
 
