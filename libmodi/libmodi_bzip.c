@@ -1848,6 +1848,20 @@ int libmodi_bzip_decompress(
 			 "\n" );
 		}
 #endif
+		if( memory_set(
+		     selectors,
+		     0,
+		     ( 1 << 15 ) + 1 ) == NULL )
+		{
+			libcerror_error_set(
+			 error,
+			 LIBCERROR_ERROR_DOMAIN_MEMORY,
+			 LIBCERROR_MEMORY_ERROR_SET_FAILED,
+			 "%s: unable to clear selectors.",
+			 function );
+
+			goto on_error;
+		}
 		if( libmodi_bzip_read_selectors(
 		     bit_stream,
 		     selectors,

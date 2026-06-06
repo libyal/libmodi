@@ -31,14 +31,17 @@
  */
 #if defined( LIBMODI_DLL_EXPORT )
 #define LIBMODI_EXTERN __declspec(dllexport)
+#define LIBMODI_EXTERN_VARIABLE extern __declspec(dllexport)
 
 #elif defined( LIBMODI_DLL_IMPORT )
-#define LIBMODI_EXTERN extern __declspec(dllimport)
+#define LIBMODI_EXTERN __declspec(dllimport)
+#define LIBMODI_EXTERN_VARIABLE extern __declspec(dllimport)
 
 #else
 #define LIBMODI_EXTERN extern
+#define LIBMODI_EXTERN_VARIABLE extern
 
-#endif
+#endif /* defined( LIBMODI_DLL_EXPORT ) */
 
 #endif /* !defined( _LIBMODI_EXTERN_H ) */
 

@@ -234,8 +234,6 @@ int libmodi_check_file_signature(
 
 			goto on_error;
 		}
-		filename        = info_plist_path;
-		filename_length = info_plist_path_size - 1;
 	}
 	else
 	{

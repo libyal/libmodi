@@ -424,9 +424,9 @@ int libmodi_sparse_image_header_read_data(
 		}
 #endif
 	}
+#if defined( HAVE_DEBUG_OUTPUT )
 	data_offset += bands_table_data_size;
 
-#if defined( HAVE_DEBUG_OUTPUT )
 	if( ( libcnotify_verbose != 0 )
 	 && ( data_offset < data_size ) )
 	{

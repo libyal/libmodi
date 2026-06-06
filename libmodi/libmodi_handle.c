@@ -573,7 +573,7 @@ int libmodi_handle_open(
 	libbfio_handle_t *file_io_handle           = NULL;
 	libcdirectory_directory_t *directory       = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
-	char *basename_end                         = NULL;
+	const char *basename_end                   = NULL;
 	static char *function                      = "libmodi_handle_open";
 	char *info_plist_path                      = NULL;
 	size_t basename_length                     = 0;
@@ -737,8 +737,7 @@ int libmodi_handle_open(
 
 			goto on_error;
 		}
-		filename        = info_plist_path;
-		filename_length = info_plist_path_size - 1;
+		filename = info_plist_path;
 	}
 	else
 	{
@@ -886,7 +885,7 @@ int libmodi_handle_open_wide(
 	libbfio_handle_t *file_io_handle           = NULL;
 	libcdirectory_directory_t *directory       = NULL;
 	libmodi_internal_handle_t *internal_handle = NULL;
-	wchar_t *basename_end                      = NULL;
+	const wchar_t *basename_end                = NULL;
 	wchar_t *info_plist_path                   = NULL;
 	static char *function                      = "libmodi_handle_open_wide";
 	size_t basename_length                     = 0;

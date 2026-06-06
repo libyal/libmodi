@@ -24,21 +24,28 @@
 
 #include <common.h>
 
+#if !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute )
+#if __has_attribute( visibility )
+#define LIBMODI_INTERNAL	__attribute__((visibility("hidden"))) extern
+
+#else
+#define LIBMODI_INTERNAL	extern
+
+#endif /* __has_attribute( visibility ) */
+#else
+#define LIBMODI_INTERNAL	extern
+
+#endif /* !defined( __CYGWIN__ ) && !defined( _WIN32 ) && defined( __has_attribute ) */
+
 /* Define HAVE_LOCAL_LIBMODI for local use of libmodi
  */
 #if !defined( HAVE_LOCAL_LIBMODI )
 
 #include <libmodi/extern.h>
 
-#if defined( __CYGWIN__ ) || defined( __MINGW32__ )
-#define LIBMODI_EXTERN_VARIABLE	extern
-#else
-#define LIBMODI_EXTERN_VARIABLE	LIBMODI_EXTERN
-#endif
-
 #else
 #define LIBMODI_EXTERN		/* extern */
-#define LIBMODI_EXTERN_VARIABLE	extern
+#define LIBMODI_EXTERN_VARIABLE	LIBMODI_INTERNAL
 
 #endif /* !defined( HAVE_LOCAL_LIBMODI ) */
 
