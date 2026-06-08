@@ -988,7 +988,7 @@ int modi_test_handle_open_file_io_handle(
 		 info_plist_path );
 
 		info_plist_path = NULL;
-	} 
+	}
 	result = libmodi_handle_initialize(
 	          &handle,
 	          &error );
@@ -2511,7 +2511,7 @@ int main(
 			 info_plist_path );
 
 			info_plist_path = NULL;
-		} 
+		}
 		MODI_TEST_RUN_WITH_ARGS(
 		 "libmodi_handle_open",
 		 modi_test_handle_open,

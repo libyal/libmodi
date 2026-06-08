@@ -568,7 +568,7 @@ int modi_test_check_file_signature_file_io_handle(
 			 info_plist_path );
 
 			info_plist_path = NULL;
-		} 
+		}
 		result = libbfio_handle_open(
 		          file_io_handle,
 		          LIBBFIO_OPEN_READ,
