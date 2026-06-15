@@ -1,6 +1,6 @@
 # Files to ignore by git
 #
-# Version: 20251129
+# Version: 20260604
 
 # Generic auto-generated build files
 *~
@@ -131,7 +131,12 @@ stamp-h[1-9]
 /moditools/*.exe
 /moditools/modiinfo
 /moditools/modimount
+/tests/*.dir
 /tests/*.exe
+/tests/*.log
+/tests/*.tmp
+/tests/atconfig
+/tests/atlocal
 /tests/input
 /tests/modi_test_bands_data_handle
 /tests/modi_test_bit_stream
@@ -155,6 +160,12 @@ stamp-h[1-9]
 /tests/modi_test_udif_resource_file
 /tests/modi_test_udif_xml_plist
 /tests/notify_stream.log
+/tests/package.m4
+/tests/test_inputs_*.at
+/tests/test_library
+/tests/test_manpages
+/tests/test_python_module
+/tests/test_tools
 /tests/tmp*
 
 # Local library dependencies specific files
