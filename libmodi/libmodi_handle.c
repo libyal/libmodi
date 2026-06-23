@@ -4247,7 +4247,7 @@ int libmodi_handle_set_band_data_files_path_wide(
 #endif /* defined( HAVE_WIDE_CHARACTER_TYPE ) */
 
 /* Retrieves the media size
- * Returns the 1 if succesful or -1 on error
+ * Returns the 1 if successful or -1 on error
  */
 int libmodi_handle_get_media_size(
      libmodi_handle_t *handle,
@@ -4339,7 +4339,7 @@ int libmodi_handle_get_media_size(
 }
 
 /* Retrieves the image type
- * Returns the 1 if succesful or -1 on error
+ * Returns the 1 if successful or -1 on error
  */
 int libmodi_handle_get_image_type(
      libmodi_handle_t *handle,
