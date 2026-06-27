@@ -1,18 +1,20 @@
 .Dd June 27, 2026
-.Dt MODIINFO 1
+.Dt MODIMOUNT 1
 .Os
 .Sh NAME
-.Nm modiinfo
-.Nd determines information about a Mac OS disk image
+.Nm modimount
+.Nd mounts a Mac OS disk image file
 .Sh SYNOPSIS
-.Nm modiinfo
+.Nm modimount
+.Op Fl X Ar extended_options
 .Op Fl hvV
 .Ar source
+.Ar mount_point
 .Sh DESCRIPTION
-.Nm modiinfo
-is a utility to determine information about a Mac OS disk image
+.Nm modimount
+is a utility to mount a Mac OS disk image file
 .Pp
-.Nm modiinfo
+.Nm modimount
 is part of the
 .Nm libmodi
 package.
@@ -20,16 +22,20 @@ package.
 is a library to access Mac OS disk image formats
 .Pp
 .Ar source
-is the source image.
+a Mac OS disk image file
+.Ar mount_point
+the directory to serve as mount point
 .Pp
 The options are as follows:
 .Bl -tag -width Ds
 .It Fl h
 shows this help
 .It Fl v
-verbose output to stderr
+verbose output to stderr, while modimount will remain running in the foreground
 .It Fl V
 print version
+.It Fl X Ar extended_options
+extended options to pass to sub system
 .El
 .Sh ENVIRONMENT
 None
@@ -37,13 +43,8 @@ None
 None
 .Sh EXAMPLES
 .Bd -literal
-# modiinfo folder-ufbi.dmg
-modiinfo 20210403
-.sp
-Mac OS disk image information:
-.sp
-	Image type:		UDIF uncompressed
-	Media size:		4.0 MiB (4194304 bytes)
+# modimount image1.sparseimage
+modimount 20260627
 .sp
 .Ed
 .Sh DIAGNOSTICS
@@ -51,7 +52,7 @@ Errors, verbose and debug output are printed to stderr when verbose output \
 \-v is enabled.
 Verbose and debug output are only printed when enabled at compilation.
 .Sh SEE ALSO
-.Xr modimount 1
+.Xr modiinfo 1
 .Sh AUTHORS
 .An Joachim Metz <joachim.metz@gmail.com>
 .Sh BUGS

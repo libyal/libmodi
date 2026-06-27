@@ -301,16 +301,16 @@ int info_handle_close(
 	return( 0 );
 }
 
-/* Prints the handle information to a stream
+/* Prints the image information to a stream
  * Returns 1 if successful or -1 on error
  */
-int info_handle_input_fprint(
+int info_handle_image_fprint(
      info_handle_t *info_handle,
      libcerror_error_t **error )
 {
 	system_character_t byte_size_string[ 16 ];
 
-	static char *function = "info_handle_input_fprint";
+	static char *function = "info_handle_image_fprint";
 	size64_t media_size   = 0;
 	int image_type        = 0;
 	int result            = 0;
