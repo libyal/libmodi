@@ -486,9 +486,14 @@ int main( int argc, char * const argv[] )
 
 		goto on_error;
 	}
-	fuse_destroy(
+#if defined( HAVE_LIBFUSE3 )
+	fuse_unmount(
 	 modimount_fuse_handle );
-
+#else
+	fuse_unmount(
+	 mount_point,
+	 modimount_fuse_channel );
+#endif
 	fuse_opt_free_args(
 	 &modimount_fuse_arguments );
 
