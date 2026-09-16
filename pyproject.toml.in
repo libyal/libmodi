@@ -23,6 +23,11 @@ Documentation = "https://github.com/libyal/libmodi/wiki/Home"
 Homepage = "https://github.com/libyal/libmodi"
 Repository = "https://github.com/libyal/libmodi"
 
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+include = "\\.pyi?$"
+
 [tool.setuptools]
 py-modules = ["_build"]
 
