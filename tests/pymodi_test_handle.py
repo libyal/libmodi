@@ -29,382 +29,387 @@ import pymodi
 
 
 class HandleTypeTests(unittest.TestCase):
-  """Tests the handle type."""
+    """Tests the handle type."""
 
-  def test_signal_abort(self):
-    """Tests the signal_abort function."""
-    modi_handle = pymodi.handle()
+    def test_signal_abort(self):
+        """Tests the signal_abort function."""
+        modi_handle = pymodi.handle()
 
-    modi_handle.signal_abort()
+        modi_handle.signal_abort()
 
-  def test_open(self):
-    """Tests the open function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+    def test_open(self):
+        """Tests the open function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    modi_handle = pymodi.handle()
+        modi_handle = pymodi.handle()
 
-    modi_handle.open(test_source)
+        modi_handle.open(test_source)
 
-    with self.assertRaises(IOError):
-      modi_handle.open(test_source)
+        with self.assertRaises(IOError):
+            modi_handle.open(test_source)
 
-    modi_handle.close()
-
-    with self.assertRaises(TypeError):
-      modi_handle.open(None)
-
-    with self.assertRaises(ValueError):
-      modi_handle.open(test_source, mode="w")
-
-  def test_open_file_object(self):
-    """Tests the open_file_object function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    if not os.path.isfile(test_source):
-      raise unittest.SkipTest("source not a regular file")
-
-    modi_handle = pymodi.handle()
-
-    with open(test_source, "rb") as file_object:
-
-      modi_handle.open_file_object(file_object)
-
-      with self.assertRaises(IOError):
-        modi_handle.open_file_object(file_object)
-
-      modi_handle.close()
-
-      with self.assertRaises(TypeError):
-        modi_handle.open_file_object(None)
-
-      with self.assertRaises(ValueError):
-        modi_handle.open_file_object(file_object, mode="w")
-
-  def test_close(self):
-    """Tests the close function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
-
-    modi_handle = pymodi.handle()
-
-    with self.assertRaises(IOError):
-      modi_handle.close()
-
-  def test_open_close(self):
-    """Tests the open and close functions."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      return
-
-    modi_handle = pymodi.handle()
-
-    # Test open and close.
-    modi_handle.open(test_source)
-    modi_handle.close()
-
-    # Test open and close a second time to validate clean up on close.
-    modi_handle.open(test_source)
-    modi_handle.close()
-
-    if os.path.isfile(test_source):
-      with open(test_source, "rb") as file_object:
-
-        # Test open_file_object and close.
-        modi_handle.open_file_object(file_object)
         modi_handle.close()
 
-        # Test open_file_object and close a second time to validate clean up on close.
-        modi_handle.open_file_object(file_object)
+        with self.assertRaises(TypeError):
+            modi_handle.open(None)
+
+        with self.assertRaises(ValueError):
+            modi_handle.open(test_source, mode="w")
+
+    def test_open_file_object(self):
+        """Tests the open_file_object function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        if not os.path.isfile(test_source):
+            raise unittest.SkipTest("source not a regular file")
+
+        modi_handle = pymodi.handle()
+
+        with open(test_source, "rb") as file_object:
+
+            modi_handle.open_file_object(file_object)
+
+            with self.assertRaises(IOError):
+                modi_handle.open_file_object(file_object)
+
+            modi_handle.close()
+
+            with self.assertRaises(TypeError):
+                modi_handle.open_file_object(None)
+
+            with self.assertRaises(ValueError):
+                modi_handle.open_file_object(file_object, mode="w")
+
+    def test_close(self):
+        """Tests the close function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        modi_handle = pymodi.handle()
+
+        with self.assertRaises(IOError):
+            modi_handle.close()
+
+    def test_open_close(self):
+        """Tests the open and close functions."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            return
+
+        modi_handle = pymodi.handle()
+
+        # Test open and close.
+        modi_handle.open(test_source)
         modi_handle.close()
 
-        # Test open_file_object and close and dereferencing file_object.
-        modi_handle.open_file_object(file_object)
-        del file_object
+        # Test open and close a second time to validate clean up on close.
+        modi_handle.open(test_source)
         modi_handle.close()
 
-  def test_read_buffer(self):
-    """Tests the read_buffer function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        if os.path.isfile(test_source):
+            with open(test_source, "rb") as file_object:
 
-    modi_handle = pymodi.handle()
+                # Test open_file_object and close.
+                modi_handle.open_file_object(file_object)
+                modi_handle.close()
 
-    modi_handle.open(test_source)
-    modi_handle.open_band_data_files()
+                # Test open_file_object and close a second time to validate clean up on close.
+                modi_handle.open_file_object(file_object)
+                modi_handle.close()
 
-    media_size = modi_handle.get_media_size()
+                # Test open_file_object and close and dereferencing file_object.
+                modi_handle.open_file_object(file_object)
+                del file_object
+                modi_handle.close()
 
-    if media_size < 4096:
-      # Test read without maximum size.
-      modi_handle.seek_offset(0, os.SEEK_SET)
+    def test_read_buffer(self):
+        """Tests the read_buffer function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-      data = modi_handle.read_buffer()
+        modi_handle = pymodi.handle()
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), media_size)
+        modi_handle.open(test_source)
+        modi_handle.open_band_data_files()
 
-    # Test read with maximum size.
-    modi_handle.seek_offset(0, os.SEEK_SET)
+        media_size = modi_handle.get_media_size()
 
-    data = modi_handle.read_buffer(size=4096)
+        if media_size < 4096:
+            # Test read without maximum size.
+            modi_handle.seek_offset(0, os.SEEK_SET)
 
-    self.assertIsNotNone(data)
-    self.assertEqual(len(data), min(media_size, 4096))
+            data = modi_handle.read_buffer()
 
-    if media_size > 8:
-      modi_handle.seek_offset(-8, os.SEEK_END)
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), media_size)
 
-      # Read buffer on media_size boundary.
-      data = modi_handle.read_buffer(size=4096)
+        # Test read with maximum size.
+        modi_handle.seek_offset(0, os.SEEK_SET)
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 8)
+        data = modi_handle.read_buffer(size=4096)
 
-      # Read buffer beyond media_size boundary.
-      data = modi_handle.read_buffer(size=4096)
+        self.assertIsNotNone(data)
+        self.assertEqual(len(data), min(media_size, 4096))
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 0)
+        if media_size > 8:
+            modi_handle.seek_offset(-8, os.SEEK_END)
 
-    # Stress test read buffer.
-    modi_handle.seek_offset(0, os.SEEK_SET)
+            # Read buffer on media_size boundary.
+            data = modi_handle.read_buffer(size=4096)
 
-    remaining_media_size = media_size
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 8)
 
-    for _ in range(1024):
-      read_size = int(random.random() * 4096)
+            # Read buffer beyond media_size boundary.
+            data = modi_handle.read_buffer(size=4096)
 
-      data = modi_handle.read_buffer(size=read_size)
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 0)
 
-      self.assertIsNotNone(data)
-
-      data_size = len(data)
-
-      if read_size > remaining_media_size:
-        read_size = remaining_media_size
-
-      self.assertEqual(data_size, read_size)
-
-      remaining_media_size -= data_size
-
-      if not remaining_media_size:
+        # Stress test read buffer.
         modi_handle.seek_offset(0, os.SEEK_SET)
 
         remaining_media_size = media_size
 
-    with self.assertRaises(ValueError):
-      modi_handle.read_buffer(size=-1)
+        for _ in range(1024):
+            read_size = int(random.random() * 4096)
 
-    modi_handle.close()
+            data = modi_handle.read_buffer(size=read_size)
 
-    # Test the read without open.
-    with self.assertRaises(IOError):
-      modi_handle.read_buffer(size=4096)
+            self.assertIsNotNone(data)
 
-  def test_read_buffer_file_object(self):
-    """Tests the read_buffer function on a file-like object."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+            data_size = len(data)
 
-    if not os.path.isfile(test_source):
-      raise unittest.SkipTest("source not a regular file")
+            if read_size > remaining_media_size:
+                read_size = remaining_media_size
 
-    modi_handle = pymodi.handle()
+            self.assertEqual(data_size, read_size)
 
-    with open(test_source, "rb") as file_object:
-      modi_handle.open_file_object(file_object)
-      modi_handle.open_band_data_files()
+            remaining_media_size -= data_size
 
-      media_size = modi_handle.get_media_size()
+            if not remaining_media_size:
+                modi_handle.seek_offset(0, os.SEEK_SET)
 
-      # Test normal read.
-      data = modi_handle.read_buffer(size=4096)
+                remaining_media_size = media_size
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), min(media_size, 4096))
+        with self.assertRaises(ValueError):
+            modi_handle.read_buffer(size=-1)
 
-      modi_handle.close()
+        modi_handle.close()
 
-  def test_read_buffer_at_offset(self):
-    """Tests the read_buffer_at_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        # Test the read without open.
+        with self.assertRaises(IOError):
+            modi_handle.read_buffer(size=4096)
 
-    modi_handle = pymodi.handle()
+    def test_read_buffer_file_object(self):
+        """Tests the read_buffer function on a file-like object."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    modi_handle.open(test_source)
-    modi_handle.open_band_data_files()
+        if not os.path.isfile(test_source):
+            raise unittest.SkipTest("source not a regular file")
 
-    media_size = modi_handle.get_media_size()
+        modi_handle = pymodi.handle()
 
-    # Test normal read.
-    data = modi_handle.read_buffer_at_offset(4096, 0)
+        with open(test_source, "rb") as file_object:
+            modi_handle.open_file_object(file_object)
+            modi_handle.open_band_data_files()
 
-    self.assertIsNotNone(data)
-    self.assertEqual(len(data), min(media_size, 4096))
+            media_size = modi_handle.get_media_size()
 
-    if media_size > 8:
-      # Read buffer on media_size boundary.
-      data = modi_handle.read_buffer_at_offset(4096, media_size - 8)
+            # Test normal read.
+            data = modi_handle.read_buffer(size=4096)
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 8)
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), min(media_size, 4096))
 
-      # Read buffer beyond media_size boundary.
-      data = modi_handle.read_buffer_at_offset(4096, media_size + 8)
+            modi_handle.close()
 
-      self.assertIsNotNone(data)
-      self.assertEqual(len(data), 0)
+    def test_read_buffer_at_offset(self):
+        """Tests the read_buffer_at_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    # Stress test read buffer.
-    for _ in range(1024):
-      random_number = random.random()
+        modi_handle = pymodi.handle()
 
-      media_offset = int(random_number * media_size)
-      read_size = int(random_number * 4096)
+        modi_handle.open(test_source)
+        modi_handle.open_band_data_files()
 
-      data = modi_handle.read_buffer_at_offset(read_size, media_offset)
+        media_size = modi_handle.get_media_size()
 
-      self.assertIsNotNone(data)
+        # Test normal read.
+        data = modi_handle.read_buffer_at_offset(4096, 0)
 
-      remaining_media_size = media_size - media_offset
+        self.assertIsNotNone(data)
+        self.assertEqual(len(data), min(media_size, 4096))
 
-      data_size = len(data)
+        if media_size > 8:
+            # Read buffer on media_size boundary.
+            data = modi_handle.read_buffer_at_offset(4096, media_size - 8)
 
-      if read_size > remaining_media_size:
-        read_size = remaining_media_size
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 8)
 
-      self.assertEqual(data_size, read_size)
+            # Read buffer beyond media_size boundary.
+            data = modi_handle.read_buffer_at_offset(4096, media_size + 8)
 
-      remaining_media_size -= data_size
+            self.assertIsNotNone(data)
+            self.assertEqual(len(data), 0)
 
-      if not remaining_media_size:
-        modi_handle.seek_offset(0, os.SEEK_SET)
+        # Stress test read buffer.
+        for _ in range(1024):
+            random_number = random.random()
 
-    with self.assertRaises(ValueError):
-      modi_handle.read_buffer_at_offset(-1, 0)
+            media_offset = int(random_number * media_size)
+            read_size = int(random_number * 4096)
 
-    with self.assertRaises(ValueError):
-      modi_handle.read_buffer_at_offset(4096, -1)
+            data = modi_handle.read_buffer_at_offset(read_size, media_offset)
 
-    modi_handle.close()
+            self.assertIsNotNone(data)
 
-    # Test the read without open.
-    with self.assertRaises(IOError):
-      modi_handle.read_buffer_at_offset(4096, 0)
+            remaining_media_size = media_size - media_offset
 
-  def test_seek_offset(self):
-    """Tests the seek_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+            data_size = len(data)
 
-    modi_handle = pymodi.handle()
+            if read_size > remaining_media_size:
+                read_size = remaining_media_size
 
-    modi_handle.open(test_source)
-    modi_handle.open_band_data_files()
+            self.assertEqual(data_size, read_size)
 
-    media_size = modi_handle.get_media_size()
+            remaining_media_size -= data_size
 
-    modi_handle.seek_offset(16, os.SEEK_SET)
+            if not remaining_media_size:
+                modi_handle.seek_offset(0, os.SEEK_SET)
 
-    offset = modi_handle.get_offset()
-    self.assertEqual(offset, 16)
+        with self.assertRaises(ValueError):
+            modi_handle.read_buffer_at_offset(-1, 0)
 
-    modi_handle.seek_offset(16, os.SEEK_CUR)
+        with self.assertRaises(ValueError):
+            modi_handle.read_buffer_at_offset(4096, -1)
 
-    offset = modi_handle.get_offset()
-    self.assertEqual(offset, 32)
+        modi_handle.close()
 
-    modi_handle.seek_offset(-16, os.SEEK_CUR)
+        # Test the read without open.
+        with self.assertRaises(IOError):
+            modi_handle.read_buffer_at_offset(4096, 0)
 
-    offset = modi_handle.get_offset()
-    self.assertEqual(offset, 16)
+    def test_seek_offset(self):
+        """Tests the seek_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    if media_size > 16:
-      modi_handle.seek_offset(-16, os.SEEK_END)
+        modi_handle = pymodi.handle()
 
-      offset = modi_handle.get_offset()
-      self.assertEqual(offset, media_size - 16)
+        modi_handle.open(test_source)
+        modi_handle.open_band_data_files()
 
-    modi_handle.seek_offset(16, os.SEEK_END)
+        media_size = modi_handle.get_media_size()
 
-    offset = modi_handle.get_offset()
-    self.assertEqual(offset, media_size + 16)
+        modi_handle.seek_offset(16, os.SEEK_SET)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      modi_handle.seek_offset(-1, os.SEEK_SET)
+        offset = modi_handle.get_offset()
+        self.assertEqual(offset, 16)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      modi_handle.seek_offset(-32 - media_size, os.SEEK_CUR)
+        modi_handle.seek_offset(16, os.SEEK_CUR)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      modi_handle.seek_offset(-32 - media_size, os.SEEK_END)
+        offset = modi_handle.get_offset()
+        self.assertEqual(offset, 32)
 
-    # TODO: change IOError into ValueError
-    with self.assertRaises(IOError):
-      modi_handle.seek_offset(0, -1)
+        modi_handle.seek_offset(-16, os.SEEK_CUR)
 
-    modi_handle.close()
+        offset = modi_handle.get_offset()
+        self.assertEqual(offset, 16)
 
-    # Test the seek without open.
-    with self.assertRaises(IOError):
-      modi_handle.seek_offset(16, os.SEEK_SET)
+        if media_size > 16:
+            modi_handle.seek_offset(-16, os.SEEK_END)
 
-  def test_get_offset(self):
-    """Tests the get_offset function."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+            offset = modi_handle.get_offset()
+            self.assertEqual(offset, media_size - 16)
 
-    modi_handle = pymodi.handle()
+        modi_handle.seek_offset(16, os.SEEK_END)
 
-    modi_handle.open(test_source)
+        offset = modi_handle.get_offset()
+        self.assertEqual(offset, media_size + 16)
 
-    offset = modi_handle.get_offset()
-    self.assertIsNotNone(offset)
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            modi_handle.seek_offset(-1, os.SEEK_SET)
 
-    modi_handle.close()
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            modi_handle.seek_offset(-32 - media_size, os.SEEK_CUR)
 
-  def test_get_media_size(self):
-    """Tests the get_media_size function and media_size property."""
-    test_source = getattr(unittest, "source", None)
-    if not test_source:
-      raise unittest.SkipTest("missing source")
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            modi_handle.seek_offset(-32 - media_size, os.SEEK_END)
 
-    modi_handle = pymodi.handle()
+        # TODO: change IOError into ValueError
+        with self.assertRaises(IOError):
+            modi_handle.seek_offset(0, -1)
 
-    modi_handle.open(test_source)
+        modi_handle.close()
 
-    media_size = modi_handle.get_media_size()
-    self.assertIsNotNone(media_size)
+        # Test the seek without open.
+        with self.assertRaises(IOError):
+            modi_handle.seek_offset(16, os.SEEK_SET)
 
-    self.assertIsNotNone(modi_handle.media_size)
+    def test_get_offset(self):
+        """Tests the get_offset function."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
 
-    modi_handle.close()
+        modi_handle = pymodi.handle()
+
+        modi_handle.open(test_source)
+
+        offset = modi_handle.get_offset()
+        self.assertIsNotNone(offset)
+
+        modi_handle.close()
+
+    def test_get_media_size(self):
+        """Tests the get_media_size function and media_size property."""
+        test_source = getattr(unittest, "source", None)
+        if not test_source:
+            raise unittest.SkipTest("missing source")
+
+        modi_handle = pymodi.handle()
+
+        modi_handle.open(test_source)
+
+        media_size = modi_handle.get_media_size()
+        self.assertIsNotNone(media_size)
+
+        self.assertIsNotNone(modi_handle.media_size)
+
+        modi_handle.close()
 
 
 if __name__ == "__main__":
-  argument_parser = argparse.ArgumentParser()
+    argument_parser = argparse.ArgumentParser()
 
-  argument_parser.add_argument(
-      "source", nargs="?", action="store", metavar="PATH",
-      default=None, help="path of the source file.")
+    argument_parser.add_argument(
+        "source",
+        nargs="?",
+        action="store",
+        metavar="PATH",
+        default=None,
+        help="path of the source file.",
+    )
 
-  options, unknown_options = argument_parser.parse_known_args()
-  unknown_options.insert(0, sys.argv[0])
+    options, unknown_options = argument_parser.parse_known_args()
+    unknown_options.insert(0, sys.argv[0])
 
-  setattr(unittest, "source", options.source)
+    setattr(unittest, "source", options.source)
 
-  unittest.main(argv=unknown_options, verbosity=2)
+    unittest.main(argv=unknown_options, verbosity=2)
