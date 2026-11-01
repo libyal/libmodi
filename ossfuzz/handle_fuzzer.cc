@@ -31,6 +31,15 @@ extern "C" {
 
 #if !defined( LIBMODI_HAVE_BFIO )
 
+/* Determines if a file contains a Mac OS disk image file signature
+ * using a Basic File IO (bfio) handle
+ * Returns 1 if true, 0 if not or -1 on error
+ */
+LIBMODI_EXTERN \
+int libmodi_check_file_signature_file_io_handle(
+     libbfio_handle_t *file_io_handle,
+     libmodi_error_t **error );
+
 /* Opens a handle using a Basic File IO (bfio) handle
  * Returns 1 if successful or -1 on error
  */
@@ -51,8 +60,10 @@ int LLVMFuzzerTestOneInput(
 
 	libbfio_handle_t *file_io_handle = NULL;
 	libmodi_handle_t *handle         = NULL;
+	ssize_t read_count               = 0;
 	off64_t media_offset             = 0;
 	size64_t media_size              = 0;
+	int image_type                   = 0;
 	int read_iterator                = 0;
 
 	if( libbfio_memory_range_initialize(
@@ -66,6 +77,12 @@ int LLVMFuzzerTestOneInput(
 	     (uint8_t *) data,
 	     size,
 	     NULL ) != 1 )
+	{
+		goto on_error_libbfio;
+	}
+	if( libmodi_check_file_signature_file_io_handle(
+	     file_io_handle,
+	     NULL ) == -1 )
 	{
 		goto on_error_libbfio;
 	}
@@ -83,6 +100,20 @@ int LLVMFuzzerTestOneInput(
 	{
 		goto on_error_libmodi;
 	}
+	if( libmodi_handle_set_maximum_number_of_open_handles(
+	     handle,
+	     8,
+	     NULL ) != 1 )
+	{
+		goto on_error_libmodi;
+	}
+	if( libmodi_handle_get_image_type(
+	     handle,
+	     &image_type,
+	     NULL ) != 1 )
+	{
+		goto on_error_libmodi;
+	}
 	if( libmodi_handle_get_media_size(
 	     handle,
 	     &media_size,
@@ -91,7 +122,80 @@ int LLVMFuzzerTestOneInput(
 		goto on_error_libmodi;
 	}
 	for( read_iterator = 0;
-	     read_iterator < 128;
+	     read_iterator < 512;
+	     read_iterator++ )
+	{
+		read_count = libmodi_handle_read_buffer(
+		                  handle,
+		                  buffer,
+		                  497,
+		                  NULL );
+
+		if( read_count == -1 )
+		{
+			goto on_error_libmodi;
+		}
+		if( read_count == 0 )
+		{
+			break;
+		}
+	}
+	if( media_size > 0 )
+	{
+		if( libmodi_handle_seek_offset(
+		     handle,
+		     (off64_t) ( media_size / 2 ),
+		     SEEK_SET,
+		     NULL ) == -1 )
+		{
+			goto on_error_libmodi;
+		}
+	}
+	if( libmodi_handle_seek_offset(
+	     handle,
+	     512,
+	     SEEK_CUR,
+	     NULL ) == -1 )
+	{
+		goto on_error_libmodi;
+	}
+	if( libmodi_handle_seek_offset(
+	     handle,
+	     0,
+	     SEEK_END,
+	     NULL ) == -1 )
+	{
+		goto on_error_libmodi;
+	}
+	if( libmodi_handle_get_offset(
+	     handle,
+	     &media_offset,
+	     NULL ) != 1 )
+	{
+		goto on_error_libmodi;
+	}
+	read_count = libmodi_handle_read_buffer(
+	                  handle,
+	                  buffer,
+	                  497,
+	                  NULL );
+
+	if( read_count == -1 )
+	{
+		goto on_error_libmodi;
+	}
+	if( libmodi_handle_seek_offset(
+	     handle,
+	     0,
+	     SEEK_SET,
+	     NULL ) == -1 )
+	{
+		goto on_error_libmodi;
+	}
+	media_offset = 0;
+
+	for( read_iterator = 0;
+	     read_iterator < 512;
 	     read_iterator++ )
 	{
 		if( media_offset >= media_size )
@@ -108,6 +212,12 @@ int LLVMFuzzerTestOneInput(
 			goto on_error_libmodi;
 		}
 		media_offset += 497;
+	}
+	if( libmodi_handle_signal_abort(
+	     handle,
+	     NULL ) != 1 )
+	{
+		goto on_error_libmodi;
 	}
 	libmodi_handle_close(
 	 handle,
@@ -127,4 +237,3 @@ on_error_libbfio:
 }
 
 } /* extern "C" */
-
