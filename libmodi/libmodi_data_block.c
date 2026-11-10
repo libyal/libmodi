@@ -331,7 +331,7 @@ int libmodi_data_block_read_list_element_data(
 	if( ( element_data_flags & LIBFDATA_RANGE_FLAG_IS_COMPRESSED ) != 0 )
 	{
 		if( ( element_data_size == 0 )
-		 || ( element_data_size > (size64_t) SSIZE_MAX ) )
+		 || ( element_data_size > (size64_t) MEMORY_MAXIMUM_ALLOCATION_SIZE ) )
 		{
 			libcerror_error_set(
 			 error,

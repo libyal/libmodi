@@ -2,7 +2,7 @@ AC_PREREQ([2.71])
 
 AC_INIT(
   [libmodi],
-  [20261031],
+  [20261110],
   [https://github.com/libyal/libmodi/issues])
 
 AC_CONFIG_SRCDIR(

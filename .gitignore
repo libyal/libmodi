@@ -131,6 +131,7 @@ stamp-h[1-9]
 /moditools/*.exe
 /moditools/modiinfo
 /moditools/modimount
+/ossfuzz/*_fuzzer
 /tests/*.dir
 /tests/*.exe
 /tests/*.log
